@@ -1,2 +1,0 @@
-function []=InitModelPas(v)
-v;

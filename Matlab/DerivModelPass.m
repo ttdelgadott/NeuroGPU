@@ -1,2 +1,0 @@
-function value = DerivModelPass()
-value=[];

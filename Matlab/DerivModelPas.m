@@ -1,2 +1,0 @@
-function []=DerivModelPas(v)
-v;
