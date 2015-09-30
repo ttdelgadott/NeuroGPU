@@ -1,0 +1,2 @@
+function []=InitModelPas(v)
+v;

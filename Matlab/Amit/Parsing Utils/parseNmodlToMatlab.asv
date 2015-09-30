@@ -1,0 +1,56 @@
+%DOCUMENTATION_REF_008D
+function parseNmodlToMatlab (fileName)
+%Function Name: parseNmodlToMatlab
+%INPUT: file name
+%OUTPUT: parse the .mod an
+def_fileTypeSuffix;
+
+cFileLines = getLines([fileName C_SUFFIX]);
+modFileLines = getLines([fileName NMODL_SUFFIX]);
+
+[suffix isElectrodeCurrent isPointProcess] = getNeuronBlockData(modFileLines, fileName);
+
+parseDefVarsAndConsts (modFileLines, suffix, isElectrodeCurrent); 
+parseNrnInitmodel(modFileLines, suffix);
+parseNrnCurrent(cFileLines, suffix, isElectrodeCurrent, isPointProcess);
+parseNrnStates(cFileLines, suffix);
+parseFunctionsAndProcedures(modFileLines, suffix);
+
+function [suffix isElectrodeCurrent isPointProcess] = ...
+    getNeuronBlockData (modLines, fileName)
+def_neuronBlockStr;
+def_generalNmodlStr;
+
+isElectrodeCurrent = false;
+isPointProcess = false;
+suffix = fileName;
+
+neuronLines = getBlock(NEURON_STR, modLines, OPEN_BLOCK_MOD_STR, CLOSE_BLOCK_MOD_STR);
+for i=1:numel(neuronLines)
+   pointProcessInd = regexp(neuronLines{i}, POINT_PROCESS_STR, 'ONCE');
+   electrodeCurrentInd = regexp(neuronLines{i}, ELECTRODE_CURRENT_STR, 'ONCE');
+   suffixInd = regexp(neuronLines{i},SUFFIX_STR, 'ONCE');
+   commentsInd = regexp(neuronLines{i}, COMMENT_MOD_STR);
+   %if found the POINT_PROCESS string in this line
+   if (~isempty(pointProcessInd))
+       %and if the string is before a remark string (meaning it's not
+       %remarked)
+      if (isempty(commentsInd) || pointProcessInd(1)<commentsInd(1))
+          isPointProcess=true;
+      end
+   end
+   %exactly the same as the point process conditions.
+   if (~isempty(electrodeCurrentInd))
+      if (isempty(commentsInd) || electrodeCurrentInd(1)<commentsInd(1))
+          isElectrodeCurrent=true;
+      end
+   end
+   %if SUFFIX string is in this line
+   if (~isempty(suffixInd))
+       if (isempty(commentsInd) || suffixInd(1)<commentsInd(1))
+          suffix = regexp(neuronLines{i}, [SUFFIX_STR ' *(\w*)'], 'match', 'once');
+          suffix = regexprep(suffix, [SUFFIX_STR ' *(\w*)'], '$1');
+      end
+   end
+end
+
