@@ -1,0 +1,245 @@
+﻿  
+  C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include"     --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile     -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd  " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6\CudaStuff.cu" -clean 
+  CudaStuff.cu
+  
+  C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include"     --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile     -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd  " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6\kernel.cu" -clean 
+  kernel.cu
+  Compiling CUDA source file CudaStuff.cu...
+  
+  C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2012 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include"     --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static    -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd  " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6\CudaStuff.cu" 
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(16): warning C4005: 'celsius' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(17): warning C4005: 'stoprun' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(18): warning C4005: 'clamp_resist' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(19): warning C4005: 'secondorder' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(263): warning : variable "i" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "hinf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "htau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "minf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "mtau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(276): warning : variable "gca" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "gca" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(287): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(287): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(295): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(295): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "hinf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "htau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "minf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "mtau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(311): warning : variable "gpas" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(185): warning : variable "CurLevel" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(291): warning : variable "StimID" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "SMemVHot" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "amps" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "offset" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(501): warning : variable "FileName" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(835): warning : expression has no effect
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "i" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "j" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "t" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning : variable "uHPOut_d" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning : variable "bHPOut_d" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(16): warning C4005: 'celsius' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(17): warning C4005: 'stoprun' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(18): warning C4005: 'clamp_resist' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(19): warning C4005: 'secondorder' : macro redefinition
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(263): warning : variable "i" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "hinf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "htau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "minf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(269): warning : variable "mtau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(276): warning : variable "gca" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "gca" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(279): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(287): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(287): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(295): warning : variable "ninf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(295): warning : variable "ntau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "hinf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "htau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "minf" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(303): warning : variable "mtau" was declared but never referenced
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(311): warning : variable "gpas" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(185): warning : variable "CurLevel" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(291): warning : variable "StimID" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "isModel_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(329): warning : variable "dVec_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_1" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_2" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_3" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_4" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_5" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_6" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_7" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_8" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_9" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_10" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_11" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_12" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(336): warning : variable "SonNo_13" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "SMemVHot" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "amps" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(485): warning : variable "offset" is used before its value is set
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(501): warning : variable "FileName" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(835): warning : expression has no effect
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "i" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "j" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning : variable "t" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning : variable "uHPOut_d" was declared but never referenced
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning : variable "bHPOut_d" was declared but never referenced
+  CudaStuff.cu
+c:\users\rben.keck-center\documents\neurogpu2\vs\neurogpulast\neurogpu6\AllModels.cu(77): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(501): warning C4101: 'FileName' : unreferenced local variable
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(542): warning C4244: 'initializing' : conversion from 'float' to 'unsigned short', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(580): warning C4244: 'argument' : conversion from 'float' to 'size_t', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(635): warning C4244: 'argument' : conversion from 'float' to 'size_t', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(781): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(781): warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(835): warning C4553: '==' : operator has no effect; did you intend '='?
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning C4101: 'bHPOut_d' : unreferenced local variable
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(548): warning C4101: 'uHPOut_d' : unreferenced local variable
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning C4101: 'i' : unreferenced local variable
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning C4101: 't' : unreferenced local variable
+C:/Users/rben.KECK-CENTER/Documents/neurogpu2/VS/NeuroGPULast/NeuroGPU6/CudaStuff.cu(545): warning C4101: 'j' : unreferenced local variable
+  Compiling CUDA source file kernel.cu...
+  
+  C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2012 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include"     --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static    -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd  " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\NeuroGPU6\kernel.cu" 
+  kernel.cu
+  Util.cpp
+Util.cpp(75): warning C4101: 'fdebug2' : unreferenced local variable
+Util.cpp(128): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
+Util.cpp(132): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(244): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
+Util.cpp(248): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(279): warning C4305: '=' : truncation from 'double' to 'float'
+Util.cpp(292): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(322): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : see declaration of 'sprintf'
+Util.cpp(325): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(335): warning C4244: 'initializing' : conversion from 'float' to 'unsigned short', possible loss of data
+Util.cpp(359): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(380): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(393): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(392): warning C4101: 'NP' : unreferenced local variable
+Util.cpp(414): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(431): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+Util.cpp(448): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : see declaration of 'fopen'
+  MainC.cpp
+  AllModels.cpp
+AllModels.cpp(76): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(118): warning C4305: '=' : truncation from 'double' to 'float'
+AllModels.cpp(151): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(151): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(152): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(154): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(157): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(158): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(159): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(167): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(182): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(196): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(210): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(215): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(222): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(223): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(226): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(230): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(235): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(239): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(243): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(247): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(248): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(257): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(258): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(265): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(266): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(271): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(272): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(277): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(278): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(283): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+AllModels.cpp(284): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  NeuroGPU6.vcxproj -> C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\x64\Debug\NeuroGPU6.exe
+  copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\cudart*.dll" "C:\Users\rben.KECK-CENTER\Documents\neurogpu2\VS\NeuroGPULast\x64\Debug\"
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\cudart32_70.dll
+  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin\cudart64_70.dll
+          2 file(s) copied.
