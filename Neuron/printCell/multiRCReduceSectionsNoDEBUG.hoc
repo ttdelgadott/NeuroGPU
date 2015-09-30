@@ -1,0 +1,238 @@
+objref outFile,amps,dels,durs,st,g1,somaref,secref
+strdef str1,str2,str3
+create a_soma,somaext[1]
+pc=0
+amp = -1
+del = 10
+dur = 20
+NStimuli =3
+amps = new Vector(NStimuli)
+dels = new Vector(NStimuli)
+durs = new Vector(NStimuli)
+for (i=0;i<NStimuli;i+=1){
+	amps.x(i) = amp+i*1
+	dels.x(i) = del
+	durs.x(i) = dur
+}
+
+celsius = 25
+proc printConsts(){
+	hoc_stdout($s1)
+	{st.get_loc() printf("%s\n%f,%d\n",secname(),area(0.5),NStimuli) pop_section()}
+	for(i=0;i<NStimuli;i+=1){
+		printf("%f,%f,%f\n",dels.x(i),durs.x(i),amps.x(i))
+	}
+	printf("%f,%f,%f\n",dt,tfinal,celsius)
+	hoc_stdout()
+}
+
+proc printTopology(){
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,area(0.5),v(0.5),parent_connection(),n3d())
+		if (ismembrane("hh")==1){
+			printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh,gkbar_hh,gl_hh,ena,ek,el_hh)
+			}	else{
+			printf("\n")
+			}
+		}
+}
+proc countChildrens(){localobj sl
+	forall{
+		comps = 0
+		sl=new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		forsec sl{
+			comps+=1
+		}
+		print comps
+	}
+}
+proc mul32(){
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	access somaext[0]
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+proc reduceSections(){localobj sl,conVec
+	comps = 0
+	forall{
+		comps = 0
+		sl=new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		forsec sl{
+			comps+=1
+			}
+			if (comps>2){
+			print diam
+				create somaext[comps+1]
+				index=0
+				somaL=somaref.sec.L
+				printf("%s l is %f diams is %f \n",secname(),somaref.sec.L, somaref.sec.diam)
+				conVec = new Vector()
+				cumL=0
+				conVec.append(0)
+				forsec sl{
+					conVec.append(parent_connection())
+				}
+				conVec=conVec.sort()
+				for(i=1;i<conVec.size();i+=1){
+				printf("i is %d diams is %f\n",i, somaref.sec.diam)
+					currPart = conVec.x(i)-conVec.x(i-1)
+					somaext[i-1]{
+						L=somaL*currPart
+						diam = somaref.sec.diam
+						parentCm = somaref.sec.cm
+						parentRa = somaref.sec.Ra
+						cumL+=L
+					}
+					connect somaext[i](0), somaext[i-1](1)
+				}
+				somaext[comps]{
+					L=somaL-cumL
+					diam = somaref.sec.diam
+					parentCm = somaref.sec.cm
+					parentRa = somaref.sec.Ra
+				}
+				forsec sl{
+				printf("index is %d i is %d\n",index,i)
+					disconnect()
+					secref= new SectionRef()
+					connect secref.sec(0),somaext[index](1)
+					index+=1
+				}
+			}
+	}	
+}
+
+proc printFmatrix(){localobj ff
+	finitialize(-65)
+	hoc_stdout($s1)
+	fcurrent()
+	fmatrix()
+	hoc_stdout()
+	/*ff = new File()
+	ff.wopen($s1)
+	while(t<tfinal){
+			forall{
+			if (ismembrane("hh")==1){
+				ff.printf("%s\n",secname())
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh(0),gna_hh(0),gl_hh(0),ik(0),ina(0),il_hh(0),m_hh(0),h_hh(0),n_hh(0),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh(0.2),gna_hh(0.2),gl_hh(0.2),ik(0.2),ina(0.2),il_hh(0.2),m_hh(0.2),h_hh(0.2),n_hh(0.2),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh(0.4),gna_hh(0.4),gl_hh(0.4),ik(0.4),ina(0.4),il_hh(0.4),m_hh(0.4),h_hh(0.4),n_hh(0.4),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh(0.6),gna_hh(0.6),gl_hh(0.6),ik(0.6),ina(0.6),il_hh(0.6),m_hh(0.6),h_hh(0.6),n_hh(0.6),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh(0.8),gna_hh(0.8),gl_hh(0.8),ik(0.8),ina(0.8),il_hh(0.8),m_hh(0.8),h_hh(0.8),n_hh(0.8),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				}	else{
+				ff.printf("%s\n",secname())
+				ff.printf("%f,%f\n",t,v(0))
+				ff.printf("%f,%f\n",t,v(0.2))
+				ff.printf("%f,%f\n",t,v(0.4))
+				ff.printf("%f,%f\n",t,v(0.6))
+				ff.printf("%f,%f\n",t,v(0.8))
+				}
+				
+			}
+			fadvance()
+		}
+	hoc_stdout()
+	ff.close()*/
+}
+proc drawGraph(){
+	finitialize(-65)
+	$o1.beginline()
+	while(t<tfinal){
+			$o1.line(t,v(0))
+			fadvance()
+		}
+	hoc_stdout()
+}
+proc printVolts(){
+	i=$2
+	counter=0
+	finitialize(-65)
+	while(t<tfinal){
+			$o1.x(counter,i)=v(0.5)
+			fadvance()
+			counter+=1
+		}
+		
+	hoc_stdout()
+}
+proc loadCell(){
+	load_file($s1)
+	reduceSections()
+	access a_soma
+	delete_section()
+	forall{
+		nseg=1
+		insert hh
+		usetable_hh=0
+		gnabar_hh =gnabar_hh/10
+		gkbar_hh =gkbar_hh/10
+		finitialize(-65)
+	}
+	forsec "somaext"{
+		gnabar_hh =gnabar_hh*130
+		gkbar_hh =gkbar_hh*50
+	}
+}
+segs=0
+comps=0
+proc countSegs(){
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+loadCell("../../Data/Cells/Mara/A150312.hoc")
+tfinal = 50
+dt =0.1
+g1 = new Graph()
+access somaext[0]
+st = new IClamp(0)
+objref mat,matFile
+mat = new Matrix(tfinal/dt,NStimuli)
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	printVolts(mat,i)
+}
+matFile = new File()
+matFile.wopen("./Output/neuronVolts.csv")
+mat.fprint(matFile)
+matFile.close()
+
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	drawGraph(g1)
+}
+
+mul32()
+printConsts("./Output/96RCC.csv")
+hoc_stdout("./Output/96RCT.csv")
+printTopology()
+hoc_stdout()
+strdef pre,post,fileName
+pre = "./Output/96RCF"
+post = ".csv"
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	sprint(fileName,"%s%d%s",pre,i,post)
+	printFmatrix(fileName)
+}
+
+load_file("nrngui.hoc")

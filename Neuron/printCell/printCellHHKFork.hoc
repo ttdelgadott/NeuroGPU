@@ -1,0 +1,75 @@
+objref outFile,st
+proc createSimpleCompt(){
+	nseg = 5
+	cm=1
+insert hh2
+finitialize(-65)
+}
+proc printTopology(){
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5))
+		printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh2,gkbar_hh2,gl_hh2,ena,ek,el_hh2)
+		}
+}
+
+proc printFmatrix(){
+	hoc_stdout($s1)
+	while(t<tfinal){
+			fcurrent()
+			fmatrix()
+			forall{
+				printf("%s\n",secname())
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh2(0),gna_hh2(0),gl_hh2(0),ik(0),ina(0),il_hh2(0),m_hh2(0),h_hh2(0),n_hh2(0),minf_hh2,mtau_hh2,hinf_hh2,htau_hh2)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh2(0.2),gna_hh2(0.2),gl_hh2(0.2),ik(0.2),ina(0.2),il_hh2(0.2),m_hh2(0.2),h_hh2(0.2),n_hh2(0.2),minf_hh2,mtau_hh2,hinf_hh2,htau_hh2)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh2(0.4),gna_hh2(0.4),gl_hh2(0.4),ik(0.4),ina(0.4),il_hh2(0.4),m_hh2(0.4),h_hh2(0.4),n_hh2(0.4),minf_hh2,mtau_hh2,hinf_hh2,htau_hh2)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh2(0.6),gna_hh2(0.6),gl_hh2(0.6),ik(0.6),ina(0.6),il_hh2(0.6),m_hh2(0.6),h_hh2(0.6),n_hh2(0.6),minf_hh2,mtau_hh2,hinf_hh2,htau_hh2)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh2(0.8),gna_hh2(0.8),gl_hh2(0.8),ik(0.8),ina(0.8),il_hh2(0.8),m_hh2(0.8),h_hh2(0.8),n_hh2(0.8),minf_hh2,mtau_hh2,hinf_hh2,htau_hh2)
+			}
+			fadvance()
+		}
+	hoc_stdout()
+}
+
+create soma
+access soma
+createSimpleCompt()
+
+create dend1
+access dend1
+createSimpleCompt()
+connect dend1(1),soma(0)
+create dend2
+access dend2
+createSimpleCompt()
+connect dend2(1),soma(0)
+create dend11
+access dend11
+createSimpleCompt()
+connect dend11(1),dend1(0)
+create dend12
+access dend12
+st = new IClamp(.5)
+st.del =0.5
+st.dur =1
+st.amp = 126
+createSimpleCompt()
+connect dend12(1),dend1(0)
+create dend21
+access dend21
+createSimpleCompt()
+connect dend21(1),dend2(0)
+create dend22
+access dend22
+createSimpleCompt()
+connect dend22(1),dend2(0)
+
+tfinal = 10
+dt =0.01
+hoc_stdout("./output/KforkHHTopo.csv")
+printTopology()
+hoc_stdout()
+printFmatrix("./Output/KfmatrixHHFork.csv")
+load_file("nrngui.hoc")
+

@@ -1,0 +1,170 @@
+objref outFile,amps,dels,durs,st,g1
+create dends[1]
+amp =0.2
+del = 10
+dur = 20
+NStimuli =1
+amps = new Vector(NStimuli)
+dels = new Vector(NStimuli)
+durs = new Vector(NStimuli)
+for (i=0;i<NStimuli;i+=1){
+	amps.x(i) = amp+i*0.2
+	dels.x(i) = del
+	durs.x(i) = dur
+}
+
+depth = 2
+celsius = 25
+proc createSimpleCompt(){
+	nseg = 45
+	cm=1
+	diam=1
+	L=50
+	insert hh
+	usetable_hh=0
+	gnabar_hh =gnabar_hh/10
+	gkbar_hh =gkbar_hh/10
+	
+
+finitialize(-65)
+}
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+proc printConsts(){
+	hoc_stdout($s1)
+	{st.get_loc() printf("%s\n%f,%d\n",secname(),area(0.5),NStimuli) pop_section()}
+	for(i=0;i<NStimuli;i+=1){
+		printf("%f,%f,%f\n",dels.x(i),durs.x(i),amps.x(i))
+	}
+	printf("%f,%f,%f\n",dt,tfinal,celsius)
+	hoc_stdout()
+}
+proc printTopology(){
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,area(0.5),v(0.5),parent_connection(),n3d())
+		if (ismembrane("hh")==1){
+			printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh,gkbar_hh,gl_hh,ena,ek,el_hh)
+			}	else{
+			printf("\n")
+			}
+		}
+}
+
+proc printFmatrix(){
+	finitialize(-65)
+	hoc_stdout($s1)
+	while(t<tfinal){
+			fcurrent()
+			fmatrix()
+			forall{
+			if (ismembrane("hh")==1){
+				printf("%s\n",secname())
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh(0),gna_hh(0),gl_hh(0),ik(0),ina(0),il_hh(0),m_hh(0),h_hh(0),n_hh(0),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh(0.2),gna_hh(0.2),gl_hh(0.2),ik(0.2),ina(0.2),il_hh(0.2),m_hh(0.2),h_hh(0.2),n_hh(0.2),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh(0.4),gna_hh(0.4),gl_hh(0.4),ik(0.4),ina(0.4),il_hh(0.4),m_hh(0.4),h_hh(0.4),n_hh(0.4),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh(0.6),gna_hh(0.6),gl_hh(0.6),ik(0.6),ina(0.6),il_hh(0.6),m_hh(0.6),h_hh(0.6),n_hh(0.6),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh(0.8),gna_hh(0.8),gl_hh(0.8),ik(0.8),ina(0.8),il_hh(0.8),m_hh(0.8),h_hh(0.8),n_hh(0.8),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				}	else{
+				
+				printf("%s\n",secname())
+				printf("%f,%f\n",t,v(0))
+				printf("%f,%f\n",t,v(0.2))
+				printf("%f,%f\n",t,v(0.4))
+				printf("%f,%f\n",t,v(0.6))
+				printf("%f,%f\n",t,v(0.8))
+				}
+				
+			}
+			fadvance()
+		}
+	hoc_stdout()
+}
+proc drawGraph(){
+	finitialize(-65)
+	$o1.beginline()
+	while(t<tfinal){
+			$o1.line(t,v(0.5))
+			fadvance()
+		}
+	hoc_stdout()
+}
+proc mul32(){
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	access dends[0]
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+
+numOfNodes = 2^depth-1
+create dends[numOfNodes]
+proc buildBTree(){
+	fatherInd = $1
+	currInd=$2
+	currDepth =$3
+	access dends[$2]
+	createSimpleCompt()
+	//nseg=currInd+1
+	
+	if($2>0){
+		connect dends[$2](0), dends[$1](1)
+	}
+	printf("f is %d c is %d d is %d\n",$1,$2,$3)
+	if($3 < depth){
+	printf("currDepth is %d depth is %d\n",$3,depth)
+		buildBTree($2,$2*2+1,$3+1)
+		buildBTree($2,$2*2+2,$3+1)
+	}	
+}
+buildBTree(0,0,1)
+access dends[0]
+nseg=1
+st = new IClamp(.5)
+L=L/10
+diam=diam*10
+gnabar_hh =gnabar_hh*140
+gkbar_hh =gkbar_hh*70
+//diam = diam*0.001
+
+tfinal = 50
+dt =0.1
+strdef pre,post,fileName,consts,topo
+pre = "./Output/"
+post = ".csv"
+mul32()
+sprint(consts,"%sconst%d%s",pre,segs+comps+1,post)
+sprint(topo,"%stopo%d%s",pre,segs+comps+1,post)
+printConsts(consts)
+hoc_stdout(topo)
+printTopology()
+hoc_stdout()
+
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	sprint(fileName,"%sFMats%d_%d%s",pre,segs+comps+1,i,post)
+	printFmatrix(fileName)
+}
+g1 = new Graph()
+access dends[0]
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	drawGraph(g1)
+}
+load_file("nrngui.hoc")

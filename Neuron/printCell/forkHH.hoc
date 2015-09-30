@@ -1,0 +1,80 @@
+objref outFile,st
+proc createSimpleCompt(){
+	nseg = 1
+	cm=1
+insert hh
+usetable_hh=0
+finitialize(-65)
+}
+proc printTopology(){
+	hasHH=$1
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5))
+		if(hasHH!=0){
+			printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh,gkbar_hh,gl_hh,ena,ek,el_hh)
+			}else	{
+			printf("%f,%f,%f,%f,%f,%f\n",0,0,0,0,0,0)
+			}
+		}
+}
+
+proc printFmatrix(){
+	hoc_stdout($s1)
+	fcurrent()
+	fmatrix()
+	hasHH = $2
+	while(t<tfinal){
+			forall{
+				printf("%s\n",secname())
+				if(hasHH){
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh(0),gna_hh(0),gl_hh(0),ik(0),ina(0),il_hh(0),m_hh(0),h_hh(0),n_hh(0),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh(0.2),gna_hh(0.2),gl_hh(0.2),ik(0.2),ina(0.2),il_hh(0.2),m_hh(0.2),h_hh(0.2),n_hh(0.2),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh(0.4),gna_hh(0.4),gl_hh(0.4),ik(0.4),ina(0.4),il_hh(0.4),m_hh(0.4),h_hh(0.4),n_hh(0.4),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh(0.6),gna_hh(0.6),gl_hh(0.6),ik(0.6),ina(0.6),il_hh(0.6),m_hh(0.6),h_hh(0.6),n_hh(0.6),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh(0.8),gna_hh(0.8),gl_hh(0.8),ik(0.8),ina(0.8),il_hh(0.8),m_hh(0.8),h_hh(0.8),n_hh(0.8),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				}	else{
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				}
+				
+			}
+			fadvance()
+			fcurrent()
+			fmatrix()
+		}
+	hoc_stdout()
+}
+
+create soma
+access soma
+createSimpleCompt()
+st = new IClamp(.5)
+st.del =0.5
+st.dur =1
+st.amp = 1
+L=L
+tfinal = 3
+dt =0.01
+diam=diam*0.001
+create dend1
+access dend1
+createSimpleCompt()
+
+connect dend1(0), soma(1)
+/*create dend2
+access dend2
+ //for some weird reason neuron puts dend2 before dend1 in the matrix in order to trick him we change the changed dend length so it would fit with the one in unix
+createSimpleCompt()
+connect dend2(0), soma(1)*/
+hoc_stdout("./Output/ForkTopoHH.csv")
+printTopology(1)
+hoc_stdout()
+printFmatrix("./Output/fmatrixForkHH.csv",1)
+
+
+

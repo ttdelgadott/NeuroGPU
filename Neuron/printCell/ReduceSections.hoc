@@ -1,0 +1,131 @@
+objref outFile,amps,dels,durs,st,g1,somaref,secref
+create a_soma,somaext[1],a_dend_0_0
+pc=0
+amp = -1
+del = 10
+dur = 20
+NStimuli =3
+amps = new Vector(NStimuli)
+dels = new Vector(NStimuli)
+durs = new Vector(NStimuli)
+for (i=0;i<NStimuli;i+=1){
+	amps.x(i) = amp+i*1
+	dels.x(i) = del
+	durs.x(i) = dur
+}
+celsius=25
+
+
+proc countChildrens(){localobj sl
+	forall{
+		comps = 0
+		sl=new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		forsec sl{
+			comps+=1
+		}
+		print comps
+	}
+}
+proc reduceSections(){localobj sl,conVec
+	comps = 0
+	forall{
+		comps = 0
+		sl=new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		forsec sl{
+			comps+=1
+			}
+			if (comps>2){
+			print diam
+				create somaext[comps+1]
+				index=0
+				somaL=somaref.sec.L
+				printf("%s l is %f diams is %f \n",secname(),somaref.sec.L, somaref.sec.diam)
+				conVec = new Vector()
+				cumL=0
+				conVec.append(0)
+				forsec sl{
+					conVec.append(parent_connection())
+				}
+				conVec=conVec.sort()
+				for(i=1;i<conVec.size();i+=1){
+				printf("i is %d diams is %f\n",i, somaref.sec.diam)
+					currPart = conVec.x(i)-conVec.x(i-1)
+					somaext[i-1]{
+						L=somaL*currPart
+						diam = somaref.sec.diam
+						parentCm = somaref.sec.cm
+						parentRa = somaref.sec.Ra
+						cumL+=L
+					}
+					connect somaext[i](0), somaext[i-1](1)
+				}
+				somaext[comps]{
+					L=somaL-cumL
+					diam = somaref.sec.diam
+					parentCm = somaref.sec.cm
+					parentRa = somaref.sec.Ra
+				}
+				forsec sl{
+				printf("index is %d i is %d\n",index,i)
+					disconnect()
+					secref= new SectionRef()
+					connect secref.sec(0),somaext[index](1)
+					index+=1
+				}
+			}
+	}	
+}
+
+
+proc drawGraph(){
+	finitialize(-65)
+	$o1.beginline()
+	while(t<tfinal){
+			$o1.line(t,v(0))
+			fadvance()
+			if(t<0.1){
+				a_dend_0_0{
+					printf("t-%f,v-%f\n",t,v(0.5))
+				}
+			}	
+		}
+	
+}
+proc loadCell(){
+	load_file($s1)
+	reduceSections()
+	access a_soma
+	delete_section()
+	forall{
+		nseg=1
+		insert hh
+		usetable_hh=0
+		gnabar_hh =gnabar_hh/10
+		gkbar_hh =gkbar_hh/10
+		finitialize(-65)
+	}
+	
+}
+
+loadCell("../../Data/Cells/Mara/A150312.hoc")
+tfinal = 50
+dt =0.01
+forsec "soma"{
+	gnabar_hh =gnabar_hh*130
+	gkbar_hh =gkbar_hh*50
+	finitialize(-65)
+	}
+g1 = new Graph()
+access somaext[0]
+st = new IClamp(0)
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	drawGraph(g1)
+}
+load_file("nrngui.hoc")

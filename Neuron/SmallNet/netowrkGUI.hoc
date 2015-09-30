@@ -1,0 +1,63 @@
+// Artificial cells no longer need a default section.
+//Network cell templates
+//Artificial cells
+//   S_NetStim
+//   C_NetStim
+
+
+begintemplate S_NetStim
+public pp, connect2target, x, y, z, position, is_art
+objref pp
+proc init() {
+  pp = new NetStim()
+}
+func is_art() { return 1 }
+obfunc connect2target() { localobj nc
+  nc = new NetCon(pp, $o1)
+  if (numarg() == 2) { $o2 = nc }
+  return nc
+}
+proc position(){x=$1  y=$2  z=$3}
+endtemplate S_NetStim
+
+begintemplate C_NetStim
+public pp, connect2target, x, y, z, position, is_art
+objref pp
+proc init() {
+  pp = new NetStim()
+}
+func is_art() { return 1 }
+obfunc connect2target() { localobj nc
+  nc = new NetCon(pp, $o1)
+  if (numarg() == 2) { $o2 = nc }
+  return nc
+}
+proc position(){x=$1  y=$2  z=$3}
+endtemplate C_NetStim
+
+//Network specification interface
+
+objref cells, nclist, netcon
+{cells = new List()  nclist = new List()}
+
+func cell_append() {cells.append($o1)  $o1.position($2,$3,$4)
+	return cells.count - 1
+}
+
+func nc_append() {//srcindex, tarcelindex, synindex
+  if ($3 >= 0) {
+    netcon = cells.object($1).connect2target(cells.object($2).synlist.object($3))
+    netcon.weight = $4   netcon.delay = $5
+  }else{
+    netcon = cells.object($1).connect2target(cells.object($2).pp)
+    netcon.weight = $4   netcon.delay = $5
+  }
+  nclist.append(netcon)
+  return nclist.count - 1
+}
+
+//Network instantiation
+
+  /* S0 */  cell_append(new S_NetStim(),	-73,	 108, 0)
+  /* C1 */  cell_append(new C_NetStim(),	28,	 112, 0)
+  /* S0 -> C1    */  nc_append(0, 1, -1,  2,1)

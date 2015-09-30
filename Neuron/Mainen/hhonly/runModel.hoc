@@ -1,0 +1,77 @@
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile
+modelFile = "././myMainen.hoc"
+timesFile = "././times.dat"
+paramsFile = "./opt_params.dat"
+stimFile = "./singleStim.dat"
+outFile = "././volts/AnalyzeAPAllopt_params_sinsMean30.dat"
+ntimestep =1650
+nparams =17
+psize =1
+ntraces =1
+tfinal =165
+load_file(modelFile)
+objref st,stims,fin,fout,pmat,matOut,stimtime
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	access soma
+
+	st = new IClamp(0.5)
+
+	st.del=50 
+	st.dur=100
+	st.amp = 1
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+	printf("running sim %d\n",sim)
+		counter=0
+		transvec = $o1.getrow(sim)
+dt=0.1
+		tfunc()
+
+		for(i=0;i<stims.nrow;i+=1){
+
+			finitialize(v_init)
+			for(tt =0;tt<ntimestep;tt+=1){
+
+				
+
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+			}
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+runMatrix(pmat,stims)
+writeMatrix(outFile,matOut)
+
+finitialize(v_init)
+// ADD STUFF HERE
+// quit()

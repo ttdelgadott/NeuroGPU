@@ -1,0 +1,298 @@
+usetable_na=0
+usetable_km=0
+usetable_kv=0
+usetable_ca=0
+usetable_kca=0
+usetable_cad=0
+secondorder=0
+create Exts[1]
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile
+modelFile = "./myMainen.hoc"
+timesFile = "./times.dat"
+paramsFile = "./001_120s1_pin.dat"
+stimFile = "./Step.dat"
+outFile = "./orig_step.dat"
+ntimestep =6176
+dt = 0.025
+nparams =17
+psize =120
+ntraces =8
+
+tfinal = 50
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most
+load_file(modelFile)
+strFunc = new StringFunctions()
+access soma
+	st = new IClamp(0.5)
+st.del=10
+	st.dur=30
+	st.amp = 0.5
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	access soma
+	st = new IClamp(0.5)
+	st.del=0 
+	st.dur=1e9
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+	printf("running sim %d\n",sim)
+		counter=0
+		transvec = $o1.getrow(sim)
+		tfunc()
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(v_init)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+			dt  =stimtime.x(0,tt)
+
+				st.amp = stims.x(i,tt)
+
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+				
+			}
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+		print i
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+proc mul32(){localobj thisone
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	forall {
+		thisone = new SectionRef()   
+		if (thisone.nchild == 0 ) {
+			break
+			}
+	}
+	access thisone.sec
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+
+
+proc printChildren(){localobj sl
+	sl = new SectionList()
+	sl.children()
+	u=0
+	forsec sl{
+	print secname()
+	u+=1
+	}
+	print u
+}	
+proc printparent(){localobj sref
+	sref = new SectionRef()
+	sref.parent
+	print secname()
+}		
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+create Exts[1]
+proc hinesDisperseBranching(){local i localobj sl,secRef, clist, avec, bvec
+	counter = 0
+	forsec most{
+		secRef = new SectionRef()
+		if(secRef.nchild>2){
+clist = new List()
+  for i=0, secRef.nchild-1 {
+    secRef.child[i] clist.append(new SectionRef())
+  }
+			Exts[counter]{
+				L = 1e-9
+				diam = 1
+				Ra = 1e-9
+				cm = 1e-9
+				nseg = secRef.nchild-1
+			}
+			i=0
+			Exts[counter]{
+				for(x){ 
+					if (x > 0) {
+						avec =new Vector()
+						bvec =new Vector()
+						printf("x is %f i is %d\n",x,i)
+						clist.o(i).sec{
+							avec =new Vector()
+							bvec =new Vector()
+							for(y){
+								avec.append(GetA(y))
+								bvec.append(GetB(y))
+							}
+						}
+						connect clist.o(i).sec(0), x
+						 k=0
+					  clist.o(i).sec{
+							for(y){
+								SetA(y,avec.x(k))
+								SetB(y,bvec.x(k))
+							}
+						}
+						i +=1
+					
+					}
+					
+					
+				}
+				
+			}
+			fcurrent()
+			secRef {
+				connect Exts[counter](0), 1
+			}
+			Exts[counter]{
+				for(x){ 
+			printf("x is %f and sec is %s\n",x,secname())
+					SetA(x,0)
+					SetB(x,0)
+					}
+				}
+			
+	counter+=1		
+		}
+	}
+}
+proc countExts(){
+ext_num=0
+forsec most {
+	somaref= new SectionRef()
+	if (somaref.nchild>2){
+		ext_num+=1
+	}
+	}
+}
+
+
+
+
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+topology()
+countExts()
+fcurrent()
+fmatrix()
+printf("Creating Exts %d\n",ext_num)
+if(ext_num>0){
+	create Exts[ext_num]
+	}	else{
+	access Exts[0]
+		delete_section()
+	}
+hinesDisperseBranching()
+
+mul32()
+transvec = pmat.getrow(0)
+tfunc()
+finitialize(v_init)
+objref g1
+g1 = new Graph()
+g1.beginline()
+
+access soma
+
+//finitialize(v_init)
+//runMatrix(pmat,stims)
+//writeMatrix(outFile,matOut)
+finitialize(v_init)
+//ADD STUFF HERE
+// Start topology output
+hoc_stdout("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64T.csv")
+topology()
+forall{
+	printf("%s\n",secname())
+	printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%.16f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5),area(0.5),parent_connection(),n3d())
+}
+hoc_stdout()
+// End topology output
+// Start topologyList output
+hoc_stdout("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64TL.csv")
+MyTopology()
+hoc_stdout()
+// End topologyList output
+// Start mechanisms output
+objref mt,ms,fn,pp
+strdef s,ss,mname
+mt = new MechanismType(0)
+fn = new File()
+fn.wopen("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64MDL.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	if (ismembrane("pas")){
+		fn.printf("g_pas = %f\n",g_pas)
+		fn.printf("e_pas = %f\n",e_pas)
+	}
+	for i=0, mt.count()-1 {
+		mt.select(i)
+		mt.selected(mname)
+		if (ismembrane(mname)){
+			ms = new MechanismStandard(mname,-1)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+		}
+	}
+}
+fn.close()
+// End mechanisms output
+// Start point processess mechanisms output
+fn = new File()
+fn.wopen("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64PP.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	mt = new MechanismType(1)
+	mt.select("IClamp")
+	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
+		x = pp.get_loc()
+		del1 = pp.del
+		dur1 = pp.dur
+		amp1 = pp.amp
+		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)
+		pop_section()
+	}
+	fn.printf("\n")
+}
+fn.close()
+// End point processess mechanisms output
+hoc_stdout("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/Fmatrix.csv")
+MyPrintMatrix()
+hoc_stdout()
+// End Fmatrix
+

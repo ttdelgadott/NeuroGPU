@@ -1,0 +1,106 @@
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile
+modelFile = "./Markov.hoc"
+timesFile = "./volts/times.dat"
+//paramsFile = "./params/orig.dat"
+stimFile = "./stims/Step.dat"
+outFile = "./volts/orig_Step.dat"
+ntimestep =600
+nparams =0
+psize =1
+ntraces =8
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most,secRef
+tfinal=250
+load_file(modelFile)
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	access soma
+	st = new IClamp(0.5)
+	st.del=0 
+	st.dur=1e9
+	matOut = new Matrix(1,($o1.nrow*$o1.ncol))
+		counter=0
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(-70)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+				dt  =stimtime.x(0,tt)
+				st.amp = stims.x(i,tt)
+				loc = 0
+				matOut.x(0,counter)=v(0.5)
+				counter+=1
+				fadvance()
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+proc mul32(){localobj thisone
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	forall {
+		thisone = new SectionRef()   
+		if (thisone.nchild == 0 ) {
+			break
+			}
+	}
+	access thisone.sec
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+forall{
+		secRef = new SectionRef()
+		if(secRef.nchild>2){
+		printf("section %s has %d childs\n",secname(),secRef.nchild)
+		}
+}
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+topology()
+fcurrent()
+fmatrix()
+
+finitialize(-70)
+objref g1
+g1 = new Graph()
+g1.beginline()
+
+access soma
+
+finitialize(-70)
+runMatrix(stims)
+writeMatrix(outFile,matOut)
+finitialize(-70)
+//ADD STUFF HERE
+

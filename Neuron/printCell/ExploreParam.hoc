@@ -1,0 +1,34 @@
+objref outFile,st
+proc createSimpleSoma(){
+	L=10
+	diam=10
+	nseg = 5
+	Ra=100
+	cm=0
+	insert hh
+	gkbar_hh=0
+	gnabar_hh=100000000
+	gl_hh=0
+	st = new IClamp(.5)
+	st.del =3*dt
+	st.dur =1
+	st.amp = 0.1
+
+
+	for(i=0;i<200;i+=1) {
+		finitialize(i-80)
+		
+		fcurrent()
+		fmatrix()
+		printf("%f\n",gna_hh)
+	}
+
+}
+
+create soma
+access soma
+hoc_stdout("./Output/ExploreP.csv")
+createSimpleSoma()
+hoc_stdout()
+
+

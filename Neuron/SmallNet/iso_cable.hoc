@@ -1,0 +1,46 @@
+load_file("nrngui.hoc")
+create somas[2]
+create isolatingCable[2]
+forall {
+	diam=1
+	L=1
+	
+}
+isolatingCable[0] connect somas[0](0), 0.5
+isolatingCable[1] connect somas[1](0), 0.5
+isolatingCable[0] connect isolatingCable[1](0), 1
+forsec "somas"{
+insert hh
+}
+forsec "isolatingCable"{
+Ra=1e9
+diam=0.1
+L=1e9
+
+}
+objref st1,st2,g1,g2
+somas[0] st1 = new IClamp(0.5)
+st1.del =10
+st1.dur=8
+st1.amp=1
+somas[1] st2 = new IClamp(0.5)
+st2.del =1
+st2.dur=8
+st2.amp=1
+tfinal = 20
+g1 = new Graph()
+g1.beginline()
+g2 = new Graph()
+g2.beginline()
+finitialize(-65)
+fcurrent()
+fmatrix()
+topology()
+while(t<tfinal){
+access somas[0]
+g1.line(t, v(0.5))
+access somas[1]
+g2.line(t,v(0.5))
+fadvance()
+}
+

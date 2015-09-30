@@ -1,0 +1,9 @@
+create soma
+access soma
+cm = 0
+L=1
+diam=1
+nseg =10
+Ra=1
+fcurrent()
+fmatrix()

@@ -1,0 +1,106 @@
+objref outFile,st,dendritic_only,dendritic,sh
+create soma
+proc createSimpleCompt(){
+	nseg = 5
+	cm=1
+//insert hh
+
+finitialize(-65)
+}
+proc printTopology(){
+	hasHH=$1
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5))
+		if(hasHH!=0){
+			printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh,gkbar_hh,gl_hh,ena,ek,el_hh)
+			}else	{
+			printf("%f,%f,%f,%f,%f,%f\n",0,0,0,0,0,0)
+			}
+		}
+}
+
+proc printFmatrix(){
+	hoc_stdout($s1)
+	hasHH = $2
+	while(t<tfinal){
+			fcurrent()
+			fmatrix()
+			forall{
+				printf("%s\n",secname())
+				if(hasHH){
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh(0),gna_hh(0),gl_hh(0),ik(0),ina(0),il_hh(0),m_hh(0),h_hh(0),n_hh(0),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh(0.2),gna_hh(0.2),gl_hh(0.2),ik(0.2),ina(0.2),il_hh(0.2),m_hh(0.2),h_hh(0.2),n_hh(0.2),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh(0.4),gna_hh(0.4),gl_hh(0.4),ik(0.4),ina(0.4),il_hh(0.4),m_hh(0.4),h_hh(0.4),n_hh(0.4),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh(0.6),gna_hh(0.6),gl_hh(0.6),ik(0.6),ina(0.6),il_hh(0.6),m_hh(0.6),h_hh(0.6),n_hh(0.6),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh(0.8),gna_hh(0.8),gl_hh(0.8),ik(0.8),ina(0.8),il_hh(0.8),m_hh(0.8),h_hh(0.8),n_hh(0.8),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				}	else{
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),0,0,0,0,0,0,0,0,0,0,0,0,0)
+				}
+				
+			}
+			fadvance()
+		}
+	hoc_stdout()
+}
+proc load_3dcell() {
+
+// $s1 filename
+
+  aspiny = 0
+  forall delete_section()
+  xopen($s1)
+  access soma
+
+  dendritic = new SectionList()
+
+  // make sure no compartments exceed 50 uM length
+  forall {
+    diam_save = diam
+    n = L/50
+    nseg = n + 1
+    if (n3d() == 0) diam = diam_save
+    dendritic.append()
+  }    
+
+
+  // show cell
+/*
+  sh = new PlotShape()
+  sh.size(-300,300,-300,300)
+*/
+  // but control position of PlotShape window -- Ted Carnevale
+  sh = new PlotShape(0)
+  sh.size(-300,300,-299.522,299.522)
+  sh.variable("v")
+  {sh.view(-300, -299.522, 600, 599.043, 265, 369, 200.64, 200.32)}
+
+  dendritic_only = new SectionList()
+  forsec dendritic dendritic_only.append()
+  soma  dendritic_only.remove()
+}
+
+
+load_3dcell("../patdemo/cells/j7.hoc")
+forall{
+	insert hh
+	usetable_hh=0
+}
+access soma
+st = new IClamp(.5)
+st.del =0.5
+st.dur =1
+st.amp = 126
+dt = 0.01
+tfinal = 3
+hoc_stdout("./Output/realCellTopo.csv")
+printTopology(1)
+hoc_stdout()
+printFmatrix("./Output/realCellFmatrix.csv",1)
+
+

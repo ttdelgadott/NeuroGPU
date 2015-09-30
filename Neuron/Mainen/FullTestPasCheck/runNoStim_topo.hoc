@@ -1,0 +1,260 @@
+usetable_na=0
+usetable_km=0
+usetable_kv=0
+usetable_ca=0
+usetable_kca=0
+usetable_cad=0
+secondorder=0
+create somaext[2]
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile
+modelFile = "./myMainen.hoc"
+timesFile = "./times.dat"
+paramsFile = "./orig.dat"
+stimFile = "./Step.dat"
+outFile = "./orig_step.dat"
+ntimestep =6150
+dt = 0.25
+nparams =17
+psize =1
+ntraces =1
+load_file(modelFile)
+tfinal = 50
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref
+access soma
+	st = new IClamp(0.5)
+st.del=10
+	st.dur=30
+	st.amp = 0.5
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	access soma
+	st = new IClamp(0.5)
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+	printf("running sim %d\n",sim)
+		counter=0
+		transvec = $o1.getrow(sim)
+		tfunc()
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(v_init)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+				dt  =0.25
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+			}
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+		print i
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+proc mul32(){localobj thisone
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	forall {
+		thisone = new SectionRef()   
+		if (thisone.nchild == 0 ) {
+			break
+			}
+	}
+	access thisone.sec
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+obfunc reverseSl(){localobj tempSl
+tempSl = new SectionList()
+comp = 0
+forsec $o1{
+		comp+=1
+		
+}
+printf("in reverseSl comp is %d",comp)
+for (i=comp;i!=0;i-=1){
+	count=0
+	forsec $o1{
+		count+=1
+		print count
+		if (count == i){
+			tempSl.append()
+		}	
+	}
+}
+print "prinitng rev sl"
+forsec tempSl{
+			print secname()
+		}
+return tempSl
+}
+proc disperseBranching(){localobj sl,conVec,tempSec,existList strdef fatherStr
+	forall{
+		comps = 0
+		sl=new SectionList()
+		existList =new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		fatherStr = secname()
+		forsec sl{
+			comps+=1
+		}
+		if (comps>1){
+			conVec = new Vector()
+			forsec sl{
+				curCon = parent_connection()
+				exists =  conVec.indwhere("==", curCon)
+				if (exists !=-1){
+					printf("exists is %d\n",exists)
+					somaref.sec.nseg = somaref.sec.nseg+2
+					existList.append
+				}	else{
+					conVec.append(curCon)
+				}
+			}
+			existCount = somaref.sec.nseg
+			dseg = 1/somaref.sec.nseg
+			forsec existList{
+				newCon = dseg*existCount
+				exists =  conVec.indwhere("==", newCon)
+				while(exists !=-1){
+					existCount-=1
+					newCon = dseg*existCount
+					exists =  conVec.indwhere("==", newCon)
+				}
+				existCount-=1
+				printf("newCon is %f  dseg is %f currently in %s\n",newCon,dseg,secname())
+				disconnect()
+				secref= new SectionRef()
+				somaref.sec connect secref.sec(0), (newCon)
+			}
+		}
+	printf("finished with %s\n",fatherStr)
+	}
+	
+	
+}
+proc printChildres(){localobj sl
+	sl = new SectionList()
+	sl.children()
+	u=0
+	forsec sl{
+	print secname()
+	u+=1
+	}
+	print u
+}		
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+
+
+
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+topology()
+disperseBranching()
+mul32()
+transvec = pmat.getrow(0)
+tfunc()
+
+//ADD STUFF HERE
+// Start topology output
+hoc_stdout("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64T.csv")
+topology()
+forall{
+	printf("%s\n",secname())
+	printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%.16f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5),area(0.5),parent_connection(),n3d())
+}
+hoc_stdout()
+// End topology output
+// Start mechanisms output
+objref mt,ms,fn,pp
+strdef s,ss,mname
+mt = new MechanismType(0)
+fn = new File()
+fn.wopen("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64MDL.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	if (ismembrane("pas")){
+		fn.printf("g_pas = %f\n",g_pas)
+	} else { fn.printf("g_pas = -777\n")	}
+	for i=0, mt.count()-1 {
+		mt.select(i)
+		mt.selected(mname)
+		if (ismembrane(mname)){
+			ms = new MechanismStandard(mname,-1)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+		}
+	}
+}
+fn.close()
+// End mechanisms output
+// Start point processess mechanisms output
+fn = new File()
+fn.wopen("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/64PP.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	mt = new MechanismType(1)
+	mt.select("IClamp")
+	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
+		x = pp.get_loc()
+		del1 = pp.del
+		dur1 = pp.dur
+		amp1 = pp.amp
+		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)
+		pop_section()
+	}
+	fn.printf("\n")
+}
+fn.close()
+// End point processess mechanisms output
+objref g1
+g1 = new Graph()
+g1.beginline()
+access soma
+finitialize(v_init)
+while(t<tfinal){
+
+g1.line(t,v(0.5))
+fadvance()
+}
+
+
+

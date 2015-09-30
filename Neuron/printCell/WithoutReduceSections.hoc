@@ -1,0 +1,71 @@
+objref outFile,amps,dels,durs,st,g1,somaref,secref
+create a_soma,somaext[1],a_dend_0_0
+pc=0
+amp = -1
+del = 10
+dur = 20
+NStimuli =3
+amps = new Vector(NStimuli)
+dels = new Vector(NStimuli)
+durs = new Vector(NStimuli)
+for (i=0;i<NStimuli;i+=1){
+	amps.x(i) = amp+i*1
+	dels.x(i) = del
+	durs.x(i) = dur
+}
+celsius=25
+
+
+proc drawGraph(){
+	finitialize(-65)
+	$o1.beginline()
+	while(t<tfinal){
+			$o1.line(t,v(0))
+			fadvance()
+			if(t<0.1){
+				a_dend_0_0{
+					printf("t-%f,v-%f\n",t,v(0.5))
+				}
+			}	
+		}
+	
+	
+}
+proc loadCell(){
+	load_file($s1)
+	//reduceSections()
+	//access a_soma
+	//delete_section()
+	forall{
+		nseg=1
+		insert hh
+		usetable_hh=0
+		gnabar_hh =gnabar_hh/10
+		gkbar_hh =gkbar_hh/10
+		finitialize(-65)
+	}
+	
+}
+
+loadCell("../../Data/Cells/Mara/A150312.hoc")
+tfinal = 50
+dt =0.01
+
+g1 = new Graph()
+access a_soma
+gnabar_hh =gnabar_hh*130
+gkbar_hh =gkbar_hh*50
+finitialize(-65)
+a_dend_0_0{
+	printf("v at a_dend_0_0 is %f\n",v(0.5))
+}
+st = new IClamp(0)
+
+
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	drawGraph(g1)
+}
+load_file("nrngui.hoc")

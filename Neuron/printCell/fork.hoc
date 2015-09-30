@@ -1,0 +1,57 @@
+objref outFile,st
+
+proc createSimpleSec(){
+	L=10
+	diam=1
+	nseg = 5
+	Ra=10
+	cm=1
+	finitialize(-65)
+}
+proc insertStim(){
+	st = new IClamp(.5)
+	st.del =3*dt
+	st.dur =0.5
+	st.amp = 0.1
+}
+proc printFmatrix(){
+	hoc_stdout($s1)
+	
+	i=0
+	while(t<tfinal){
+		fadvance()
+		fcurrent()
+		fmatrix()
+		forall{
+			printf("%s\n",secname())
+			printf("%f,%f,%f,%f\n",t,v(0.5),i_cap(0.5),st.amp)
+			i+=1	
+		}
+	}
+	hoc_stdout()
+}
+proc printTopology(){
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5))
+		}
+}
+dt = 0.01
+tfinal=2
+create soma
+access soma
+createSimpleSec()
+insertStim()
+create dend1
+access dend1
+createSimpleSec()
+connect dend1(0), soma(1)
+create dend2
+access dend2
+createSimpleSec()
+connect dend2(0), soma(1)
+hoc_stdout("./output/forkTopo.csv")
+printTopology()
+hoc_stdout()
+printFmatrix("./output/forkData.csv")

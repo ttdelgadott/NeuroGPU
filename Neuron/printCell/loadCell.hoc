@@ -1,0 +1,10 @@
+load_file("nrngui.hoc")
+proc loadCell(){
+	load_file($s1)
+	comps = 0
+	segs = 0
+	forall{
+		comps +=1
+		segs+=nseg
+	}
+}

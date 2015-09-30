@@ -1,0 +1,135 @@
+objref dbg
+dbg = new File()
+dbg.wopen("C:/Users/Roy/Documents/NeuroGPU2_2/Neuron/printCell/Amit/output/Debug.csv")
+usetable_na=0
+usetable_km=0
+usetable_kv=0
+usetable_ca=0
+usetable_kca=0
+usetable_cad=0
+secondorder=0
+
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile
+modelFile = "./myMainen.hoc"
+timesFile = "./times.dat"
+paramsFile = "./orig.dat"
+stimFile = "./Step.dat"
+outFile = "./orig_step.dat"
+ntimestep =6150
+dt = 0.25
+nparams =17
+psize =1
+ntraces =1
+load_file(modelFile)
+tfinal = 50
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref
+access soma
+	st = new IClamp(0.5)
+st.del=10
+	st.dur=30
+	st.amp = 0.5
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	access soma
+	st = new IClamp(0.5)
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+	printf("running sim %d\n",sim)
+		counter=0
+		transvec = $o1.getrow(sim)
+		tfunc()
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(v_init)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+				dt  =0.25
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+			}
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+		print i
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+proc mul32(){localobj thisone
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	forall {
+		thisone = new SectionRef()   
+		if (thisone.nchild == 0 ) {
+			break
+			}
+	}
+	access thisone.sec
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+
+
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+
+
+
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+//reduceSections()
+mul32()
+transvec = pmat.getrow(0)
+tfunc()
+forall{
+}
+//ADD STUFF HERE
+objref g1
+g1 = new Graph()
+g1.beginline()
+access soma
+finitialize(v_init)
+while(t<tfinal){
+
+g1.line(t,v(0.5))
+fadvance()
+forall{
+dbg.printf("%s,",secname())
+dbg.printf("%1.15f\n",v(0.5))
+}
+}
+
+
+dbg.close()
+

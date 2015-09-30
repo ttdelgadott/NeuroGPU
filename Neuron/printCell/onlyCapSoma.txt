@@ -1,0 +1,28 @@
+objref outFile,st
+
+proc createSimpleSoma(){
+	L=10
+	diam=10
+	nseg = 10
+	Ra=10
+	st = new IClamp(.5)
+	st.del =1
+	st.dur =1
+	st.amp = 0.1
+	v=-65
+}
+proc printFmatrix(){
+	dt = 0.01
+	hoc_stdout($s1)
+	while(t<10){
+		fcurrent()
+		fmatrix()
+		printf("\n******\n%f,%f,%f,\n",t,v(0.5),i_cap(0.5))
+		fadvance()
+	}
+	hoc_stdout()
+}
+create soma
+access soma
+createSimpleSoma()
+printFmatrix("./output/nakedSoma.csv")

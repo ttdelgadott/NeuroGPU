@@ -1,0 +1,142 @@
+objref outFile,amps,dels,durs,st,g1,somaref,secref
+strdef str1,str2,str3
+create cyl
+pc=0
+amp = 0.1
+del = 10
+dur = 20
+NStimuli =1
+amps = new Vector(NStimuli)
+dels = new Vector(NStimuli)
+durs = new Vector(NStimuli)
+for (i=0;i<NStimuli;i+=1){
+	amps.x(i) = amp+i*1
+	dels.x(i) = del
+	durs.x(i) = dur
+}
+proc createSimpleCompt(){
+	nseg = 62
+	cm=1
+	diam=1
+	L=50
+	insert hh
+	usetable_hh=0
+	gnabar_hh =gnabar_hh*10
+	gkbar_hh =gkbar_hh*5
+	
+
+finitialize(-65)
+}
+celsius = 25
+proc printConsts(){
+	hoc_stdout($s1)
+	{st.get_loc() printf("%s\n%f,%d\n",secname(),area(0.5),NStimuli) pop_section()}
+	for(i=0;i<NStimuli;i+=1){
+		printf("%f,%f,%f\n",dels.x(i),durs.x(i),amps.x(i))
+	}
+	printf("%f,%f,%f\n",dt,tfinal,celsius)
+	hoc_stdout()
+}
+proc printTopology(){
+	topology()
+	forall{
+		printf("%s\n",secname())
+		printf("%f,%f,%f,%f,%f,%f,%f,%f,%f\n",nseg,L,diam,Ra,cm,area(0.5),v(0.5),parent_connection(),n3d())
+		if (ismembrane("hh")==1){
+			printf("%f,%f,%f,%f,%f,%f\n",gnabar_hh,gkbar_hh,gl_hh,ena,ek,el_hh)
+			}	else{
+			printf("\n")
+			}
+		}
+}
+proc countChildrens(){localobj sl
+	forall{
+		comps = 0
+		sl=new SectionList()
+		sl.children()
+		somaref= new SectionRef()
+		forsec sl{
+			comps+=1
+		}
+		print comps
+	}
+}
+
+proc printFmatrix(){localobj ff
+	finitialize(-65)
+	hoc_stdout($s1)
+	fcurrent()
+	fmatrix()
+	hoc_stdout()
+	/*ff = new File()
+	ff.wopen($s1)
+	while(t<tfinal){
+			forall{
+			if (ismembrane("hh")==1){
+				ff.printf("%s\n",secname())
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0),gk_hh(0),gna_hh(0),gl_hh(0),ik(0),ina(0),il_hh(0),m_hh(0),h_hh(0),n_hh(0),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.2),gk_hh(0.2),gna_hh(0.2),gl_hh(0.2),ik(0.2),ina(0.2),il_hh(0.2),m_hh(0.2),h_hh(0.2),n_hh(0.2),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.4),gk_hh(0.4),gna_hh(0.4),gl_hh(0.4),ik(0.4),ina(0.4),il_hh(0.4),m_hh(0.4),h_hh(0.4),n_hh(0.4),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.6),gk_hh(0.6),gna_hh(0.6),gl_hh(0.6),ik(0.6),ina(0.6),il_hh(0.6),m_hh(0.6),h_hh(0.6),n_hh(0.6),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				ff.printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",t,v(0.8),gk_hh(0.8),gna_hh(0.8),gl_hh(0.8),ik(0.8),ina(0.8),il_hh(0.8),m_hh(0.8),h_hh(0.8),n_hh(0.8),minf_hh,mtau_hh,hinf_hh,htau_hh)
+				}	else{
+				ff.printf("%s\n",secname())
+				ff.printf("%f,%f\n",t,v(0))
+				ff.printf("%f,%f\n",t,v(0.2))
+				ff.printf("%f,%f\n",t,v(0.4))
+				ff.printf("%f,%f\n",t,v(0.6))
+				ff.printf("%f,%f\n",t,v(0.8))
+				}
+				
+			}
+			fadvance()
+		}
+	hoc_stdout()
+	ff.close()*/
+}
+proc drawGraph(){
+	finitialize(-65)
+	$o1.beginline()
+	while(t<tfinal){
+			$o1.line(t,v(0))
+			fadvance()
+		}
+	hoc_stdout()
+}
+
+segs=0
+comps=0
+proc countSegs(){
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+
+tfinal = 50
+dt =0.1
+access cyl
+createSimpleCompt()
+g1 = new Graph()
+st = new IClamp(0)
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	drawGraph(g1)
+}
+printConsts("./Output/64CC.csv")
+hoc_stdout("./Output/64CT.csv")
+printTopology()
+hoc_stdout()
+strdef pre,post,fileName
+pre = "./Output/64CF"
+post = ".csv"
+for(i=0;i<NStimuli;i+=1){
+	st.del = dels.x(i)
+	st.dur = durs.x(i)
+	st.amp = amps.x(i)
+	sprint(fileName,"%s%d%s",pre,i,post)
+	printFmatrix(fileName)
+}
+load_file("nrngui.hoc")

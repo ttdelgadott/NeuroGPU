@@ -1,0 +1,60 @@
+objref outFile,st
+proc createSimpleSoma(){
+L=1
+diam=0.1
+insert hh
+nseg = 5
+gkbar_hh=10000000
+gnabar_hh=0
+gl_hh=0
+st = new IClamp(.5)
+st.del =1
+st.dur =1
+st.amp = 0.1
+v=-70
+}
+proc loadCell() {
+  forall delete_section()
+  xopen($s1)
+  //sh = new PlotShape(0)
+  //sh.size(-300,300,-300,300)
+}
+proc printMatrix(){
+	outFile = new File()
+	outFile.wopen($s1)
+	forall{
+		dx = L/nseg
+		for i=1,nseg{
+			currPart = (dx*i)/L
+			currDiam = diam(currPart)
+			outFile.printf("%d,%d,%f,%f\n",i,nseg,currDiam,L)
+		}
+	}
+	outFile.close()
+	hoc_stdout("./Output/topology.csv")
+	topology()
+	
+}
+proc printFmatrix(){
+	dt = 0.01
+	hoc_stdout($s1)
+	printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",dt,ri(0.5),ri(1),Ra,cm,gnabar_hh, gkbar_hh,ek,ena,el_hh)
+	printf("\n******\n%f,%f,%f,%f,%f,%f,%f,%f %f %f %f\n",t,v,gk_hh,gna_hh,gl_hh,ik,ina,il_hh,m_hh,h_hh,n_hh)
+	while(t<10){
+		fcurrent()
+		fmatrix()
+		printf("\n******\n%f,%f,%f,%f,%f,%f,%f,%f %f %f %f\n",t,v,gk_hh,gna_hh,gl_hh,ik,ina,il_hh,m_hh,h_hh,n_hh)
+		fadvance()
+	}
+	hoc_stdout()
+}
+
+//loadCell("./Cells/simple.hoc")
+create soma
+access soma
+createSimpleSoma()
+printFmatrix("./Output/fmatrix.csv")
+
+
+//printMatrix("./Output/nakedSoma.csv")
+
