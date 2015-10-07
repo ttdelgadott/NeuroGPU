@@ -5,7 +5,7 @@ ENDCOMMENT
 NEURON { SUFFIX nothing }
 
 VERBATIM
-char* secname();
+
 ENDVERBATIM
 PROCEDURE init_files(){
 	VERBATIM {
