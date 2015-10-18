@@ -42,7 +42,7 @@ FNWithTopo=AddTopologyToHocV2(HocBaseFN,FN_Topo,FN_TopoF,FN_TopoPP,FN_TopoMDL,FN
 cd(HocP);
 RunHoc(FNWithTopo);
 cd([BaseP 'Matlab']);
-%%
+%%F
 global Neuron
 [Neuron Sim Stim ] = ReadKForkTopology2V2(FN_Topo);
 [Comp Seg] = ReadRecordingSite(FN_RecSites,Neuron);
