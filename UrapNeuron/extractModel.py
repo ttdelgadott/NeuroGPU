@@ -51,8 +51,17 @@ def nrn_dll_sym(name, type=None):
     else:
         return type.in_dll(dll, name)
 
+def get_mech_list():
+    mech_names = []
+    mechlist = nrn.h.MechanismType(0) # object that contains all mechanism names
+    for i in range(int(mechlist.count())):
+        s = nrn.h.ref('') # string reference to store mechanism name
+        mechlist.select(i)
+        mechlist.selected(s)
+        mech_names.append(s[0])
+    return mech_names
 
-USE_CTYPES = True
+USE_CTYPES = False
 modelFile = "./runModel.hoc"
 nrn.h.load_file(1, modelFile)
 if USE_CTYPES:
@@ -61,15 +70,45 @@ if USE_CTYPES:
     #FN_TopoList
     for i in range(thread.contents.end):
         print i, thread.contents._v_parent_index[i] 
+    #print "entering unknown territory"
+    #print thread.contents.tml.contents.ml.contents.prop[0].contents.type
+
+    #FN_TopoF
+    for i in range(thread.contents.end):
+        node = thread.contents._v_node[i]
+        _a = thread.contents._actual_a[node.contents.v_node_index]
+        _b = thread.contents._actual_b[node.contents.v_node_index]
+
+        print i, _b, _a, node.contents._d[0], node.contents._rhs[0]
+    #print nrn.h.MyPrintMatrix()
 
 else:
+    print "---"
+    
     for s in nrn.h.allsec():
         # FN_Topo 
         name = nrn.h.secname()
         topology =  [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal, s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
 
+        # FN_TopoMDL
+        if nrn.h.ismembrane("pas"):
+            print name
+            print "===="
+            print "g_pas = {0}".format(s.g_pas)
+            print "e_pas = {0}".format(s.e_pas)
+        mech_names = get_mech_list()
+        for mech_name in mech_names:
+            if not nrn.h.ismembrane(mech_name):
+                continue
+            ms = nrn.h.MechanismStandard(mech_name, -1)
+            for j in range(int(ms.count())):
+                param = nrn.h.ref('') # string reference to store parameter name
+                ms.name(param, j)
+                nrn.h('x = {0}'.format(param[0]))
+                print "{0} = {1}".format(param[0], nrn.h.x)
+            
     # FN_RecSites
     for s in nrn.h.recSites:
         print s.name()
-    #topolist = nrn.h.MyTopology()
+    topolist = nrn.h.MyTopology()
     

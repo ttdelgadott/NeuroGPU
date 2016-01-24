@@ -27,19 +27,65 @@ Node._fields_ = [("_v", ctypes.c_double),
                 ("eqn_index_", ctypes.c_int),
                 ("prop", ctypes.POINTER(Prop)), # should be Prop*
                 ("child", ctypes.c_void_p), # should be Section*
-                ("sec", ctypes.c_void_p) # should be Section*
+                ("sec", ctypes.c_void_p), # should be Section*
                 # fields further down in the struct may or may not exist depending on macro conditionals
+                ("_classical_parent", ctypes.c_void_p), # should be Node*
+                ("_nt", ctypes.c_void_p), # should be NrnThread*
+                ("extnode", ctypes.c_void_p), # should be Extnode*
+                ("v_node_index", ctypes.c_int)
                 ]
 
+"""
+hocdec.h
+"""
+class Datum(ctypes.Union):
+    pass
+
+Datum._fields_ = [("val", ctypes.c_double),
+                    ("sym", ctypes.c_void_p), # should be Symbol*
+                    ("i", ctypes.c_int),
+                    ("pval", ctypes.POINTER(ctypes.c_double)),
+                    ("pobj", ctypes.c_void_p), # should be HocStruct Object **
+                    ("obj", ctypes.c_void_p), # should be HocStruct Object *
+                    ("pstr", ctypes.POINTER(ctypes.c_char_p)),
+                    ("itm", ctypes.c_void_p), # should be HocStruct hoc_Item*
+                    ("lst", ctypes.c_void_p), # should be hoc_List*
+                    ("_pvoid", ctypes.c_void_p)]
+"""
+nrnoc_ml.h
+"""
+class Memb_list(ctypes.Structure):
+    pass
+
+Memb_list._fields_ = [("nodelist", ctypes.POINTER(ctypes.POINTER(Node))), 
+                        ("nodeindices", ctypes.POINTER(ctypes.c_int)), # inside an if directive, might not actually exist
+                        ("data", ctypes.POINTER(ctypes.POINTER(ctypes.c_double))),
+                        ("pdata", ctypes.POINTER(ctypes.POINTER(Datum))), 
+                        ("prop", ctypes.POINTER(ctypes.POINTER(Prop))),
+                        ("_thread", ctypes.POINTER(Datum)), 
+                        ("nodecount", ctypes.c_int)]
+"""
+multicore.h
+"""
+class NrnThreadMembList(ctypes.Structure):
+    pass
+
+NrnThreadMembList._fields_ = [("next", ctypes.POINTER(NrnThreadMembList)),
+                                ("ml", ctypes.POINTER(Memb_list)), 
+                                ("index", ctypes.c_int)]
+
+"""
+multicore.h
+"""
 class NrnThread(ctypes.Structure):
     pass 
 
 NrnThread._fields_ = [("_t", ctypes.c_double),
                 ("_dt", ctypes.c_double),
                 ("cj", ctypes.c_double),
-                ("tml", ctypes.c_void_p), # should be NrnThreadMembList*
-                ("hcell", ctypes.c_int),
-                ("end", ctypes.c_int),
+                ("tml", ctypes.POINTER(NrnThreadMembList)), # should be NrnThreadMembList*
+                ("ncell", ctypes.c_int),
+                ("end", ctypes.c_int), # 1 + position of last node in v_node array
                 ("id", ctypes.c_int),
                 ("_stop_stepping", ctypes.c_int),
                 ("_actual_rhs", ctypes.POINTER(ctypes.c_double)),
