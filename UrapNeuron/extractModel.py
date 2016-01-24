@@ -61,30 +61,24 @@ def get_mech_list():
         mech_names.append(s[0])
     return mech_names
 
-USE_CTYPES = False
-modelFile = "./runModel.hoc"
-nrn.h.load_file(1, modelFile)
-if USE_CTYPES:
+def main():
+    modelFile = "./runModel.hoc"
+    nrn.h.load_file(1, modelFile)
     nrn_nthread = nrn_dll_sym('nrn_threads', ctypes.c_void_p)
     thread = ctypes.cast(nrn_nthread, ctypes.POINTER(NrnThread))
-    #FN_TopoList
+
+    # FN_TopoList
     for i in range(thread.contents.end):
         print i, thread.contents._v_parent_index[i] 
-    #print "entering unknown territory"
-    #print thread.contents.tml.contents.ml.contents.prop[0].contents.type
 
-    #FN_TopoF
+    # FN_TopoF
     for i in range(thread.contents.end):
         node = thread.contents._v_node[i]
         _a = thread.contents._actual_a[node.contents.v_node_index]
         _b = thread.contents._actual_b[node.contents.v_node_index]
 
         print i, _b, _a, node.contents._d[0], node.contents._rhs[0]
-    #print nrn.h.MyPrintMatrix()
 
-else:
-    print "---"
-    
     for s in nrn.h.allsec():
         # FN_Topo 
         name = nrn.h.secname()
@@ -111,4 +105,6 @@ else:
     for s in nrn.h.recSites:
         print s.name()
     topolist = nrn.h.MyTopology()
-    
+
+if __name__ == '__main__':
+    main()
