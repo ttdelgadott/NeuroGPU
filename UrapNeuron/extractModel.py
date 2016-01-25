@@ -6,13 +6,10 @@ from cStringIO import StringIO
 from nrn_structs import *
 
 
+### Helper functions for loading NEURON C library ###
+
 def nrn_dll(printpath=False):
     """Return a ctypes object corresponding to the NEURON library.
-    
-    .. warning::
-    
-        This provides access to the C-language internals of NEURON and should
-        be used with care.
     """
     import ctypes
     import os
@@ -51,15 +48,7 @@ def nrn_dll_sym(name, type=None):
     else:
         return type.in_dll(dll, name)
 
-def get_mech_list():
-    mech_names = []
-    mechlist = nrn.h.MechanismType(0) # object that contains all mechanism names
-    for i in range(int(mechlist.count())):
-        s = nrn.h.ref('') # string reference to store mechanism name
-        mechlist.select(i)
-        mechlist.selected(s)
-        mech_names.append(s[0])
-    return mech_names
+### Model extraction functions ###
 
 def topo_list(thread):
     for i in range(thread.contents.end):
@@ -79,6 +68,7 @@ def topo():
         topology =  [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal, s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
 
 def topo_mdl():
+    # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     for s in nrn.h.allsec():
         name = nrn.h.secname()
         if nrn.h.ismembrane("pas"):
@@ -90,9 +80,9 @@ def topo_mdl():
         for mech_name in mech_names:
             if not nrn.h.ismembrane(mech_name):
                 continue
-            ms = nrn.h.MechanismStandard(mech_name, -1)
+            ms = nrn.h.MechanismStandard(mech_name, -1) # contains mechanism parameter names
             for j in range(int(ms.count())):
-                param = nrn.h.ref('') # string reference to store parameter name
+                param = nrn.h.ref('')                   # string reference to store parameter name
                 ms.name(param, j)
                 nrn.h('x = {0}'.format(param[0]))
                 print "{0} = {1}".format(param[0], nrn.h.x)
@@ -100,6 +90,19 @@ def topo_mdl():
 def recsites():
     for s in nrn.h.recSites:
         print s.name()
+
+### Helpers ###
+
+def get_mech_list():
+    mech_names = []
+    mechlist = nrn.h.MechanismType(0)       # object that contains all mechanism names
+    for i in range(int(mechlist.count())):
+        s = nrn.h.ref('')                   # string reference to store mechanism name
+        mechlist.select(i)
+        mechlist.selected(s)
+        mech_names.append(s[0])
+    return mech_names
+
 
 def main():
     modelFile = "./runModel.hoc"
