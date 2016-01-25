@@ -61,17 +61,11 @@ def get_mech_list():
         mech_names.append(s[0])
     return mech_names
 
-def main():
-    modelFile = "./runModel.hoc"
-    nrn.h.load_file(1, modelFile)
-    nrn_nthread = nrn_dll_sym('nrn_threads', ctypes.c_void_p)
-    thread = ctypes.cast(nrn_nthread, ctypes.POINTER(NrnThread))
-
-    # FN_TopoList
+def topo_list(thread):
     for i in range(thread.contents.end):
         print i, thread.contents._v_parent_index[i] 
 
-    # FN_TopoF
+def topo_f_matrix(thread):
     for i in range(thread.contents.end):
         node = thread.contents._v_node[i]
         _a = thread.contents._actual_a[node.contents.v_node_index]
@@ -79,12 +73,14 @@ def main():
 
         print i, _b, _a, node.contents._d[0], node.contents._rhs[0]
 
+def topo():
     for s in nrn.h.allsec():
-        # FN_Topo 
         name = nrn.h.secname()
         topology =  [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal, s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
 
-        # FN_TopoMDL
+def topo_mdl():
+    for s in nrn.h.allsec():
+        name = nrn.h.secname()
         if nrn.h.ismembrane("pas"):
             print name
             print "===="
@@ -100,11 +96,31 @@ def main():
                 ms.name(param, j)
                 nrn.h('x = {0}'.format(param[0]))
                 print "{0} = {1}".format(param[0], nrn.h.x)
-            
-    # FN_RecSites
+
+def recsites():
     for s in nrn.h.recSites:
         print s.name()
-    topolist = nrn.h.MyTopology()
+
+def main():
+    modelFile = "./runModel.hoc"
+    nrn.h.load_file(1, modelFile)
+    nrn_nthread = nrn_dll_sym('nrn_threads', ctypes.c_void_p)
+    thread = ctypes.cast(nrn_nthread, ctypes.POINTER(NrnThread))
+
+    # FN_TopoList
+    topo_list(thread)
+
+    # FN_TopoF
+    topo_f_matrix(thread)
+
+    # FN_Topo 
+    topo()
+
+    # FN_TopoMDL
+    topo_mdl()   
+
+    # FN_RecSites
+    recsites()
 
 if __name__ == '__main__':
     main()
