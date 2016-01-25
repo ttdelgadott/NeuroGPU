@@ -114,8 +114,7 @@ def get_mech_list():
 def main():
     modelFile = "./runModel.hoc"
     nrn.h.load_file(1, modelFile)
-    nrn_nthread = nrn_dll_sym('nrn_threads', ctypes.c_void_p)
-    thread = ctypes.cast(nrn_nthread, ctypes.POINTER(NrnThread))
+    thread = nrn_dll_sym('nrn_threads', ctypes.POINTER(NrnThread))
 
     get_topo_list(thread)
     get_topo_f_matrix(thread)
