@@ -77,10 +77,6 @@ def get_topo_mdl():
         mech_params = {}
         name = nrn.h.secname()
         if nrn.h.ismembrane("pas"):
-            print name
-            print "===="
-            print "g_pas = {0}".format(s.g_pas)
-            print "e_pas = {0}".format(s.e_pas)
             mech_params['g_pas'] = s.g_pas
             mech_params['e_pas'] = s.e_pas
         mech_names = get_mech_list()
@@ -92,7 +88,6 @@ def get_topo_mdl():
                 param = nrn.h.ref('')                   # string reference to store parameter name
                 ms.name(param, j)
                 nrn.h('x = {0}'.format(param[0]))
-                print "{0} = {1}".format(param[0], nrn.h.x)
                 mech_params[param[0]] = nrn.h.x
         sections[name] = mech_params
     return sections
