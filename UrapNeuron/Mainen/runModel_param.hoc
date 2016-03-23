@@ -9498,7 +9498,7 @@ a=e_pas
 fn.vwrite(&a)
 }
 proc printParams(){
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/neurogpu2/Neuron/printCell/Amit/output/ParamM.dat")
+fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
 writeReversals()
 writeGGlobals()
 writeNGlobals()
@@ -9684,7 +9684,7 @@ printParams()
 // End params output
 // Start Mat Output
 fcurrent()
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/neurogpu2/Neuron/printCell/Amit/output/Mat.dat")
+hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Mat.dat")
 MyPrintMatrix()
 hoc_stdout()
 // endMat Output

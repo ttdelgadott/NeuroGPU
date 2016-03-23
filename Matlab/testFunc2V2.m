@@ -2,7 +2,7 @@
 clearvars -except 'HocBaseFromOpt' stim params AxonP BaseP OptP Model FTYPESTR paramSet currOptRunStr copyToFileFlg OutFN initParams;
 fclose all
 clc;
-%NeuroGPUInit;
+NeuroGPUInitGitHub;
 cd([BaseP 'Matlab']);
 % HocFN=[BaseP 'Neuron\printCell\Amit\printCellBinaryK64 - 4.hoc'];
 FN_Topo=fullfile(BaseP, 'Neuron','printCell','Amit','output','64T.csv');

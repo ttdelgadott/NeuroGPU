@@ -1,15 +1,19 @@
-function [Sim] = RunOnGPUFuncMultiParamsGitHub(params,stim,model,copyToFileFlg)
+function [Sim] = RunOnGPUFuncMultiParamsGitHub()
 NeuroGPUInitGitHub;
+model = Model;
+HocBaseFromOpt=fullfile(OptP, 'UrapNeuron',model,'runModel.hoc');
+stim = 'Step.dat';
+addpath(genpath(BaseP));
+[nrnpath bla1 bla2] = fileparts(HocBaseFromOpt);
+params = nrn_mread([nrnpath,'\params\orig.dat'],inf);
+nrn_mwrite([nrnpath,filesep,'opt_params.dat'],params);
 paramSet = 'opt_params.dat'; 
 if(nargin<4)
    copyToFileFlg =0;
 end
 %HocBaseFromOpt=fullfile(OptP, 'Neuron',model,'runModelForAnalyze.hoc');
 %HocBaseFromOpt=fullfile(OptP, 'Neuron',model,'runModelPas.hoc');
-HocBaseFromOpt=fullfile(OptP, 'Neuron',model,'runModel.hoc');
-addpath(genpath(BaseP));
-[nrnpath bla1 bla2] = fileparts(HocBaseFromOpt);
-nrn_mwrite([nrnpath,filesep,'opt_params.dat'],params);
+
 testFunc2V2;
 pause(2);
 NMODLtoC_MainV3;
@@ -19,11 +23,11 @@ slnFN = fullfile(BaseP,'VS','NeuroGPULast','NeuroGPU6.sln');
 model = 'Mainen';
 ntimestep=3168;
 stimSize =7;
-StimFolder = fullfile(OptP, 'Neuron',model,'Stims');
+StimFolder = fullfile(OptP, 'UrapNeuron',model,'Stims');
 StimFN = [StimFolder,filesep,stim];
 %StimFN = [StimFolder,filesep,'Step.dat'];
 %VoltsFolder = fullfile(OptP, 'Neuron',model,'Volts','passive');
-VoltsFolder = fullfile(OptP, 'Neuron',model,'Volts');
+VoltsFolder = fullfile(OptP, 'UrapNeuron',model,'Volts');
 TimeFN = [VoltsFolder,'/times.dat'];
 StimOut =  fullfile(BaseP,'Data','StimF.dat');
 %gpuDir = fullfile(BaseP,'VS','NeuroGPUStimCUDAHu','Release');
@@ -39,7 +43,7 @@ Nt = ntimestep;
 AdjustStim;
 pSizeSet = size(params,1);
 %HocBaseFN = fullfile(OptP, 'Neuron',model,'runModelForAnalyze.hoc');
-HocBaseFN = fullfile(OptP, 'Neuron',model,'runModel.hoc');
+HocBaseFN = fullfile(OptP, 'UrapNeuron',model,'runModel.hoc');
 cd([OptP '/Matlab']);
 ProcAddParamToHocForOpt(AllParametersNonGlobalC,HocBaseFN,BaseP,availableMechanisms,NeuronSC,Reversals,CompNames,CompMechnisms,GGlobals,NGlobals,Neuron,FTYPESTR,pSizeSet,paramSet)
 %AddParamToHocForOpt;

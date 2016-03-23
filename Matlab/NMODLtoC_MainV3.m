@@ -45,7 +45,7 @@
 %%
 % clear variables;
 clc;
-NeuroGPUInit;
+NeuroGPUInitGitHub;
 
 FN_TopoList=fullfile(BaseP, 'Neuron','printCell','Amit','output','64TL.csv');
 % FN_Topo=fullfile(BaseP, 'Neuron','printCell','Amit','output','64T.csv');

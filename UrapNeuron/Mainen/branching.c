@@ -3,23 +3,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "scoplib.h"
+#include "scoplib_ansi.h"
 #undef PI
- 
+#define nil 0
 #include "md1redef.h"
 #include "section.h"
+#include "nrniv_mf.h"
 #include "md2redef.h"
-
+ 
 #if METHOD3
 extern int _method3;
 #endif
 
+#if !NRNGPU
 #undef exp
 #define exp hoc_Exp
-extern double hoc_Exp();
+extern double hoc_Exp(double);
+#endif
  
 #define _threadargscomma_ /**/
 #define _threadargs_ /**/
+ 
+#define _threadargsprotocomma_ /**/
+#define _threadargsproto_ /**/
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
 	/*SUPPRESS 763*/
@@ -38,32 +44,41 @@ extern double hoc_Exp();
 #define h _mlhh
 #endif
 #endif
+ 
+#if defined(__cplusplus)
+extern "C" {
+#endif
  static int hoc_nrnpointerindex =  -1;
  /* external NEURON variables */
  /* declaration of user functions */
- static int _hoc_GetB();
- static int _hoc_GetA();
- static int _hoc_MyTopology();
- static int _hoc_MyAdb();
- static int _hoc_MyPrintMatrix();
- static int _hoc_PrintRHS_D();
- static int _hoc_SetB();
- static int _hoc_SetA();
- static int _hoc_init_files();
+ static void _hoc_GetB(void);
+ static void _hoc_GetA(void);
+ static void _hoc_MyTopology(void);
+ static void _hoc_MyAdb(void);
+ static void _hoc_MyPrintMatrix(void);
+ static void _hoc_PrintRHS_D(void);
+ static void _hoc_SetB(void);
+ static void _hoc_SetA(void);
+ static void _hoc_init_files(void);
  static int _mechtype;
-extern int nrn_get_mechtype();
+extern void _nrn_cacheloop_reg(int, int);
+extern void hoc_register_prop_size(int, int, int);
+extern void hoc_register_limits(int, HocParmLimits*);
+extern void hoc_register_units(int, HocParmUnits*);
+extern void nrn_promote(Prop*, int, int);
+extern Memb_func* memb_func;
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _p = _prop->param; _ppvar = _prop->dparam;
  }
- static _hoc_setdata() {
- Prop *_prop, *hoc_getdata_range();
+ static void _hoc_setdata() {
+ Prop *_prop, *hoc_getdata_range(int);
  _prop = hoc_getdata_range(_mechtype);
    _setdata(_prop);
- ret(1.);
+ hoc_retpushx(1.);
 }
  /* connect user functions to hoc names */
- static IntFunc hoc_intfunc[] = {
+ static VoidFunc hoc_intfunc[] = {
  "setdata_branching", _hoc_setdata,
  "GetB", _hoc_GetB,
  "GetA", _hoc_GetA,
@@ -76,10 +91,10 @@ extern int nrn_get_mechtype();
  "init_files", _hoc_init_files,
  0, 0
 };
- extern double GetB();
- extern double GetA();
- extern double SetB();
- extern double SetA();
+ extern double GetB( double );
+ extern double GetA( double );
+ extern double SetB( double , double );
+ extern double SetA( double , double );
  /* declare global and static user variables */
  /* some parameters have upper and lower limits */
  static HocParmLimits _hoc_parm_limits[] = {
@@ -97,9 +112,11 @@ extern int nrn_get_mechtype();
  0,0,0
 };
  static double _sav_indep;
- static void nrn_alloc(), nrn_init(), nrn_state();
+ static void nrn_alloc(Prop*);
+static void  nrn_init(_NrnThread*, _Memb_list*, int);
+static void nrn_state(_NrnThread*, _Memb_list*, int);
  /* connect range variables in _p that hoc is supposed to know about */
- static char *_mechanism[] = {
+ static const char *_mechanism[] = {
  "6.2.0",
 "branching",
  0,
@@ -107,10 +124,10 @@ extern int nrn_get_mechtype();
  0,
  0};
  
-static void nrn_alloc(_prop)
-	Prop *_prop;
-{
-	Prop *prop_ion, *need_memb();
+extern Prop* need_memb(Symbol*);
+
+static void nrn_alloc(Prop* _prop) {
+	Prop *prop_ion;
 	double *_p; Datum *_ppvar;
  	_p = nrn_prop_data_alloc(_mechtype, 0, _prop);
  	/*initialize range parameters*/
@@ -118,12 +135,18 @@ static void nrn_alloc(_prop)
  	_prop->param_size = 0;
  
 }
- static _initlists();
- _branching_reg() {
+ static void _initlists();
+ extern Symbol* hoc_lookup(const char*);
+extern void _nrn_thread_reg(int, int, void(*f)(Datum*));
+extern void _nrn_thread_table_reg(int, void(*)(double*, Datum*, Datum*, _NrnThread*, int));
+extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
+extern void _cvode_abstol( Symbol**, double*, int);
+
+ void _branching_reg() {
 	int _vectorized = 0;
   _initlists();
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 branching C:/Users/rben.KECK-CENTER/Documents/Lab/GPUAnalysis/Neuron/Mainen/branching.mod\n");
+ 	ivoc_help("help ?1 branching C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/UrapNeuron/Mainen/branching.mod\n");
  }
 static int _reset;
 static char *modelname = "";
@@ -131,17 +154,17 @@ static char *modelname = "";
 static int error;
 static int _ninits = 0;
 static int _match_recurse=1;
-static _modl_cleanup(){ _match_recurse=1;}
-static MyTopology();
-static MyAdb();
-static MyPrintMatrix();
-static PrintRHS_D();
-static init_files();
+static void _modl_cleanup(){ _match_recurse=1;}
+static int MyTopology();
+static int MyAdb();
+static int MyPrintMatrix();
+static int PrintRHS_D();
+static int init_files();
  
 /*VERBATIM*/
-char* secname();
+
  
-static int  init_files (  )  {
+static int  init_files (  ) {
    
 /*VERBATIM*/
 {
@@ -150,16 +173,14 @@ static int  init_files (  )  {
 	}
   return 0; }
  
-static int _hoc_init_files() {
+static void _hoc_init_files(void) {
   double _r;
    _r = 1.;
- init_files (  ) ;
- ret(_r);
+ init_files (  );
+ hoc_retpushx(_r);
 }
  
-double GetA (  _lx )  
-	double _lx ;
- {
+double GetA (  double _lx ) {
    double _lGetA;
  
 /*VERBATIM*/
@@ -185,15 +206,13 @@ Section* sec;
 return _lGetA;
  }
  
-static int _hoc_GetA() {
+static void _hoc_GetA(void) {
   double _r;
-   _r =  GetA (  *getarg(1) ) ;
- ret(_r);
+   _r =  GetA (  *getarg(1) );
+ hoc_retpushx(_r);
 }
  
-double GetB (  _lx )  
-	double _lx ;
- {
+double GetB (  double _lx ) {
    double _lGetB;
  
 /*VERBATIM*/
@@ -219,15 +238,13 @@ Section* sec;
 return _lGetB;
  }
  
-static int _hoc_GetB() {
+static void _hoc_GetB(void) {
   double _r;
-   _r =  GetB (  *getarg(1) ) ;
- ret(_r);
+   _r =  GetB (  *getarg(1) );
+ hoc_retpushx(_r);
 }
  
-double SetA (  _lx , _la )  
-	double _lx , _la ;
- {
+double SetA (  double _lx , double _la ) {
    double _lSetA;
  
 /*VERBATIM*/
@@ -253,15 +270,13 @@ Section* sec;
 return _lSetA;
  }
  
-static int _hoc_SetA() {
+static void _hoc_SetA(void) {
   double _r;
-   _r =  SetA (  *getarg(1) , *getarg(2) ) ;
- ret(_r);
+   _r =  SetA (  *getarg(1) , *getarg(2) );
+ hoc_retpushx(_r);
 }
  
-double SetB (  _lx , _lb )  
-	double _lx , _lb ;
- {
+double SetB (  double _lx , double _lb ) {
    double _lSetB;
  
 /*VERBATIM*/
@@ -287,13 +302,13 @@ Section* sec;
 return _lSetB;
  }
  
-static int _hoc_SetB() {
+static void _hoc_SetB(void) {
   double _r;
-   _r =  SetB (  *getarg(1) , *getarg(2) ) ;
- ret(_r);
+   _r =  SetB (  *getarg(1) , *getarg(2) );
+ hoc_retpushx(_r);
 }
  
-static int  MyPrintMatrix (  )  {
+static int  MyPrintMatrix (  ) {
    
 /*VERBATIM*/
 {
@@ -312,14 +327,14 @@ printf("%d %1.15f %1.15f %1.15f %1.15f\n", ii, NODEB(nd), NODEA(nd), NODED(nd), 
 }
   return 0; }
  
-static int _hoc_MyPrintMatrix() {
+static void _hoc_MyPrintMatrix(void) {
   double _r;
    _r = 1.;
- MyPrintMatrix (  ) ;
- ret(_r);
+ MyPrintMatrix (  );
+ hoc_retpushx(_r);
 }
  
-static int  MyAdb (  )  {
+static int  MyAdb (  ) {
    
 /*VERBATIM*/
 {
@@ -334,14 +349,14 @@ printf("%d,%1.15f %1.15f %1.15f %1.15f\n",ii, _nt->_actual_a[ii],_nt->_actual_d[
 }
   return 0; }
  
-static int _hoc_MyAdb() {
+static void _hoc_MyAdb(void) {
   double _r;
    _r = 1.;
- MyAdb (  ) ;
- ret(_r);
+ MyAdb (  );
+ hoc_retpushx(_r);
 }
  
-static int  PrintRHS_D (  )  {
+static int  PrintRHS_D (  ) {
    
 /*VERBATIM*/
 {
@@ -357,14 +372,14 @@ printf("%d,%1.15f %1.15f \n",ii,  NODED(nd), NODERHS(nd));
 }
   return 0; }
  
-static int _hoc_PrintRHS_D() {
+static void _hoc_PrintRHS_D(void) {
   double _r;
    _r = 1.;
- PrintRHS_D (  ) ;
- ret(_r);
+ PrintRHS_D (  );
+ hoc_retpushx(_r);
 }
  
-static int  MyTopology (  )  {
+static int  MyTopology (  ) {
    
 /*VERBATIM*/
 {
@@ -379,11 +394,11 @@ printf("%d %d\n", ii, _nt->_v_parent_index[ii]);
 }
   return 0; }
  
-static int _hoc_MyTopology() {
+static void _hoc_MyTopology(void) {
   double _r;
    _r = 1.;
- MyTopology (  ) ;
- ret(_r);
+ MyTopology (  );
+ hoc_retpushx(_r);
 }
 
 static void initmodel() {
@@ -444,9 +459,9 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 
 }
 
-static terminal(){}
+static void terminal(){}
 
-static _initlists() {
+static void _initlists() {
  int _i; static int _first = 1;
   if (!_first) return;
 _first = 0;

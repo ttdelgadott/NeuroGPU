@@ -1,5 +1,5 @@
 figure(10000)
-NeuroGPUInit;
+NeuroGPUInitGitHub;
 StimOut =  fullfile(BaseP,'Data','StimF.dat');
 AllStim = nrn_mread(StimFN,Nt);
 plot(AllStim');

@@ -1,4 +1,4 @@
-// Automatically generated C for C:\Users\rben.KECK-CENTER\Documents\Lab\GPUAnalysis\Neuron\Mainen\runModel.hoc
+// Automatically generated C for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\UrapNeuron\Mainen\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -29,7 +29,7 @@ float i,ica,ik,ina;
 #define vmin_ca (-120)
 #define vmax_ca (100)
 #define vshift_ca (0)
-#define depth_cad (0.27033)
+#define depth_cad (0.1)
 #define cainf_cad (0.0001)
 #define taur_cad (200)
 #define q10_kca (2.3)

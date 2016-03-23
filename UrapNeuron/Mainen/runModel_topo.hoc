@@ -9,7 +9,7 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMainen.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./opt_params.dat"
+paramsFile = "./params/orig.dat"
 stimFile = "./Stims/Step.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3176
