@@ -1,7 +1,11 @@
-FTYPESTR = 'float';
+global FTYPESTR;
+FTYPESTR = 'float'; 
 %AxonP = 'C:\Users\rben.KECK-CENTER\Documents\axon-gpu\';
-%BaseP = 'C:\Users\rben.KECK-CENTER\Documents\neurogpu2\';
-%OptP = 'C:\Users\rben.KECK-CENTER\Documents\Lab\GPUAnalysis\';
+cd('../');
+BaseP = [pwd,'\'];
+cd([BaseP,'Matlab']);
+OptP = BaseP;
+addpath(genpath(BaseP));
+addpath(genpath([BaseP,'/Matlab']));
 
-BaseP = '../';
-OptP = '../';
+Model = 'Mainen';

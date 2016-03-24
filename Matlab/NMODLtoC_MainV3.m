@@ -349,7 +349,7 @@ fprintf(fid,'\n#endif');
 fclose(fid);
 
 %Amit - Main
-NeuroGPUInit
+NeuroGPUInitGitHub
 cd([BaseP 'Matlab']);
 % addpath(genpath('./Amit/'));
 %%
