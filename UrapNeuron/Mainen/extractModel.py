@@ -19,6 +19,7 @@ def nrn_dll(printpath=False):
 
     success = False
     base_path = os.path.join(neuron_home, 'lib' , 'python2.7', 'site-packages', 'neuron', 'hoc')
+    base_path = '/home/devloop0/neuron/nrn/lib/python/neuron/hoc'
     for extension in ['', '.dll', '.so', '.dylib']:
         try:
             the_dll = ctypes.cdll[base_path + extension]
@@ -55,12 +56,19 @@ def get_topo_list(thread):
         print i, thread.contents._v_parent_index[i] 
 
 def get_topo_f_matrix(thread):
+    lst = []
     for i in range(thread.contents.end):
         node = thread.contents._v_node[i]
         _a = thread.contents._actual_a[node.contents.v_node_index]
         _b = thread.contents._actual_b[node.contents.v_node_index]
 
-        print i, _b, _a, node.contents._d[0], node.contents._rhs[0]
+        try:
+            _rhs = node.contents._rhs[0]
+            lst.append([ i, _b, _a, node.contents._d[0], _rhs ])
+        except ValueError:
+            _rhs = 0.0
+            lst.append([ i, _b, _a, node.contents._d[0], _rhs ])
+    return lst
 
 def get_topo():
     sections = {}
@@ -117,7 +125,9 @@ def main():
     thread = nrn_dll_sym('nrn_threads', ctypes.POINTER(NrnThread))
 
     get_topo_list(thread)
-    get_topo_f_matrix(thread)
+    tmp = get_topo_f_matrix(thread)
+    print(tmp)
+
     topo = get_topo()           # dictionary whose keys are section names
     topo_mdl = get_topo_mdl()   # dictionary whose keys are section names
     recsites = get_recsites()   # list of section names
