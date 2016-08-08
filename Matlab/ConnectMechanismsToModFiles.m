@@ -1,6 +1,6 @@
 function ModMap=ConnectMechanismsToModFiles(hocFileName, ModMap)
 %BaseP='C:\Users\Roy\Documents\NeuroGPU2_2\';
-BaseP = 'C:\Users\rben.KECK-CENTER\Documents\neurogpu2\';
+%BaseP = 'C:\Users\rben.KECK-CENTER\Documents\neurogpu2\';
 hocPath=fileparts(hocFileName);
 D=dir([hocPath filesep '*.mod']);
 D=D(~strcmp({D.name},'branching.mod'));
@@ -11,5 +11,5 @@ for i=1:numel(D)
     S=regexp(SLine,' ','split');
     ModMap.(S{1}{end})=[hocPath filesep D(i).name(1:end-4)];
 end
-ModMap.pas=[BaseP 'Neuron/Mainen/passivex'];
-ModMap.esps=[BaseP 'Neuron/Mainen/passivex'];
+ModMap.pas=ModMap.pas2;
+%ModMap.esps=[BaseP 'Neuron/Mainen/passivex'];

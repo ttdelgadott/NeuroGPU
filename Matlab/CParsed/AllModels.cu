@@ -1,4 +1,4 @@
-// Automatically generated CU for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\UrapNeuron\Mainen\runModel.hoc
+// Automatically generated CU for C:\Users\bensr\Documents\GitHub\NeuroGPU\UrapNeuron\Mainen\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -220,6 +220,8 @@ float hinf,htau,minf,mtau;
 	h = hinf;
 ;};
 __device__ void CuInitModel_pas(float v,float g_pas,float e_pas) {
+	g_pas = .001	(S/cm2)	<0,1e9>;
+	e_pas = -70	;
 ;};
 
 // Derivs:
@@ -259,9 +261,7 @@ float hinf,htau,minf,mtau;
     m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau)))*(- ( ( ( minf ) ) / mtau ) / ( ( ( ( - 1.0) ) ) / mtau ) - m) ;
     h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau)))*(- ( ( ( hinf ) ) / htau ) / ( ( ( ( - 1.0) ) ) / htau ) - h) ;
    ;}
-__device__ void CuDerivModel_pas(float dt, float v,float g_pas,float e_pas) {
-float i;
-;}
+
 
 // Breakpoints:
 __device__ void CuBreakpointModel_ca(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
@@ -309,9 +309,8 @@ sumCurrents+= ina;
 sumConductivity+= gna;
 ;};
 __device__ void CuBreakpointModel_pas(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float g_pas,float e_pas) {
-float gpas;
+float g_pas;
 float i;
 i=g_pas*(v-e_pas);
-sumCurrents+= i;
 sumConductivity+= g_pas;
 ;};

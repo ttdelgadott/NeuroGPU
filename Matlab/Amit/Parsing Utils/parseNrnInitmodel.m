@@ -21,10 +21,14 @@ firstLine = ['function [' CONSTS_PER_MODEL_PER_SEG_STR ', ' CONSTS_PER_MODEL_ALL
 parameterBlockLines = getBlock(PARAMETER_BLOCK_STR, modLines, OPEN_BLOCK_MOD_STR, CLOSE_BLOCK_MOD_STR);
 parameterBlockLines = regexprep(parameterBlockLines, PARAMETER_BLOCK_STR, '');
 parameterBlockLines = deleteUselessLines(parameterBlockLines);
-
+try
 initialBlockLines = getBlock(INITIAL_BLOCK_STR, modLines, OPEN_BLOCK_MOD_STR, CLOSE_BLOCK_MOD_STR);
+
 initialBlockLines = regexprep(initialBlockLines, INITIAL_BLOCK_STR, '');
 initialBlockLines = deleteUselessLines(initialBlockLines);
+catch e
+    initialBlockLines = [];
+end
 
 parameterBlockLines = deleteUnits(parameterBlockLines);
 

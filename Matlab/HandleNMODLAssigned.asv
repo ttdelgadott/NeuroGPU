@@ -29,12 +29,8 @@ if ~isempty(StartI)
         AllStateLineSeg=strrep(AllStateLineSeg,'@',' ');
         AllStateLineSeg=AllStateLineSeg(1:end-1);
     end
-else
-    AllStateLine=zeros(1,0);
-        AllStateLineSeg='';
-        AllState={};
+    
 end
-
 AssignedLine=find(strhas(Lines,'PARAMETER'));
 StartL=AssignedLine;
 EndL=min(EndLines(EndLines>StartL));

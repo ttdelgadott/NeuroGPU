@@ -6,15 +6,17 @@
 % }
  Straighten=@(x) reshape(x,[1 numel(x)]);
 InitialLineI=find(strhas(Lines,'INITIAL'));
-StartL=InitialLineI;
-EndL=StartL;
-SumP=0;
-while(1)
-    SumP=SumP+sum(Lines{EndL}=='{')-sum(Lines{EndL}=='}');
-    if(SumP==0)
-        break;
+if ~isempty(InitialLineI)
+    StartL=InitialLineI;
+    EndL=StartL;
+    SumP=0;
+    while(1)
+        SumP=SumP+sum(Lines{EndL}=='{')-sum(Lines{EndL}=='}');
+        if(SumP==0)
+            break;
+        end
+        EndL=EndL+1;
     end
-    EndL=EndL+1;
 end
 if(~exist('StatesAndParamsStr'))
     StatesAndParamsStr='';

@@ -1,5 +1,7 @@
 function [Sim] = RunOnGPUFuncMultiParamsGitHub()
+cd(fileparts(which(mfilename)))
 NeuroGPUInitGitHub;
+
 model = Model;
 HocBaseFromOpt=fullfile(OptP, 'UrapNeuron',model,'runModel.hoc');
 stim = 'Step.dat';

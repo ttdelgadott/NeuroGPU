@@ -17,7 +17,10 @@ PARAMETER {
 	e = -70	(mV)
 }
 
-ASSIGNED {v (mV)  i (mA/cm2)}
+ASSIGNED {
+	v (mV)  
+	i (mA/cm2)
+	}
 
 BREAKPOINT {
 	i = g*(v - e)
