@@ -1,0 +1,92 @@
+﻿Build started 8/9/2016 11:04:17 AM.
+     1>Project "C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\NeuroGPU6\NeuroGPU6.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /nologo /W3 /WX- /Ox /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt AllModels.cpp MainC.cpp Util.cpp
+     1>cl : Command line warning D9007: '/Gm' requires '/Zi or /ZI'; option ignored
+         AllModels.cpp
+     1>AllModels.cpp(76): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(118): warning C4305: '=' : truncation from 'double' to 'float'
+     1>AllModels.cpp(151): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(151): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(152): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(154): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(157): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(158): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(159): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(167): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(182): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(196): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(210): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(215): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(222): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(223): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(226): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(230): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(235): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(239): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(243): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(247): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(248): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(257): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(258): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(265): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(266): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(271): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(272): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(277): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(278): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(283): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>AllModels.cpp(284): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         MainC.cpp
+         Util.cpp
+     1>Util.cpp(75): warning C4101: 'fdebug2' : unreferenced local variable
+     1>Util.cpp(128): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+     1>Util.cpp(132): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(244): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+     1>Util.cpp(248): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(279): warning C4305: '=' : truncation from 'double' to 'float'
+     1>Util.cpp(292): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(322): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
+     1>Util.cpp(325): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(335): warning C4244: 'initializing' : conversion from 'float' to 'unsigned short', possible loss of data
+     1>Util.cpp(359): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(380): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(393): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(392): warning C4101: 'NP' : unreferenced local variable
+     1>Util.cpp(414): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(431): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+     1>Util.cpp(448): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\NeuroGPU6.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\Win32" cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\NeuroGPU6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\NeuroGPU6.lib" /MACHINE:X86 Debug\CudaStuff.cu.obj
+         Debug\kernel.cu.obj
+         Debug\AllModels.obj
+         Debug\MainC.obj
+         Debug\Util.obj
+         NeuroGPU6.vcxproj -> C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\NeuroGPU6.exe
+       PostBuildEvent:
+         echo copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\"
+         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\"
+         :VCEnd
+         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\Debug\"
+         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart32_75.dll
+         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart64_75.dll
+                 2 file(s) copied.
+     1>Done Building Project "C:\Users\bensr\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5\NeuroGPU6\NeuroGPU6.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.86

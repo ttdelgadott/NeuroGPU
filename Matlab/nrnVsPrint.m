@@ -1,4 +1,7 @@
-FN='../Neuron\Mainen\FullTest\orig_step.dat';
-npoints = 6150;
-[NV,err] =nrn_mread(FN,npoints);
+NeuroGPUInitGitHub;
+FN=['../UrapNeuron\HodgkinHuxley\Volts\orig_step_soma.dat'];
+ntimestep=3168;
+stimSize =2;
+[NV,err] =nrn_mread(FN,6352);
+figure (234)
 plot(NV);
