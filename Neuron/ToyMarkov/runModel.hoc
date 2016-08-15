@@ -103,4 +103,4 @@ runMatrix(stims)
 writeMatrix(outFile,matOut)
 finitialize(-70)
 //ADD STUFF HERE
-
+quit()

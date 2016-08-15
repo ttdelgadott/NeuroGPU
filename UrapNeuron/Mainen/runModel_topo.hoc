@@ -276,6 +276,13 @@ forall{
 				execute(ss)
 				fn.printf("%s = %f\n",s,temp)
 			}
+			ms = new MechanismStandard(mname,3)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
 		}
 	}
 }

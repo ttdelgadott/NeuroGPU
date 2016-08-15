@@ -1,5 +1,5 @@
 #soma
-IClamp,0.5, 10, 30, 0.5, 
+IClamp,0.5, 0, 1e+009, 0, 
 #dend1[0]
 
 #dend1[1]

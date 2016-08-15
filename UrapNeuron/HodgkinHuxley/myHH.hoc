@@ -131,4 +131,6 @@ forall most.append()
 
 
 load_3dcell("./j4a.hoc") 
+forall {insert hh2}
+
 proc tfunc(){}

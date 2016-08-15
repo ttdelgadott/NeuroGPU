@@ -76,12 +76,10 @@ INITIAL {
 
 ? states
 DERIVATIVE states {  
-		
         rates(v)
         m' =  (minf-m)/mtau
         h' = (hinf-h)/htau
         n' = (ninf-n)/ntau
-		: printf("AAA %f,%f,%f,%f,%f\n",v,m,dt,mtau,minf)
 }
  
 :LOCAL q10
@@ -122,7 +120,5 @@ FUNCTION vtrap(x,y) {  :Traps for 0 in denominator of rate eqns.
                 vtrap = x/(exp(x/y) - 1)
         }
 }
-
-
  
 UNITSON

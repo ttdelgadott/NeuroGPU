@@ -16,16 +16,20 @@ if(numel(AddLineI)~=1)
     error('Problem with finding place to add code: End point processess mechanisms output');
 end
 if exist('pSizeSet','var')
-     Lines{18} = [Lines{18}(1:7),num2str(pSizeSet)];
+    psizeLine = find(strhas(Lines,'psize =')); 
+     Lines{psizeLine} = [Lines{psizeLine}(1:7),num2str(pSizeSet)];
 end
-NSets = str2num(Lines{18}(8:end));
-Nt = str2num(Lines{15}(12:end));
+timeStepsLine  = find(strhas(Lines,'ntimestep =')); 
+NSets = str2num(Lines{psizeLine}(8:end));
+Nt = str2num(Lines{timeStepsLine}(12:end));
+paramsSetLine = find(strhas(Lines,'paramsFile ='));
 if exist('paramSet','var')
-     Lines{12} = [Lines{12}(1:16),paramSet,'"'];
+    
+     Lines{paramsSetLine} = [Lines{paramsSetLine}(1:16),paramSet,'"'];
 end
 
 
-ParamName = Lines{12}(17:end-5);
+ParamName = Lines{paramsSetLine}(17:end-5);
 %NSets = 5;
 %%
 clear RepComp

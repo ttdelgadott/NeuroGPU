@@ -24,8 +24,8 @@ SolveLine=CurLines(strhas(CurLines,'SOLVE'));
 [SolveWhat RestLine]=strtok(RestLine);
 [Tmp RestLine]=strtok(RestLine);
 SolveMethod=strtok(RestLine);
-if(~strcmp(SolveMethod,'cnexp'))
-    disp(['Solve method not cnexp! in ' ModelName]);
+if(~strcmp(SolveMethod,'cnexp') ||~strcmp(SolveMethod,'sparse'))
+    disp(['Solve method not cnexp/sparse! in ' ModelName]);
 end
 CurLines=CurLines(~strhas(CurLines,'SOLVE'));
 CurLines=regexprep(CurLines,'\s*','');
@@ -37,10 +37,10 @@ TmpVars=setdiff(NeuronS.Range,union(AllParameters,AllState));
 SecondLine=strcat(union(TmpVars,NeuronS.Condatances),',');
 SecondLine=[FTYPESTR ' ' SecondLine{:}];
 SecondLine=[SecondLine(1:end-1) ';'];
-% BreakOutVars=[{NeuronS.UseIon(:).write} NeuronS.NonspecificCurrent];
 BreakOutVars={NeuronS.Writes NeuronS.NonspecificCurrent};
-BreakOutVars=BreakOutVars(cellNumel(BreakOutVars)>0);
-BreakOutVars=cat(1,BreakOutVars{:});
+BreakOutVars={NeuronS.Writes{:} NeuronS.NonspecificCurrent};
+%BreakOutVars=BreakOutVars(cellNumel(BreakOutVars)>0);
+%BreakOutVars=cat(1,BreakOutVars{:});
 BreakOutVars=setdiff(BreakOutVars,union(AdditionalWritesC,NeuronS.WritesNoCurrents));
 ThirdLine='';
 if(~isempty(BreakOutVars))

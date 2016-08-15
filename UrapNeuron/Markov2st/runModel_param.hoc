@@ -1,0 +1,2275 @@
+
+secondorder=0
+strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
+modelFile = "./myMarkov.hoc"
+timesFile = "./times.dat"
+
+paramsFile = "./params/orig.dat"
+stimFile = "./Stims/Step.dat"
+outFile = "./volts/orig_step.dat"
+ntimestep =3176
+nparams =12
+
+psize =1
+ntraces =2
+create Exts[1]
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most
+load_file(modelFile)
+objref recSites
+recSites = new SectionList()
+outFPre = "./volts/orig_step"
+soma recSites.append()
+//node[1] recSites.append()
+//dend[1] recSites.append()
+strFunc = new StringFunctions()
+access soma
+	st = new IClamp(0.5)
+st.del=10
+	st.dur=30
+	st.amp = 0.5
+fin = new File()
+fout = new File()
+tfinal=1000
+proc runMatrix(){
+	//access dend[1]
+	sprint(outFile,"%s_%s.dat",outFPre,secname())
+	st = new IClamp(0.5)
+	st.del=0 
+	st.dur=1e9
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+	printf("running sim %d\n",sim)
+		counter=0
+		transvec = $o1.getrow(sim)
+		tfunc()
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(v_init)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+			dt  =stimtime.x(0,tt)
+
+				st.amp = 1*stims.x(i,tt)
+
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+				
+			}
+		}
+	}
+	printf("finshed run matrix %s\n",outFile)
+}
+proc readMatrix(){localobj temp
+	temp = new Vector()
+	fin.ropen($s1)
+	for (i=0;i<$o2.nrow;i+=1){
+		temp.vread(fin)
+		$o2.setrow(i,temp)
+		//print i
+	}
+	fin.close()
+}
+proc writeMatrix(){localobj temp
+	fout.wopen($s1)
+	temp = new Vector()
+	for (i=0;i<$o2.nrow;i+=1){
+		temp = $o2.getrow(i)
+		temp.vwrite(fout,3)
+	}
+	fout.close()
+}
+proc mul32(){localobj thisone
+	countSegs()
+	segsMat = segs+comps+1 
+	printf("1we have a matrix in the size of %d \n",segsMat )
+	segsToAdd = 32-segsMat%32
+	forall {
+		thisone = new SectionRef()   
+		if (thisone.nchild == 0 ) {
+			break
+			}
+	}
+	access thisone.sec
+	nseg = nseg+segsToAdd
+	fcurrent()
+	countSegs()
+	printf("we have a matrix in the size of %d \n",segs+comps+1 )
+	
+}
+
+proc printChildren(){localobj sl
+	sl = new SectionList()
+	sl.children()
+	u=0
+	forsec sl{
+	print secname()
+	u+=1
+	}
+	print u
+}	
+proc printparent(){localobj sref
+	sref = new SectionRef()
+	sref.parent
+	print secname()
+}		
+
+
+proc countSegs(){
+segs=0
+comps=0
+	forall{
+		segs+=nseg
+		comps+=1
+	}
+}
+create Exts[1]
+proc hinesDisperseBranching(){local i localobj sl,secRef, clist, avec, bvec
+	counter = 0
+	forsec most{
+		secRef = new SectionRef()
+		if(secRef.nchild>2){
+clist = new List()
+  for i=0, secRef.nchild-1 {
+    secRef.child[i] clist.append(new SectionRef())
+  }
+			Exts[counter]{
+				L = 1e-9
+				diam = 1
+				Ra = 1e-9
+				cm = 1e-9
+				nseg = secRef.nchild-1
+			}
+			i=0
+			Exts[counter]{
+				for(x){ 
+					if (x > 0) {
+						avec =new Vector()
+						bvec =new Vector()
+						printf("x is %f i is %d\n",x,i)
+						clist.o(i).sec{
+							avec =new Vector()
+							bvec =new Vector()
+							for(y){
+								avec.append(GetA(y))
+								bvec.append(GetB(y))
+							}
+						}
+						connect clist.o(i).sec(0), x
+						 k=0
+					  clist.o(i).sec{
+							for(y){
+								SetA(y,avec.x(k))
+								SetB(y,bvec.x(k))
+							}
+						}
+						i +=1
+					
+					}
+					
+					
+				}
+				
+			}
+			fcurrent()
+			secRef {
+				connect Exts[counter](0), 1
+			}
+			Exts[counter]{
+				for(x){ 
+			printf("x is %f and sec is %s\n",x,secname())
+					SetA(x,0)
+					SetB(x,0)
+					}
+				}
+			
+	counter+=1		
+		}
+	}
+}
+proc countExts(){
+ext_num=0
+forsec most {
+	somaref= new SectionRef()
+	if (somaref.nchild>2){
+		ext_num+=1
+	}
+	}
+}
+
+
+
+proc PrintRecSites(){localobj sref
+	recSites.printnames()
+}	
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+forsec "dend" nseg=1
+forsec "apic" nseg=1
+	
+topology()
+countExts()
+fcurrent()
+fmatrix()
+printf("Creating Exts %d\n",ext_num)
+if(ext_num>0){
+	create Exts[ext_num]
+	}	else{
+	access Exts[0]
+		delete_section()
+	}
+hinesDisperseBranching()
+
+mul32()
+access soma
+transvec = pmat.getrow(0)
+tfunc()
+finitialize(v_init)
+
+
+//runMatrix(pmat,stims)
+//writeMatrix(outFile,matOut)
+finitialize(v_init)
+//ADD STUFF HERE
+// Start topology output
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64T.csv")
+topology()
+forall{
+	printf("%s\n",secname())
+	printf("%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%.16f,%f,%f\n",nseg,L,diam,Ra,cm,dt,st.del,st.dur,st.amp,tfinal,v(0.5),area(0.5),parent_connection(),n3d())
+}
+hoc_stdout()
+// End topology output
+// Start topologyList output
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64TL.csv")
+MyTopology()
+hoc_stdout()
+// End topologyList output
+// Start mechanisms output
+objref mt,ms,fn,pp
+strdef s,ss,mname
+mt = new MechanismType(0)
+fn = new File()
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64MDL.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	if (ismembrane("pas")){
+		fn.printf("g_pas = %f\n",g_pas)
+		fn.printf("e_pas = %f\n",e_pas)
+	}
+	for i=0, mt.count()-1 {
+		mt.select(i)
+		mt.selected(mname)
+		if (ismembrane(mname)){
+			ms = new MechanismStandard(mname,-1)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+			ms = new MechanismStandard(mname,3)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+		}
+	}
+}
+fn.close()
+// End mechanisms output
+// Start point processess mechanisms output
+fn = new File()
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64PP.csv")
+forall{
+	fn.printf("#%s\n",secname())
+	mt = new MechanismType(1)
+	mt.select("IClamp")
+	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
+		x = pp.get_loc()
+		del1 = pp.del
+		dur1 = pp.dur
+		amp1 = pp.amp
+		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)
+		pop_section()
+	}
+	fn.printf("\n")
+}
+fn.close()
+// End point processess mechanisms output
+// Start params output
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+access soma
+a=ek
+fn.vwrite(&a)
+a=celsius
+fn.vwrite(&a)
+a=stoprun
+fn.vwrite(&a)
+a=clamp_resist
+fn.vwrite(&a)
+a=secondorder
+fn.vwrite(&a)
+access soma
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend1[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[9]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[10]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[11]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend2[12]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend3[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend3[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend3[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend3[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend3[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend4[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend5[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[9]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend6[10]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[9]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[10]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[11]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend7[12]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend8[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend8[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend8[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend8[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend8[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend9[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend9[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend9[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend9[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend9[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[9]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend10[10]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[5]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[6]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[7]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[8]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[9]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[10]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[11]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[12]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[13]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[14]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[15]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[16]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[17]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[18]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[19]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[20]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[21]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[22]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[23]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[24]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[25]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[26]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[27]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[28]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[29]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[30]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[31]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[32]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[33]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[34]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[35]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[36]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[37]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[38]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[39]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[40]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[41]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[42]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[43]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[44]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[45]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[46]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[47]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[48]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[49]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[50]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[51]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[52]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[53]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[54]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[55]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[56]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[57]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[58]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[59]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[60]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[61]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[62]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[63]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[64]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[65]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[66]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[67]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[68]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[69]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[70]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[71]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[72]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[73]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[74]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[75]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[76]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[77]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[78]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[79]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[80]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[81]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access dend11[82]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access iseg
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access hill
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access myelin[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access myelin[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access myelin[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access myelin[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access myelin[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access node[0]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access node[1]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access node[2]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access node[3]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access node[4]
+a=gbar_CO
+fn.vwrite(&a)
+a=a12_CO
+fn.vwrite(&a)
+a=a21_CO
+fn.vwrite(&a)
+a=z12_CO
+fn.vwrite(&a)
+a=z21_CO
+fn.vwrite(&a)
+access Exts[0]
+fn.close()
+// End params output
+// Start Mat Output
+fcurrent()
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Mat.dat")
+MyPrintMatrix()
+hoc_stdout()
+// endMat Output
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Fmatrix.csv")
+MyPrintMatrix()
+hoc_stdout()
+// End Fmatrix
+// Start Recording Sites
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/RecList.csv")
+PrintRecSites()
+hoc_stdout()
+
+
+quit()
+
+

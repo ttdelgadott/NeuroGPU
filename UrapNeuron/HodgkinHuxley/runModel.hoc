@@ -1,4 +1,4 @@
-
+usetable_hh2 = 0
 secondorder=0
 strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myHH.hoc"
@@ -9,7 +9,7 @@ stimFile = "./Stims/Step.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3176
 nparams =12
-
+v_init = -65
 psize =1
 ntraces =2
 create Exts[1]

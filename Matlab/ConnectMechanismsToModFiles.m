@@ -11,5 +11,7 @@ for i=1:numel(D)
     S=regexp(SLine,' ','split');
     ModMap.(S{1}{end})=[hocPath filesep D(i).name(1:end-4)];
 end
-ModMap.pas=ModMap.pas2;
+if isfield(ModMap,'pas')
+    ModMap.pas=ModMap.pas2;
+end
 %ModMap.esps=[BaseP 'Neuron/Mainen/passivex'];

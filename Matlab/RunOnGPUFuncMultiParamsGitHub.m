@@ -3,7 +3,7 @@ cd(fileparts(which(mfilename)))
 NeuroGPUInitGitHub;
 
 model = Model;
-HocBaseFromOpt=fullfile(OptP, 'UrapNeuron',model,'runModel.hoc');
+HocBaseFromOpt=fullfile(OptP, 'URapNeuron',model,'runModel.hoc');
 stim = 'Step.dat';
 addpath(genpath(BaseP));
 [nrnpath bla1 bla2] = fileparts(HocBaseFromOpt);
@@ -19,12 +19,12 @@ end
 testFunc2V2;
 pause(2);
 NMODLtoC_MainV3;
-slnFN = fullfile(BaseP,'VS','NeuroGPULast','NeuroGPU6.sln');
+slnFN = fullfile(BaseP,'VS','NeuroGPULast7_5','NeuroGPU6.sln');
  eval(['!msbuild /property:Configuration=Debug /p:Platform=x64 ',slnFN,]);
 %model = 'NewModelCA';
-model = 'Mainen';
+model = 'HodgkinHuxley';
 ntimestep=3168;
-stimSize =7;
+stimSize =2;
 StimFolder = fullfile(OptP, 'UrapNeuron',model,'Stims');
 StimFN = [StimFolder,filesep,stim];
 %StimFN = [StimFolder,filesep,'Step.dat'];
@@ -33,14 +33,14 @@ VoltsFolder = fullfile(OptP, 'UrapNeuron',model,'Volts');
 TimeFN = [VoltsFolder,'/times.dat'];
 StimOut =  fullfile(BaseP,'Data','StimF.dat');
 %gpuDir = fullfile(BaseP,'VS','NeuroGPUStimCUDAHu','Release');
-exeFile = fullfile(BaseP,'VS','NeuroGPULast','x64/Debug/NeuroGPU6.exe');
-gpuDir = fullfile(BaseP,'VS','NeuroGPULast','NeuroGPU6');
+exeFile = fullfile(BaseP,'VS','NeuroGPULast7_5','x64/Debug/NeuroGPU6.exe');
+gpuDir = fullfile(BaseP,'VS','NeuroGPULast7_5','NeuroGPU6');
 GpuOut = fullfile(BaseP,'Data','VHotP.dat');
 %paramSet = 'opt_params.dat';
 
 %paramSet = 'orig.dat';
 StimFN = strrep(StimFN,'.mat','.dat')
-stimSize = 7;
+stimSize = 2;
 Nt = ntimestep;
 AdjustStim;
 pSizeSet = size(params,1);

@@ -8,4 +8,4 @@ OptP = BaseP;
 addpath(genpath(BaseP));
 addpath(genpath([BaseP,'/Matlab']));
 
-Model = 'Mainen';
+Model = 'HodgkinHuxley';

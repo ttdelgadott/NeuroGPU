@@ -44,7 +44,14 @@ AddedLines{end+1}='		mt.select(i)';
 AddedLines{end+1}='		mt.selected(mname)';
 AddedLines{end+1}='		if (ismembrane(mname)){';
 AddedLines{end+1}='			ms = new MechanismStandard(mname,-1)';
-AddedLines{end+1}='			for j=0, ms.count()-1 {'; % all parameters of the mechanism
+AddedLines{end+1}='			for j=0, ms.count()-1 {'; % all global parameters of the mechanism
+AddedLines{end+1}='				k = ms.name(s, j)';
+AddedLines{end+1}='				sprint(ss,"temp=%s",s)';
+AddedLines{end+1}='				execute(ss)';
+AddedLines{end+1}='				fn.printf("%s = %f\n",s,temp)';
+AddedLines{end+1}='			}';
+AddedLines{end+1}='			ms = new MechanismStandard(mname,3)';
+AddedLines{end+1}='			for j=0, ms.count()-1 {'; % all global parameters of the mechanism
 AddedLines{end+1}='				k = ms.name(s, j)';
 AddedLines{end+1}='				sprint(ss,"temp=%s",s)';
 AddedLines{end+1}='				execute(ss)';

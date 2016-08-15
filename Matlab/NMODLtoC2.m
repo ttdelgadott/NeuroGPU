@@ -1,4 +1,4 @@
-clearvars -except paramsFN VoltsFolder StimFN params BaseP FN_TopoList FN_Topo FN_TopoF FN_TopoMDL FN_TopoPP HocBaseFN ModFN ModMap ModelName availableMechanisms CurModI CallToInitC CallToDerivC CallToBreakC CallToBreakDvC BreakPointDeclareC DerivDeclareC InitDeclareC AllParametersC AllStateC ReadsC WritesC CParamLinesC CDerivLinesC CBreakLinesC CInitLinesC CProcLinesC GlobalParamBC ProcDeclareC ProcDeclareCuC CFuncLinesC CFuncLinesCuC LocalsC ParamStartVal StateStartVal AllParametersModelNameC NeuronSC AllAssignedC AllParametersNonGlobalC AllParametersGlobalC AllReadsNoReversals ExtraStatesTrg GGlobals Currents CInitLinesCuC CDerivLinesCuC CBreakLinesCuC CProcLinesCuC AllWrites stim Stim Sim paramSet currOptRunStr OutFN initParams copyToFileFlg 
+clearvars -except paramsFN VoltsFolder StimFN params BaseP FN_TopoList FN_Topo FN_TopoF FN_TopoMDL FN_TopoPP HocBaseFN ModFN ModMap ModelName availableMechanisms CurModI CallToInitC CallToDerivC CallToBreakC CallToBreakDvC BreakPointDeclareC DerivDeclareC InitDeclareC AllParametersC AllStateC ReadsC WritesC CParamLinesC CDerivLinesC CBreakLinesC CInitLinesC CProcLinesC GlobalParamBC ProcDeclareC ProcDeclareCuC CFuncLinesC CFuncLinesCuC LocalsC ParamStartVal StateStartVal AllParametersModelNameC NeuronSC AllAssignedC AllParametersNonGlobalC AllParametersGlobalC AllReadsNoReversals ExtraStatesTrg GGlobals Currents CInitLinesCuC CDerivLinesCuC CBreakLinesCuC CProcLinesCuC AllWrites stim Stim Sim paramSet currOptRunStr OutFN initParams copyToFileFlg Model
 mkdir([BaseP 'Matlab' filesep 'CParsed' filesep]);
 MODLFN=[BaseP 'Matlab' filesep 'CParsed' filesep ModelName '.mod'];
 if(exist(MODLFN,'file'))
@@ -70,6 +70,7 @@ HandleNMODLProcedure; % CProcLines
 HandleNMODLInitial; % CInitLines;
 HandleNMODLDerivative; % CDerivLines
 HandleNMODLBreakpoint; % CBreakLines
+HandleNMODLKinetic;
 AllAssignedC{CurModI}=AllAssigned;
 %%
 % Update states by derivatives!

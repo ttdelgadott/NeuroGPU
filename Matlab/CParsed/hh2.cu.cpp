@@ -1,7 +1,7 @@
 #include "hh.h"
 #include <math.h>
 
-void rates_hh2(float v,float gnabar,float gkbar,float gl,float el,float &hinf,float &htau,float &minf,float &mtau,float &ninf,float &ntau);
+__device__ void Curates_hh2(float v,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2);
 
 float vtrap_hh2(float x,float y) {
         if (fabs(x/y) < 1e-6) {;
@@ -11,9 +11,9 @@ float vtrap_hh2(float x,float y) {
         };
 };
 
-void InitModel_hh2(float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
-float hinf_hh2,htau_hh2,minf_hh2,mtau_hh2,ninf_hh2,ntau_hh2;
-	rates_hh2(v,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2,hinf_hh2,htau_hh2,minf_hh2,mtau_hh2,ninf_hh2,ntau_hh2);
+__device__ void CuInitModel_hh2(float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float ;
+	Curates_hh2(v,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2);
 	m = minf_hh2;
 	h = hinf_hh2;
 	n = ninf_hh2;
@@ -43,23 +43,16 @@ float  alpha, beta, sum, q10;
         ninf_hh2 = alpha/sum;
 };
 
-void DerivModel_hh2(float dt, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
-float m_d,h_d,n_d;
-		;
-float hinf_hh2,htau_hh2,minf_hh2,mtau_hh2,ninf_hh2,ntau_hh2;
-        rates_hh2(v,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2,hinf_hh2,htau_hh2,minf_hh2,mtau_hh2,ninf_hh2,ntau_hh2);
-        m_d =  (minf_hh2-m)/mtau_hh2;
-        h_d = (hinf_hh2-h)/htau_hh2;
-        n_d = (ninf_hh2-n)/ntau_hh2;
-		;
-m+=m_d*dt;
-h+=h_d*dt;
-n+=n_d*dt;
-};
+__device__ void CuDerivModel_hh2(float dt, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float ek,ik,il;
+float ;
+   Curates_hh2 (  v ,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2);
+    m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau_hh2)))*(- ( ( ( minf_hh2 ) ) / mtau_hh2 ) / ( ( ( ( - 1.0) ) ) / mtau_hh2 ) - m) ;
+    h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau_hh2)))*(- ( ( ( hinf_hh2 ) ) / htau_hh2 ) / ( ( ( ( - 1.0) ) ) / htau_hh2 ) - h) ;
+    n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ntau_hh2)))*(- ( ( ( ninf_hh2 ) ) / ntau_hh2 ) / ( ( ( ( - 1.0) ) ) / ntau_hh2 ) - n) ;
+   }
 
-void BreakpointModel_hh2(float &sumCurrents, float &sumConductivity, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
-float gk,gna;
-float ina,ik,il;
+void BreakpointModel_hh2(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
 gna=gnabar_hh2*m*m*m*h;
 ina=gna*(v-ena);
 gk=gkbar_hh2*n*n*n*n;

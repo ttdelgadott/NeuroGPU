@@ -14,7 +14,7 @@ for i=1:numel(InC)
         if(~isempty(F1))
             F2=find(In=='=');
             F3=find(In==';');
-            OutC{i}=[In(1:F2) 'pow(' In(F2+1:F1-1) ',' In(F1+1:F3-1) ');'];
+            OutC{i}=[In(1:F2) 'pow((MYFTYPE)' In(F2+1:F1-1) ',(MYFTYPE)' In(F1+1:F3-1) ');'];
         else
             OutC{i}=InC{i};
         end

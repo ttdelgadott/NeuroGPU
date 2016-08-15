@@ -96,29 +96,29 @@ proc add_spines() { local a
 
 
 proc init_cell() {
-  // passive
+  // pas2sive
  forall {
-    insert pas
+    insert pas2
     Ra = ra 
     cm = c_m 
-    g_pas = 1/rm
-   e_pas = v_init
+    g_pas2 = 1/rm
+   e_pas2 = v_init
   }
-forsec "node" g_pas = g_pas_node
+forsec "node" g_pas2 = g_pas2_node
 
 
  forsec "dend" {
-    insert pas
+    insert pas2
     Ra = ra 
     cm = c_m 
-    g_pas = 1/rm
-    e_pas = v_init
+    g_pas2 = 1/rm
+    e_pas2 = v_init
   }
 
 
   // exceptions along the axon
   forsec "myelin" cm = cm_myelin
- forsec "node" g_pas = g_pas_node
+ forsec "node" g_pas2 = g_pas2_node
 
   // na+ channels
     forall insert na
