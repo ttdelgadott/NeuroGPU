@@ -1,15 +1,15 @@
 NUM_OF_MODELS = 2;
 NUM_OF_SEGS = 416;
-MAX_NUM_CONSTS_PER_MODEL = 4;
+MAX_NUM_CONSTS_PER_MODEL = 5;
 MAX_NUM_CONSTS_GLOBAL = 3;
-MAX_NUM_VARS_PER_MODEL_PER_SEG = 5;
-MAX_NUM_VARS_PER_MODEL_ALL_SEGS = 6;
+MAX_NUM_VARS_PER_MODEL_PER_SEG = 3;
+MAX_NUM_VARS_PER_MODEL_ALL_SEGS = 0;
 
 ModelsFuncsNames = cell(NUM_OF_MODELS, NUM_OF_FUNCS_PER_MODEL);
 ModelsFuncsNames(:, INIT_INDEX) = {'NrnInitModel_'};
 ModelsFuncsNames(:, CURRENT_INDEX) = {'NrnCurrent_'};
 ModelsFuncsNames(:, STATES_INDEX) = {'NrnStates_'};
-ModelsFuncsNames(1,:) = strcat(ModelsFuncsNames(1,:), 'hh2');
+ModelsFuncsNames(1,:) = strcat(ModelsFuncsNames(1,:), 'CO');
 ModelsFuncsNames(2,:) = strcat(ModelsFuncsNames(2,:), 'stim');
 
 hasModel = zeros (NUM_OF_SEGS, NUM_OF_MODELS);

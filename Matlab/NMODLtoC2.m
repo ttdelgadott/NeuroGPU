@@ -96,11 +96,16 @@ for i=1:numel(CProcLines)
     CProcLinesCu{i}=AddModelNameToFunctions(CProcLinesCu{i},SrcCu,TrgCu);
 end
 if ~isempty(CDerivLines)
-CDerivLines=AddModelNameToFunctions(CDerivLines,Src,Trg);
-CDerivLinesCu=AddModelNameToFunctions(CDerivLinesCu,SrcCu,TrgCu);
+    CDerivLines=AddModelNameToFunctions(CDerivLines,Src,Trg);
+    CDerivLinesCu=AddModelNameToFunctions(CDerivLinesCu,SrcCu,TrgCu);
+end
+if ~isempty(CKineticLines)
+    CKineticLines = AddModelNameToFunctions(CKineticLines,Src,Trg);
+    CKineticLines = AddModelNameToFunctions(CKineticLines,SrcCu,TrgCu);
 end
 CBreakLines=AddModelNameToFunctions(CBreakLines,Src,Trg);
 CBreakLinesCu=AddModelNameToFunctions(CBreakLinesCu,SrcCu,TrgCu);
+
 
 Src=AllParameters;
 Trg=strcat(AllParameters,['_' ModelName]);
@@ -113,6 +118,10 @@ CParamLines=AddModelNameToFunctions(CParamLines,Src,Trg);
 if ~isempty(CDerivLines)
 CDerivLines=AddModelNameToFunctions(CDerivLines,Src,Trg);
 CDerivLinesCu=AddModelNameToFunctions(CDerivLinesCu,Src,Trg);
+end
+if ~isempty(CKineticLines)
+CKineticLines=AddModelNameToFunctions(CKineticLines,Src,Trg);
+CKineticLinesCu=AddModelNameToFunctions(CKineticLinesCu,Src,Trg);
 end
 CBreakLines=AddModelNameToFunctions(CBreakLines,Src,Trg);
 CBreakLinesCu=AddModelNameToFunctions(CBreakLinesCu,Src,Trg);
@@ -132,6 +141,9 @@ for i=1:numel(CFuncLinesCu)
 end
 
 BreakPointDeclare=AddModelNameToFunctions(BreakPointDeclare,Src,Trg);
+if ~isempty(DerivDeclare)
+    DerivDeclare=AddModelNameToFunctions(DerivDeclare,Src,Trg);
+end
 if ~isempty(DerivDeclare)
     DerivDeclare=AddModelNameToFunctions(DerivDeclare,Src,Trg);
 end

@@ -37,8 +37,12 @@ TmpVars=setdiff(NeuronS.Range,union(AllParameters,AllState));
 SecondLine=strcat(union(TmpVars,NeuronS.Condatances),',');
 SecondLine=[FTYPESTR ' ' SecondLine{:}];
 SecondLine=[SecondLine(1:end-1) ';'];
-BreakOutVars={NeuronS.Writes NeuronS.NonspecificCurrent};
-BreakOutVars={NeuronS.Writes{:} NeuronS.NonspecificCurrent};
+%BreakOutVars={NeuronS.Writes NeuronS.NonspecificCurrent};
+if ~isempty(NeuronS.NonspecificCurrent)
+    BreakOutVars={NeuronS.Writes{:} NeuronS.NonspecificCurrent};
+else
+    BreakOutVars={NeuronS.Writes{:}};
+end
 %BreakOutVars=BreakOutVars(cellNumel(BreakOutVars)>0);
 %BreakOutVars=cat(1,BreakOutVars{:});
 BreakOutVars=setdiff(BreakOutVars,union(AdditionalWritesC,NeuronS.WritesNoCurrents));

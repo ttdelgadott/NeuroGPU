@@ -211,6 +211,7 @@ CInitLinesC=removeGlobalsRecalculation(ReplacePow(CInitLinesC),NGlobals);
 CProcLinesC=removeGlobalsRecalculation(ReplacePow(CProcLinesC),NGlobals);
 CDerivLinesC=removeGlobalsRecalculation(ReplacePow(CDerivLinesC),NGlobals);
 CBreakLinesC=removeGlobalsRecalculation(ReplacePow(CBreakLinesC),NGlobals);
+CKineticLinesC=removeGlobalsRecalculation(ReplacePow(CKineticLinesC),NGlobals);
 fprintf(fid,'\n// Declarations:\n');
 putLines(fid,ProcDeclareC);
 
@@ -222,6 +223,8 @@ fprintf(fid,'\n// Inits:\n');
 putLines(fid,CInitLinesC);
 fprintf(fid,'\n// Procedures:\n');
 putLines(fid,CProcLinesC);
+fprintf(fid,'\n// Kinetic:\n');
+putLines(fid,CKineticLinesC);
 fprintf(fid,'\n// Derivs:\n');
 putLines(fid,CDerivLinesC);
 fprintf(fid,'\n// Breakpoints:\n');
@@ -424,8 +427,8 @@ cmVec = createCmvec(Neuron.Cms,Neuron.NSegs);
 [FN FNP FNM Aux]=CreatAuxiliaryData3(rot90(OurMat,2),Nx,fliplr(Neuron.NSegsMat'), numel(Neuron.NSegs)+1-fliplr(Neuron.Parent),Neuron,cmVec,FN_TopoList);
 %% CUH file
 %VSDir = fullfile(BaseP, 'VS','NeuroGPUStimCUDAHu','NeuronC');
-VSDir = fullfile(BaseP, 'VS','NeuroGPULast','NeuroGPU6');
-
+%VSDir = fullfile(BaseP, 'VS','NeuroGPULast','NeuroGPU6');
+VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5','NeuroGPU6');
 % fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.cuh'),'w');
 fid=fopen(fullfile(VSDir,'AllModels.cuh'),'w');
 fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
