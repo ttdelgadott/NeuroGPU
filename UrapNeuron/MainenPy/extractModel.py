@@ -15,11 +15,12 @@ def nrn_dll(printpath=False):
     import os
     import platform
     
-    neuron_home = os.path.split(os.path.split(nrn.h.neuronhome())[0])[0]
+    # neuron_home = os.path.split(os.path.split(nrn.h.neuronhome())[0])[0]
 
     success = False
-    base_path = os.path.join(neuron_home, 'lib' , 'python2.7', 'site-packages', 'neuron', 'hoc')
-    base_path = '/home/devloop0/neuron/nrn/lib/python/neuron/hoc'
+    # base_path = os.path.join(neuron_home, 'lib' , 'python2.7', 'site-packages', 'neuron', 'hoc')
+    # base_path = '/home/devloop0/neuron/nrn/lib/python/neuron/hoc'
+    base_path = os.path.join(os.path.expanduser('~'), 'neuron', 'nrn', 'lib', 'python', 'neuron', 'hoc')
     for extension in ['', '.dll', '.so', '.dylib']:
         try:
             the_dll = ctypes.cdll[base_path + extension]
