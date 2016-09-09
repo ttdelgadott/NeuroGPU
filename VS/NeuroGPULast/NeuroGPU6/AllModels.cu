@@ -1,4 +1,4 @@
-// Automatically generated CU for C:\Users\rben.KECK-CENTER\Documents\Lab\GPUAnalysis\Neuron\Mainen\runModel.hoc
+// Automatically generated CU for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -25,7 +25,7 @@
 #define vmin_ca (-120)
 #define vmax_ca (100)
 #define vshift_ca (0)
-#define depth_cad (0.93433)
+#define depth_cad (0.1)
 #define cainf_cad (0.0001)
 #define taur_cad (200)
 #define q10_kca (2.3)
@@ -128,7 +128,7 @@ float  a, b;
 ;};
 __device__ void Curates_kca(float cai,float gbar_kca,float caix_kca,float Ra_kca,float Rb_kca,float &a,float &b,float &ninf,float &ntau) {
         ;
-        a =pow( Ra_kca * cai,caix_kca);
+        a =pow((MYFTYPE) Ra_kca * cai,(MYFTYPE)caix_kca);
         b = Rb_kca;
        /* removed tadj_kca recalculation */
         ntau = 1/tadj_kca/(a+b);
@@ -219,8 +219,6 @@ float hinf,htau,minf,mtau;
 	m = minf;
 	h = hinf;
 ;};
-__device__ void CuInitModel_pas(float v,float g_pas,float e_pas) {
-;};
 
 // Derivs:
 __device__ void CuDerivModel_ca(float dt, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
@@ -259,13 +257,11 @@ float hinf,htau,minf,mtau;
     m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau)))*(- ( ( ( minf ) ) / mtau ) / ( ( ( ( - 1.0) ) ) / mtau ) - m) ;
     h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau)))*(- ( ( ( hinf ) ) / htau ) / ( ( ( ( - 1.0) ) ) / htau ) - h) ;
    ;}
-__device__ void CuDerivModel_pas(float dt, float v,float g_pas,float e_pas) {
-float i;
-;}
 
 // Breakpoints:
 __device__ void CuBreakpointModel_ca(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
-
+float eca;
+eca = Cunernst(cai,DEF_cao,2.);
 float gca,hinf,htau,minf,mtau;
 gca=tadj_ca*gbar_ca*m*m*h;
 ica=(1e-4)*gca*(v-eca);
@@ -306,11 +302,4 @@ gna=tadj_na*gbar_na*m*m*m*h;
 ina=(1e-4)*gna*(v-ena);
 sumCurrents+= ina;
 sumConductivity+= gna;
-;};
-__device__ void CuBreakpointModel_pas(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float g_pas,float e_pas) {
-float gpas;
-float i;
-i=g_pas*(v-e_pas);
-sumCurrents+= i;
-sumConductivity+= g_pas;
 ;};

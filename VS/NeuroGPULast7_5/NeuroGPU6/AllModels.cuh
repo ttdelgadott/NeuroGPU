@@ -18,6 +18,7 @@
 __device__ void CuInitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 ;
 __device__ void CuBreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
+__device__ void CuKineticModel_CO(,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 
 
 #define  SET_STATES(VARILP) ModelStates_ ## VARILP [0]=0;ModelStates_ ## VARILP [1]=0;;
@@ -35,6 +36,8 @@ __device__ void CuBreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumCon
 #define CALL_TO_BREAK_CU(VARILP)  if(cBoolModel[PIdx_ ## VARILP +0*InMat.N]){CuBreakpointModel_CO(sumCurrents_ ## VARILP , sumConductivity_ ## VARILP,v_ ## VARILP ,ModelStates_ ## VARILP[0],ModelStates_ ## VARILP[1],param_macro(0,PIdx_ ## VARILP) ,param_macro(1,PIdx_ ## VARILP) ,param_macro(2,PIdx_ ## VARILP) ,param_macro(3,PIdx_ ## VARILP) ,param_macro(4,PIdx_ ## VARILP) );}
 
 #define CALL_TO_BREAK_DV_CU(VARILP)  if(cBoolModel[PIdx_ ## VARILP +0*InMat.N]){CuBreakpointModel_CO(sumCurrentsDv_ ## VARILP , sumConductivityDv_ ## VARILP ,v_ ## VARILP +0.001,ModelStates_ ## VARILP[0],ModelStates_ ## VARILP[1],param_macro(0,PIdx_ ## VARILP) ,param_macro(1,PIdx_ ## VARILP) ,param_macro(2,PIdx_ ## VARILP) ,param_macro(3,PIdx_ ## VARILP) ,param_macro(4,PIdx_ ## VARILP) );}
+
+#define CALL_TO_KINETIC_CU(VARILP)  if(cBoolModel[PIdx_ ## VARILP +0*InMat.N]){CuKineticModel_CO(V[seg],ModelStates_ ## VARILP[0],ModelStates_ ## VARILP[1],param_macro(0,PIdx_ ## VARILP) ,param_macro(1,PIdx_ ## VARILP) ,param_macro(2,PIdx_ ## VARILP) ,param_macro(3,PIdx_ ## VARILP) ,param_macro(4,PIdx_ ## VARILP) );}
 
 
 #endif

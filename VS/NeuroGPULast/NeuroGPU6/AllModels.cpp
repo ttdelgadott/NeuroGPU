@@ -1,4 +1,4 @@
-// Automatically generated C for C:\Users\rben.KECK-CENTER\Documents\Lab\GPUAnalysis\Neuron\Mainen\runModel.hoc
+// Automatically generated C for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -20,7 +20,7 @@
 float a,b,drive_channel,gca,gk,gna,hinf,htau,minf,mtau,ninf,ntau;
 
 // Ion currents as Locals:
-float i,ica,ik,ina;
+float ica,ik,ina;
 
 // NGlobals:
 #define q10_ca (2.3)
@@ -29,7 +29,7 @@ float i,ica,ik,ina;
 #define vmin_ca (-120)
 #define vmax_ca (100)
 #define vshift_ca (0)
-#define depth_cad (0.11311)
+#define depth_cad (0.1)
 #define cainf_cad (0.0001)
 #define taur_cad (200)
 #define q10_kca (2.3)
@@ -138,8 +138,6 @@ void InitModel_na(float v,float &m,float &h,float gbar_na,float tha_na,float qa_
 	m = minf;
 	h = hinf;
 ;};
-void InitModel_pas(float v,float g_pas,float e_pas) {
-;};
 
 // Procedures:
 void trates_ca(float v ,float gbar_ca,float cao_ca) {
@@ -161,7 +159,7 @@ float  a, b;
 ;};
 void rates_kca(float cai,float gbar_kca,float caix_kca,float Ra_kca,float Rb_kca) {
         ;
-        a =pow( Ra_kca * cai,caix_kca);
+        a =pow((MYFTYPE) Ra_kca * cai,(MYFTYPE)caix_kca);
         b = Rb_kca;
        /* removed tadj_kca recalculation */
         ntau = 1/tadj_kca/(a+b);
@@ -216,6 +214,8 @@ float  a, b;
 	hinf = 1/(1+exp((vm-thinf_na)/qinf_na));
 ;};
 
+// Kinetic:
+
 // Derivs:
 void DerivModel_ca(float dt, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
    trates_ca (  v + vshift_ca ,gbar_ca,cao_ca) ;
@@ -247,8 +247,6 @@ void DerivModel_na(float dt, float v,float &m,float &h,float gbar_na,float tha_n
     m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau)))*(- ( ( ( minf ) ) / mtau ) / ( ( ( ( - 1.0) ) ) / mtau ) - m) ;
     h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau)))*(- ( ( ( hinf ) ) / htau ) / ( ( ( ( - 1.0) ) ) / htau ) - h) ;
    ;}
-void DerivModel_pas(float dt, float v,float g_pas,float e_pas) {
-;}
 
 // Breakpoints:
 void BreakpointModel_ca(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
@@ -284,9 +282,4 @@ gna=tadj_na*gbar_na*m*m*m*h;
 ina=(1e-4)*gna*(v-ena);
 sumCurrents+= ina;
 sumConductivity+= gna;
-;};
-void BreakpointModel_pas(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float g_pas,float e_pas) {
-i=g_pas*(v-e_pas);
-sumCurrents+= i;
-sumConductivity+= g_pas;
 ;};

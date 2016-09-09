@@ -21,5 +21,7 @@ void InitModel_ca(float v,float &m,float &h,float gbar_ca,float cao_ca, float ca
 
 #define CALL_TO_BREAK_DV BreakpointModel_ca(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[0][seg] ,StatesM[1][seg] ,ParamsM[0][comp],ParamsM[1][comp],StatesM[8][ seg ],StatesM[9][ seg ]);
 
+#define CALL_TO_Kinetic 
+
 
 #endif
