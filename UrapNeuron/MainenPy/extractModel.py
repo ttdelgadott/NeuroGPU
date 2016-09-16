@@ -137,32 +137,245 @@ def get_recsites():
 
 
 def parse_models():
-    modout = []
-
+    model_name=[]
+    reads =[]
+    writes =[]
+    only_reads = []
+    all_states = []
+    lines = []
+    globals = []
+    nglobals_c = []
+    ions_c = []
+    all_state_line=[]
+    reads_no_reversals = []
+    only_reads_no_reversals = []
+    write_no_currents = []
+    all_state_line_seg = []
+    all_assigned = []
+    gs = []
     mod_files = list(glob.glob('*.mod'))
     mod_files.remove('branching.mod')
     for  i in range(len(mod_files)):
         mod_f = mod_files[i]
+        print 'parsing ' + mod_f
+        lines.append(file_to_list_no_comments(mod_f))
        # print 'parsing ' + mod_f + 'i is ' + repr(i)
-        modout.append(parse_model(mod_f))
-    return modout
+        output = parse_model(lines[i])
+        #return [model_name,globals,ions,reads,writes,only_reads,nglobal_c,curr_all_state,all_state_line]
+        model_name.append(output[0])
+        ions_c.append(output[2])
+        currents = ['i' + s for s in ions_c[i]]
+        reads.append(output[3])
+        writes.append(output[4])
+        curr_gs = ['g' + s for s in ions_c[i]]
+        gs.append(curr_gs)
+        curr_writes_no_currents = set(writes[i]) - set(currents)
+        write_no_currents.append(curr_writes_no_currents)
+        only_reads_tmp = output[5]
+        only_reads.append(only_reads_tmp)
+        curr_all_states = output[7]
+        all_states.append(curr_all_states)
+        globals.append(output[1])
+        nglobals_c.append(output[6])
+        all_state_line.append(output[8])
+        all_state_line_seg.append(output[9])
+        all_assigned.append(output[10])
+        reversals = set(['e' + v for v in ions_c[i]])
+        tmp = only_reads_tmp-reversals
+        only_reads_no_reversals.append(tmp)
+    ions = set([item for sublist in ions_c for item in sublist])
+    all_currents = ['i' + s for s in ions]
+    all_reversals = ['e' + s for s in ions]
+    all_reads = set([item for sublist in reads for item in sublist])
+    all_reads_no_reversals = set(all_reads-set(all_reversals))
+    for i in range(len(lines)):
+        print 'parsing ' + model_name[i]
+        output = parse_model2(lines[i],globals[i],all_state_line[i],all_state_line_seg[i],model_name[i],only_reads_no_reversals[i],write_no_currents[i],all_reads_no_reversals,writes[i],all_assigned[i],all_states[i],reads[i],gs[i])
 
 
 
-def parse_model(FN):
-    print 'parsing ' +FN
+
+
+def parse_model(lines):
+
     writes = []
     reads = []
-    lines = file_to_list_no_comments(FN)
+    ions = []
+    nglobal_c = []
+    only_reads = []
     #output = get_mech_writes_reads(lines) # we might not need this.
-    output = handleNeuronBlock(lines)
-    assigned = handleAssignedBlock(lines)
-    states = handleStateBlock(lines)
-    output = handleParamsBlock(lines,output.Global)
+    output = handle_neuron_block(lines)
+    #return [suffix, currglobal, Useion, NSC, reads, writes, Range]
+    model_name = output[0]
+    globals = output[1]
+    ions = output[2]
+    reads = output[4]
+    writes = output[5]
+    only_reads = set(set(reads) - set(writes))
+    nglobal_c = [ v  + '_' + model_name for v in globals]
+    all_assigned = handle_assigned_block(lines)
+    output = handle_state_block(lines)
+    if not output:
+        output = ['',[],[]]
+    all_state_line = output[0]
+    all_state_line_seg = output[1]
+    curr_all_state = output[2]
+    return [model_name,globals,ions,reads,writes,only_reads,nglobal_c,curr_all_state,all_state_line,all_state_line_seg,all_assigned]
+
+
+def parse_model2(lines,globals,all_state_line,all_state_line_seg,model_name,only_reads_no_reversals,writes_no_currents,all_reads_no_reversals,writes,all_assigned,all_states,reads,gs):
+    output = handle_params_block(lines,globals)
+    # return [all_params_line, all_params_line_seg, c_param_lines, all_param_line_declare, all_params_line_call,all_params]
+    all_params_line = output[0]
+    all_params_line_seg = output[1]
+    all_params = output[5]
     all_param_line_declare = output[3]
-    functions = handleModFunction(lines)
-    procedure = hadnleModProcedures(lines,all_param_line_declare,output.Global)
-    return output
+    all_params_line_call = output[4]
+
+    #MIGHT need to pass this to parse model
+    output = create_states_param_str(all_state_line,all_state_line_seg,all_params_line,all_params_line_seg,only_reads_no_reversals,writes_no_currents,all_reads_no_reversals,writes)
+    states_params_str = output[0]
+    states_params_str_seg = output[1]
+    #return [all_params_line, all_params_line_seg, c_param_lines, all_param_line_declare, all_params_line_call]
+    output = handle_mod_function(lines)
+    #[func_names,c_func_lines,input_vars]
+    func_names = output[0]
+    c_func_lines = output[1]
+    input_vars = output[2]
+    output = handle_mod_procedures(lines,model_name,all_param_line_declare,globals,all_params_line_call)
+    #return [str_of_out_vars, before_first_line_all, all_c_proc_lines_cu, func_names, input_vars_c, all_out_vars]
+    before_first_line_all = output[1]
+    proc_names = output[3]
+    input_vars_proc = output[4]
+    all_out_vars = output[5]
+    tmpset = set(['celsius','v'] +all_states +all_params +reads+writes)
+    locals = set(all_assigned)-tmpset
+    output = handle_initial_block(lines,model_name,states_params_str,states_params_str_seg,proc_names,input_vars_proc,all_params_line_call,before_first_line_all)
+    # handle_initial_block(lines,model_name,states_params_str,func_names,input_vars_c,all_param_li
+    output = handle_deriv_block(lines,model_name,states_params_str,all_states,locals,all_params,all_out_vars,gs)
+
+    #def handle_deriv_block(lines, model_name, states_params_str, states, locals, all_parameters, all_out_vars,conductances):
+
+    return [locals]
+
+def create_states_param_str(all_state_line,all_state_line_seg,all_params_line,all_params_line_seg,only_reads_no_reversals,writes_no_currents,all_reads_no_reversals,writes):
+    additional_writes = set(set(v for  v in writes) & all_reads_no_reversals)-set(writes_no_currents)
+    only_reads_no_reversals = [v for v in only_reads_no_reversals]
+    additional_writes = [v for v in additional_writes]
+    state_param_sep = ''
+    param_global_sep = ''
+    if all_state_line:
+        state_param_sep=','
+    if all_params_line:
+        param_global_sep = ','
+    only_read = ''
+    only_read_seg = ''
+    if only_reads_no_reversals:
+        only_read = [', float ' + s for s in only_reads_no_reversals]
+        only_read = ''.join(only_read)
+        only_read_seg = [', ' + s +' [ seg ]' for s in only_reads_no_reversals]
+        only_read_seg = ''.join(only_read_seg)
+    write_no_current = ''
+    write_no_current_seg = ''
+    if writes_no_currents:
+        write_no_current = [', float &' + s for s in writes_no_currents]
+        write_no_current_seg = [', ' + s + ' [ seg ]' for s in writes_no_currents]
+        write_no_current = ''.join(write_no_current)
+        write_no_current_seg = ''.join(write_no_current_seg)
+    if additional_writes:
+        additional_writes = [', float &' + s for s in additional_writes]
+        additional_writes_seg = [', ' + s + ' [ seg ]' for s in additional_writes]
+        additional_writes = ''.join(additional_writes)
+        additional_writes_seg = ''.join(additional_writes_seg)
+    else:
+        additional_writes= ''
+        additional_writes_seg = ''
+
+    #your here and line 126 in handlemodlassigned
+
+    states_params_str = state_param_sep + all_state_line + param_global_sep + all_params_line + only_read + write_no_current + additional_writes
+    states_params_str_seg = state_param_sep + all_state_line_seg + param_global_sep + all_params_line_seg + only_read_seg + write_no_current_seg + additional_writes_seg
+    return [states_params_str,states_params_str_seg]
+
+
+
+
+
+
+def handle_initial_block(lines,model_name,states_params_str,states_params_str_seg,proc_names,input_vars_c,all_param_line_call,before_first_line_all):
+    start = index_containing_substring(lines, 'INITIAL')
+    if start < -1:
+        return []
+    sumP = lines[start].count('{') - lines[start].count('}')
+    currInd = start + 1
+    while (sumP > 0):
+        sumP = sumP + lines[currInd].count('{') - lines[currInd].count('}')
+        currInd += 1
+    end = currInd
+    tmp = lines[start].find('}')
+    if tmp>-1:
+        lines = lines[start][tmp:].split(' ')
+    else:
+        lines = lines[start+1:end]
+    first_line = 'void InitModel_' + model_name + '(float v' + states_params_str + '){'
+    init_declare = first_line[:-1] + ';'
+    tmp_lines = [s+';' for s in lines]
+    tmp_ind = index_containing_substring(tmp_lines,'SOLVE')
+    if tmp_ind>-1:
+        tmp_lines[tmp_ind] = '}'
+    c_init_lines = [first_line] + tmp_lines
+    c_init_lines = add_params_to_func_call(c_init_lines,proc_names,input_vars_c,all_param_line_call)
+    call_to_init = 'InitModel_' + model_name + '(V[seg]' + states_params_str_seg + ');'
+    tmp_lines_cu = tmp_lines
+    var_def_line = ''
+    has_proc_call = False
+    for proc in proc_names:
+        proc_ind = index_containing_substring(tmp_lines_cu,proc)
+        if proc_ind>-1:
+            has_proc_call = True
+            tmp_line = tmp_lines_cu[proc_ind][:tmp_lines_cu[proc_ind].rfind(')')]
+            tmp_lines_cu[proc_ind] = tmp_line+ ',' + all_param_line_call + ');'
+    if has_proc_call:
+        c_init_lines_cu = [first_line] + [before_first_line_all]+tmp_lines_cu
+    else:
+        c_init_lines_cu = [first_line] + tmp_lines_cu
+    c_init_lines_cu[0] = '__device__' + re.sub(c_init_lines_cu[0],'void\W*','void Cu')
+
+
+def handle_deriv_block(lines,model_name,states_params_str,states,locals,all_parameters,all_out_vars,conductances):
+    start = index_containing_substring(lines, 'DERIVATIVE')
+    if start < 0:
+        return []
+    sumP = lines[start].count('{') - lines[start].count('}')
+    currInd = start + 1
+    while (sumP > 0):
+        sumP = sumP + lines[currInd].count('{') - lines[currInd].count('}')
+        currInd += 1
+    end = currInd
+    tmp = lines[start].find('}')
+    lines = lines[start + 1:end]
+    first_line = 'void DerivModel_' + model_name + '(float dt, float v' + states_params_str + '){'
+    derivs = [s + '_d,' for s in states]
+    derivs[-1] = derivs[-1][:-1]
+    second_line_x = FTYPESTR + ' '.join(derivs) + ';'
+    tmp_vars = set(locals-set(all_parameters))- set(all_out_vars | set(conductances))
+    locals_line = ''
+    if tmp_vars:
+        locals_line = [s + ',' for s in tmp_vars]
+        locals_line = FTYPESTR.join(locals_line)
+        locals_line = locals_line[:-1] + ';'
+    deriv_declare = first_line[:-1] + ';'
+    tmp_lines = [re.sub("'",'_d',s)+';' for s in lines ]
+    add_deriv_lines = [s + '+=' + s + '_d*dt;' for s in states]
+    print tmp_lines
+
+
+#CInitLines=AddParamsToFuncCall(CInitLines,FuncNames,InputVarsC,AllParamLineCall);
+
+
+
+
+
 
 def get_mech_writes_reads(lines):
     writes = []
@@ -180,9 +393,9 @@ def get_mech_writes_reads(lines):
 
     return output
 
-def handleNeuronBlock(lines):
-    writes = ''
-    reads = ''
+def handle_neuron_block(lines):
+    writes = []
+    reads = []
     NSC = ''
     Useion = ''
     Range = ''
@@ -194,12 +407,12 @@ def handleNeuronBlock(lines):
         [first,rest] = currline.split(' ',1)
         #print "first is" + first + "rest is "+ rest
         if first.find('SUFFIX')>0:
-            Suffix=rest.strip(' ')
+            suffix=rest.strip(' ')
         elif first.find('USEION')>0:
 
 
             [ion_name,rest] = rest.split(' ',1)
-            Useion = ion_name
+            Useion = [ion_name]
             Tmp = re.findall('.*WRITE(.*)', rest)
             if Tmp:
                 writes = Tmp[0].split(',')
@@ -234,10 +447,10 @@ def handleNeuronBlock(lines):
         else:
             print 'unknown' + currline
 
-    output = ModNeuron(Suffix, Useion, NSC, reads,writes,Range, currglobal)
-    return output
 
-def handleAssignedBlock(lines):
+    return [suffix, currglobal, Useion, NSC, reads,writes,Range]
+
+def handle_assigned_block(lines):
     start = index_containing_substring(lines,'ASSIGNED')
 
     end = index_containing_substring(lines[start:],'}')
@@ -252,13 +465,14 @@ def handleAssignedBlock(lines):
                     all_assigned.append(s)
     return all_assigned
 
-def handleStateBlock(lines):
+def handle_state_block(lines):
     states=[]
-    all_state_line = str(0)
+    all_states = []
+    all_state_line = ''
     all_state_line_seg = ''
     start = index_containing_substring(lines,'STATE')
     if start==-1:
-        return states
+        return [all_state_line,all_state_line_seg,states]
     end = index_containing_substring(lines[start:],'}')
     if end == 0:
         states_line = lines[start:(start+end+1)][0]
@@ -280,10 +494,10 @@ def handleStateBlock(lines):
         for x in xrange(0, len(states)):
             all_state_line_seg = all_state_line_seg +'StatesM[' + str(x +StateStartVal) + '][seg] ,'
         all_state_line_seg = all_state_line_seg[:-1]
-    #print all_state_line
-    #print all_state_line_seg
 
-def handleParamsBlock(lines,globals):
+    return [all_state_line,all_state_line_seg,states]
+
+def handle_params_block(lines,globals):
     params = []
     new_params_lines = []
     new_params_lines_with_values = []
@@ -291,7 +505,7 @@ def handleParamsBlock(lines,globals):
     all_params_line_seg = []
     c_param_lines = []
     all_param_line_declare = ''
-    all_param_line_call = []
+    all_params_line_call = ''
     start = index_containing_substring(lines, 'PARAMETER')
     if start == -1:
         return params
@@ -337,13 +551,14 @@ def handleParamsBlock(lines,globals):
             all_param_line_declare = ','+all_params_line
             all_params_line_call = [params[i] + ',' for i in not_global_inds]
             all_params_line_call = ''.join(all_params_line_call)[:-1]
-    return [all_params_line, all_params_line_seg, c_param_lines, all_param_line_declare, all_param_line_call]
+    return [all_params_line, all_params_line_seg, c_param_lines, all_param_line_declare, all_params_line_call,all_params]
 
-def handleModFunction(lines):
+def handle_mod_function(lines):
     func_names = []
     func_names_cu = []
     c_func_lines =[]
     c_func_lines_cu = []
+    input_vars = []
     indices = [i for i, x in enumerate(lines) if "FUNCTION" in x]
     for start in indices:
         sumP =lines[start].count('{') - lines[start].count('}')
@@ -352,14 +567,15 @@ def handleModFunction(lines):
             sumP = sumP + lines[currInd].count('{') - lines[currInd].count('}')
             currInd += 1
         end = currInd
-        output = parseModFunction(lines[start:end])
+        output = parse_mod_function(lines[start:end])
         func_names.append(output[0])
         func_names_cu.append('Cu' + output[0])
         c_func_lines.append(output[1])
+        input_vars.append(output[2])
         c_func_lines_cu.append('__device__ ' + re.sub(output[0],'Cu' + output[0],output[1][0]))
-    print c_func_lines_cu
+    return [func_names,c_func_lines,input_vars]
 
-def parseModFunction(lines):
+def parse_mod_function(lines):
     p_ind = lines[0].find('(')
     func_name = lines[0][9:p_ind]
     input_vars =  re.search('\((.*?)\)', lines[0]).group(1)
@@ -371,9 +587,10 @@ def parseModFunction(lines):
     for line in lines[1:]:
         c_func_lines.append(re.sub(func_name + '\W*=', 'return ', line.strip(' \t')))
     #print c_func_lines
-    return [func_name,c_func_lines]
+    return [func_name,c_func_lines,input_vars]
 
-def hadnleModProcedures(lines,all_param_line_declare,globals,all_param_line_call):
+
+def handle_mod_procedures(lines,model_name,all_param_line_declare,globals,all_params_line_call):
     indices = [i for i, x in enumerate(lines) if "PROCEDURE" in x]
     out_vars_c = []
     func_names = []
@@ -382,28 +599,94 @@ def hadnleModProcedures(lines,all_param_line_declare,globals,all_param_line_call
     proc_declare = []
     all_c_proc_lines = []
     proc_declare_cu = []
-    c_proc_lines_cu= []
+    all_c_proc_lines_cu = []
+    all_params_line_call_c = []
+    all_out_vars = set()
+    out_vars = []
+    local_vars = []
     for start in indices:
         end = index_containing_substring(lines[start:],'}')
-        output = parseModProc(lines[start:start+end+1],all_param_line_declare,all_param_line_call)
+        output = parse_mod_proc(lines[start:start+end+1],all_param_line_declare,globals,all_params_line_call)
+        #out_vars, func_name, input_vars, before_first_line, first_line, c_local_line, f_lines, params_line_call_c,local_vars)
+        out_vars = output[0]
         out_vars_c.append(output[0])
         func_names.append(output[1])
         input_vars_c.append(output[2])
-        list_of_out_vars.apeend(output[3])
+        list_of_out_vars.append(output[3])
         first_line = output[4]
         c_local_line = output[5]
         f_lines = output[6]
+        all_params_line_call_c.append(output[7])
+        #local_vars.append(output[8])
         flat_f_lines = [v for v in f_lines]
-        c_proc_lines = [first_line, c_local_line + flat_f_lines]
+        #flat_f_lines = ''.join(flat_f_lines)
+        c_proc_lines = [first_line,c_local_line]
+        for v in flat_f_lines:
+            c_proc_lines.append(v)
         all_c_proc_lines.append(c_proc_lines)
         curr_proc_declare = first_line[:-1] + ';'
         proc_declare.append(curr_proc_declare)
-        proc_declare_cu.append(curr_proc_declare[:curr_proc_declare.find(')')-1] + end_str + ');' )
-        first_line_cu = [proc_declare_cu[-1][:-1] + ' {']
-        c_proc_lines_cu.append[first_line_cu + c_local_line + flat_f_lines]
+        proc_declare_cu.append(curr_proc_declare[:curr_proc_declare.find(')')] + end_str + ');' )
+        first_line_cu = proc_declare_cu[-1][:-1] + ' {'
+        c_proc_lines_cu = [first_line_cu,c_local_line]
+        for v in flat_f_lines:
+            c_proc_lines_cu.append(v)
+        all_c_proc_lines_cu.append(c_proc_lines_cu)
+    all_out_vars = all_out_vars.union(out_vars)
+    all_out_vars = all_out_vars.difference(globals)
+    tmp_str = ''
+    #tmp = [FTYPESTR + ' &' + v +',' for v in all_out_vars]
+    #tmp = tmp[:-1]
+    tmp = ''
+    tmp2 = ''
+    before_first_line_all = ''
+    for s in all_out_vars:
+        tmp2 = tmp2 + s + ','
+        tmp_str = tmp_str + FTYPESTR + ' &' + s + ','
+        before_first_line_all = before_first_line_all + tmp +s
+        tmp = ','
+    tmp_str = tmp_str[:-1]
+    str_of_out_vars = before_first_line_all
+    before_first_line_all = FTYPESTR + ' ' + before_first_line_all + ';'
+    seperator = ','
+    if not all_out_vars:
+        seperator = ''
+    #all_params_line_call_all = all_params_line_call + seperator + tmp2[:-1]
+    for i in range(len(indices)):
+        c_proc_lines = all_c_proc_lines[i]
+        proc_declare_cu[i] ='__device__ ' + proc_declare_cu[i].replace(end_str,seperator + tmp_str)
+        proc_declare_cu[i] = re.sub('void\W*','void Cu',proc_declare_cu[i])
+        proc_declare_cu[i] = re.sub('\W*\(','_' + model_name + '(', proc_declare_cu[i])
+        #print 'start printing'
+        #print c_proc_lines
+        #YOU ARE HERE PUT C PROC LINES IN ORDER
+        out = add_params_to_func_call(c_proc_lines[1:], func_names, input_vars_c, all_params_line_call)
+        #print 'out is'
+        #print out
+        c_proc_lines = [c_proc_lines[0]]
+        for s in out:
+            c_proc_lines.append(s)
+        all_c_proc_lines[i] = c_proc_lines
+        curr_c_proc_cu = all_c_proc_lines_cu[i][0]
+        curr_c_proc_cu = '__device__ ' + curr_c_proc_cu.replace(end_str,seperator + tmp_str)
+        curr_c_proc_cu = re.sub('void\W*','void Cu',curr_c_proc_cu)
+        curr_c_proc_cu = re.sub('\W*\(', '_' + model_name + '(', curr_c_proc_cu)
+        all_c_proc_lines_cu[i][0] = curr_c_proc_cu
+    for k in range(len(indices)):
+        tmp_lines_cu = all_c_proc_lines_cu[k][1:]
+        for i in range(len(tmp_lines_cu)):
+            for j in range(len(func_names)):
+                func_call_i = tmp_lines_cu[i].find(func_names[j])
+                if func_call_i > -1:
+                    tmp_line = tmp_lines_cu[i][:tmp_lines_cu[i].rfind(')')]
+                    tmp_lines_cu[i] = tmp_line + ',' + all_params_line_call_c[j] + ');'
+        all_c_proc_lines_cu[k][1:] = tmp_lines_cu
+
+    return [str_of_out_vars,before_first_line_all,all_c_proc_lines_cu,func_names,input_vars_c,all_out_vars]
+    #return [out_vars_c,func_names,input_vars_c,list_of_out_vars,proc_declare,all_c_proc_lines,proc_declare_cu,c_proc_lines_cu ]
 
 
-def parseModProc(lines,all_param_line_declare,globals,all_param_line_call):
+def parse_mod_proc(lines,all_param_line_declare,globals,all_params_line_call):
     c_local_line = ''
     before_first_line = ''
     local_vars = []
@@ -442,21 +725,17 @@ def parseModProc(lines,all_param_line_declare,globals,all_param_line_call):
     lines = lines[1:]
     indices = [i for i, x in enumerate(lines) if re.search('UNITSOFF|LOCAL|TABLE', x)]
     f_lines = [v.strip(' /t').strip(' /t')+';' for i, v in enumerate(lines) if i not in indices]
-    print local_line_ind
     if local_line_ind>-1:
         local_lines = lines[local_line_ind]
     out_vars_no_globals = list(set(out_vars) - set(globals))
     tmp = ''
     out_vars_no_globals = [tmp.join(v.strip(' /t')) + ',' for v in out_vars_no_globals]
+    out_vars_no_globals = ''.join(out_vars_no_globals)
     separtor = ','
     if not out_vars_no_globals:
         separtor = ''
-    all_param_line_call_c = [all_param_line_call + separtor + tmp[:-1]]
-
-
-    print 'out_vars_no_globals:'
-    print out_vars_no_globals
-    return (out_vars,func_name,input_vars,before_first_line,first_line,c_local_line,f_lines,all_param_line_call_c)
+    params_line_call_c = all_params_line_call + separtor + out_vars_no_globals[:-1]
+    return (out_vars,func_name,input_vars,before_first_line,first_line,c_local_line,f_lines,params_line_call_c,local_vars)
 
 
 
@@ -514,6 +793,30 @@ def index_containing_substring(the_list, substring):
             return i
     return -1
 
+
+def add_params_to_func_call(input,func_names,input_vars_c,all_param_line_call):
+    out = input
+    end_i =0
+    seperator = ''
+    for i in range(len(input)):
+        curr_line = out[i]
+        for j in range(len(func_names)):
+            func_call_i = curr_line.find(func_names[j])
+            if func_call_i==-1:
+                continue
+            cur_ends_i = [m.start() for m in re.finditer('\\)', curr_line)]
+            end_i = -1
+            for k in cur_ends_i:
+                if k>func_call_i:
+                    end_i = k
+                    break
+            seperator = ','
+            if not input_vars_c:
+                seperator = ''
+            new_curr_line = curr_line[:end_i]+ seperator + all_param_line_call + curr_line[end_i:]
+            curr_line = new_curr_line
+        out[i] = curr_line
+    return out
 
 
 
