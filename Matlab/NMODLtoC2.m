@@ -1,4 +1,4 @@
-clearvars -except paramsFN VoltsFolder StimFN params BaseP FN_TopoList FN_Topo FN_TopoF FN_TopoMDL FN_TopoPP HocBaseFN ModFN ModMap ModelName availableMechanisms CurModI CallToInitC CallToDerivC CallToBreakC CallToBreakDvC BreakPointDeclareC DerivDeclareC InitDeclareC AllParametersC AllStateC ReadsC WritesC CParamLinesC CDerivLinesC CBreakLinesC CInitLinesC CProcLinesC GlobalParamBC ProcDeclareC ProcDeclareCuC CFuncLinesC CFuncLinesCuC LocalsC ParamStartVal StateStartVal AllParametersModelNameC NeuronSC AllAssignedC AllParametersNonGlobalC AllParametersGlobalC AllReadsNoReversals ExtraStatesTrg GGlobals Currents CInitLinesCuC CDerivLinesCuC CBreakLinesCuC CProcLinesCuC AllWrites stim Stim Sim paramSet currOptRunStr OutFN initParams copyToFileFlg Model
+clearvars -except paramsFN VoltsFolder StimFN params BaseP FN_TopoList FN_Topo FN_TopoF FN_TopoMDL FN_TopoPP HocBaseFN ModFN ModMap ModelName availableMechanisms CurModI CallToInitC CallToDerivC CallToBreakC CallToKineticC CallToBreakDvC BreakPointDeclareC KineticDeclareC  DerivDeclareC InitDeclareC AllParametersC AllStateC ReadsC WritesC CParamLinesC CDerivLinesC CBreakLinesC CKineticLinesC CInitLinesC CProcLinesC GlobalParamBC ProcDeclareC ProcDeclareCuC CFuncLinesC CFuncLinesCuC LocalsC ParamStartVal StateStartVal AllParametersModelNameC NeuronSC AllAssignedC AllParametersNonGlobalC AllParametersGlobalC AllReadsNoReversals ExtraStatesTrg GGlobals Currents CInitLinesCuC CDerivLinesCuC CBreakLinesCuC  CKineticLinesCuC CProcLinesCuC AllWrites stim Stim Sim paramSet currOptRunStr OutFN initParams copyToFileFlg Model
 mkdir([BaseP 'Matlab' filesep 'CParsed' filesep]);
 MODLFN=[BaseP 'Matlab' filesep 'CParsed' filesep ModelName '.mod'];
 if(exist(MODLFN,'file'))
@@ -70,7 +70,7 @@ HandleNMODLProcedure; % CProcLines
 HandleNMODLInitial; % CInitLines;
 HandleNMODLDerivative; % CDerivLines
 HandleNMODLBreakpoint; % CBreakLines
-HandleNMODLKinetic;
+HandleNMODLKinetic;% CKineticLines
 AllAssignedC{CurModI}=AllAssigned;
 %%
 % Update states by derivatives!
@@ -144,8 +144,8 @@ BreakPointDeclare=AddModelNameToFunctions(BreakPointDeclare,Src,Trg);
 if ~isempty(DerivDeclare)
     DerivDeclare=AddModelNameToFunctions(DerivDeclare,Src,Trg);
 end
-if ~isempty(DerivDeclare)
-    DerivDeclare=AddModelNameToFunctions(DerivDeclare,Src,Trg);
+if ~isempty(KineticDeclare)
+    KineticDeclare=AddModelNameToFunctions(KineticDeclare,Src,Trg);
 end
 InitDeclare=AddModelNameToFunctions(InitDeclare,Src,Trg);
 
@@ -162,15 +162,17 @@ CDerivLinesC{CurModI}=CDerivLines;
 CDerivLinesCuC{CurModI}=CDerivLinesCu;
 CBreakLinesC{CurModI}=CBreakLines;
 CBreakLinesCuC{CurModI}=CBreakLinesCu;
-
+CKineticLinesC{CurModI}=CKineticLines;
+CKineticLinesCuC{CurModI}=CKineticLinesCu;
 CallToInitC{CurModI}=CallToInit;
 CallToDerivC{CurModI}=CallToDeriv;
 CallToBreakC{CurModI}=CallToBreak;
 CallToBreakDvC{CurModI}=CallToBreakDv;
-
+CallToKineticC{CurModI}=CallToKinetic;
 BreakPointDeclareC{CurModI}=BreakPointDeclare;
 DerivDeclareC{CurModI}=DerivDeclare;
 InitDeclareC{CurModI}=InitDeclare;
+KineticDeclareC{CurModI}=KineticDeclare;
 
 AllParametersC{CurModI}=AllParameters;
 %% Writing out files
@@ -219,6 +221,11 @@ for i=1:numel(CBreakLines)
 end
 fprintf(fid,'\n');
 
+for i=1:numel(CKineticLines)
+    fprintf(fid,'%s\n',CKineticLines{i});
+end
+fprintf(fid,'\n');
+
 fclose(fid);
 
 %% H file
@@ -244,7 +251,7 @@ fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',CallToInit);
 fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',CallToDeriv);
 fprintf(fid,'#define CALL_TO_BREAK %s\n\n',CallToBreak);
 fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',CallToBreakDv);
-
+fprintf(fid,'#define CALL_TO_Kinetic %s\n\n',CallToKinetic);
 fprintf(fid,'\n#endif');
 fclose(fid);
 %% Cu file
@@ -290,6 +297,11 @@ fprintf(fid,'\n');
 
 for i=1:numel(CBreakLines)
     fprintf(fid,'%s\n',CBreakLines{i});
+end
+fprintf(fid,'\n');
+
+for i=1:numel(CKineticLines)
+    fprintf(fid,'%s\n',CKineticLines{i});
 end
 fprintf(fid,'\n');
 

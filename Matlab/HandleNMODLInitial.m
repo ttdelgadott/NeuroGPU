@@ -21,10 +21,20 @@ end
 if(~exist('StatesAndParamsStr'))
     StatesAndParamsStr='';
 end
-CurLines=Lines((StartL+1):EndL);
+if strhas(Lines(StartL),'}') 
+    CurLines = Lines(StartL);
+    CurLines =regexp(CurLines,'INITIAL\s*{','split');
+    CurLines = CurLines{1};
+else
+    CurLines=Lines((StartL+1):EndL);
+end
 FirstLine=['void InitModel_' ModelName '(float v' StatesAndParamsStr ') {'];
 InitDeclare=[FirstLine(1:end-1) ';'];
 TmpLines=strcat(CurLines,';');
+tmpInd = find(strhas(TmpLines,'SOLVE'));
+if(tmpInd)
+    TmpLines{tmpInd} = '}';
+end
 CInitLines=[FirstLine; Straighten(TmpLines)'];
 
 CInitLines=AddParamsToFuncCall(CInitLines,FuncNames,InputVarsC,AllParamLineCall);

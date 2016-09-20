@@ -224,12 +224,13 @@ putLines(fid,CInitLinesC);
 fprintf(fid,'\n// Procedures:\n');
 putLines(fid,CProcLinesC);
 fprintf(fid,'\n// Kinetic:\n');
-putLines(fid,CKineticLinesC);
+%putLines(fid,CKineticLinesC);
 fprintf(fid,'\n// Derivs:\n');
 putLines(fid,CDerivLinesC);
 fprintf(fid,'\n// Breakpoints:\n');
 putLines(fid,CBreakLinesC);
-
+fprintf(fid,'\n// Kinetic:\n');
+putLines(fid,CKineticLinesC);
 fclose(fid);
 
 %% CU file
@@ -280,7 +281,7 @@ CInitLinesCuC=removeGlobalsRecalculation(ReplacePow(CInitLinesCuC),NGlobals);
 CProcLinesCuC=removeGlobalsRecalculation(ReplacePow(CProcLinesCuC),NGlobals);
 CDerivLinesCuC=removeGlobalsRecalculation(ReplacePow(CDerivLinesCuC),NGlobals);
 CBreakLinesCuC=removeGlobalsRecalculation(ReplacePow(CBreakLinesCuC),NGlobals);
-
+CKineticLinesCuC=removeGlobalsRecalculation(ReplacePow(CKineticLinesCuC),NGlobals);
 fprintf(fid,'\n// Declarations:\n');
 putLines(fid,ProcDeclareCuC);
 
@@ -296,7 +297,8 @@ fprintf(fid,'\n// Derivs:\n');
 putLines(fid,CDerivLinesCuC);
 fprintf(fid,'\n// Breakpoints:\n');
 putLines(fid,CBreakLinesCuC);
-
+fprintf(fid,'\n// Kinetic:\n');
+putLines(fid,CKineticLinesCuC);
 fclose(fid);
 %% H file
 fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.h'),'w');
@@ -325,22 +327,27 @@ for CurModI=1:numel(availableMechanisms)
     fprintf(fid,'%s\n',BreakPointDeclareC{CurModI});
     fprintf(fid,'%s\n',DerivDeclareC{CurModI});
     fprintf(fid,'%s\n\n',InitDeclareC{CurModI});
+     fprintf(fid,'%s\n\n',KineticDeclareC{CurModI});
 end
 %%RBS Start
 callToInitStr='';
 callToDerivStr='';
 callToBreakStr ='';
+callToKineticStr ='';
 callToBreakDVStr='';
 for modInd = 1:numel(CallToInitC)
     callToInitStr=[callToInitStr,sprintf(' if(TheMMat.boolModel[seg+%d*TheMMat.N]){%s}',modInd-1,CallToInitC{modInd})];
     callToDerivStr=[callToDerivStr,sprintf(' if(TheMMat.boolModel[seg+%d*TheMMat.N]){%s}',modInd-1,CallToDerivC{modInd})];
     callToBreakStr=[callToBreakStr,sprintf(' if(TheMMat.boolModel[seg+%d*TheMMat.N]){%s}',modInd-1,CallToBreakC{modInd})];
+    
     callToBreakDVStr=[callToBreakDVStr,sprintf(' if(TheMMat.boolModel[seg+%d*TheMMat.N]){%s}',modInd-1,CallToBreakDvC{modInd})];
+    callToKineticStr=[callToKineticStr,sprintf(' if(TheMMat.boolModel[seg+%d*TheMMat.N]){%s}',modInd-1,CallToKineticC{modInd})];
 end
 fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',strrep(callToInitStr,'ParamsM[','ParamsMSerial['));
 fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',strrep(callToDerivStr,'ParamsM[','ParamsMSerial['));
 fprintf(fid,'#define CALL_TO_BREAK %s\n\n',strrep(callToBreakStr,'ParamsM[','ParamsMSerial['));
 fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',strrep(callToBreakDVStr,'ParamsM[','ParamsMSerial['));
+fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',strrep(callToKineticStr,'ParamsM[','ParamsMSerial['));
 
 % 
 % fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',strrep([CallToInitC{:}],'ParamsM[','ParamsMSerial['));
@@ -427,8 +434,8 @@ cmVec = createCmvec(Neuron.Cms,Neuron.NSegs);
 [FN FNP FNM Aux]=CreatAuxiliaryData3(rot90(OurMat,2),Nx,fliplr(Neuron.NSegsMat'), numel(Neuron.NSegs)+1-fliplr(Neuron.Parent),Neuron,cmVec,FN_TopoList);
 %% CUH file
 %VSDir = fullfile(BaseP, 'VS','NeuroGPUStimCUDAHu','NeuronC');
-%VSDir = fullfile(BaseP, 'VS','NeuroGPULast','NeuroGPU6');
-VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5','NeuroGPU6');
+%VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5Mainen','NeuroGPU6');
+VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5Mainen','NeuroGPU6');
 % fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.cuh'),'w');
 fid=fopen(fullfile(VSDir,'AllModels.cuh'),'w');
 fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
@@ -451,6 +458,7 @@ for CurModI=1:numel(availableMechanisms)
     fprintf(fid,'%s\n',[CInitLinesCuC{CurModI}{1}(1:end-1) ';']);
     fprintf(fid,'%s\n',[CDerivLinesCuC{CurModI}{1}(1:end-1) ';']);
     fprintf(fid,'%s\n',[CBreakLinesCuC{CurModI}{1}(1:end-1) ';']);
+    fprintf(fid,'%s\n',[CKineticLinesCuC{CurModI}{1}(1:end-1) ';']);
 end
 %RBS Start
 
@@ -472,10 +480,13 @@ callToInitStrCU = regexprep(callToInitStrCU,'p([0-9]*)_ ## VARILP','param_macro(
 callToDerivStrCU = regexprep(callToDerivStrCU,'p([0-9]*)_ ## VARILP','param_macro($1,PIdx_ ## VARILP)');
 callToBreakStrCU = regexprep(callToBreakStrCU,'p([0-9]*)_ ## VARILP','param_macro($1,PIdx_ ## VARILP)');
 callToBreakDVStrCU = regexprep(callToBreakDVStrCU,'p([0-9]*)_ ## VARILP','param_macro($1,PIdx_ ## VARILP)');
+callToKineticStrCU = regexprep(callToKineticStrCU,'p([0-9]*)_ ## VARILP','param_macro($1,PIdx_ ## VARILP)');
+
 fprintf(fid,'\n\n#define CALL_TO_INIT_STATES_CU(VARILP)  %s\n\n',callToInitStrCU);
 fprintf(fid,'#define CALL_TO_DERIV_CU(VARILP)  %s\n\n',callToDerivStrCU);
 fprintf(fid,'#define CALL_TO_BREAK_CU(VARILP) %s\n\n',callToBreakStrCU);
 fprintf(fid,'#define CALL_TO_BREAK_DV_CU(VARILP) %s\n\n',callToBreakDVStrCU);
+fprintf(fid,'#define CALL_TO_KINETIC_CU(VARILP) %s\n\n',callToKineticStrCU);
 
 %RBS end
 %%Gilad's code
@@ -517,13 +528,14 @@ for CurModI=1:numel(availableMechanisms)
     fprintf(fid,'%s\n',BreakPointDeclareC{CurModI});
     fprintf(fid,'%s\n',DerivDeclareC{CurModI});
     fprintf(fid,'%s\n\n',InitDeclareC{CurModI});
+     fprintf(fid,'%s\n',KineticDeclareC{CurModI});
 end
 
 fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',[CallToInitC{:}]);
 fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',[CallToDerivC{:}]);
 fprintf(fid,'#define CALL_TO_BREAK %s\n\n',[CallToBreakC{:}]);
 fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',[CallToBreakDvC{:}]);
-
+fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',[CallToKineticC{:}]);
 fprintf(fid,'\n#endif');
 fclose(fid);
 

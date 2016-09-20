@@ -20,5 +20,7 @@ void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a2
 
 #define CALL_TO_BREAK_DV BreakpointModel_CO(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[0][seg] ,StatesM[1][seg] ,ParamsM[0][comp],ParamsM[1][comp],ParamsM[2][comp],ParamsM[3][comp],ParamsM[4][comp]);
 
+#define CALL_TO_Kinetic KineticModel_CO(V[seg],StatesM[0][seg] ,StatesM[1][seg] ,ParamsM[0][comp],ParamsM[1][comp],ParamsM[2][comp],ParamsM[3][comp],ParamsM[4][comp]);
+
 
 #endif

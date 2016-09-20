@@ -16,6 +16,8 @@ if(~isempty(KineticLineI))
         EndL=EndL+1;
     end
     
+    
+    
     CurLines=Lines((StartL+1):EndL);
     FirstLine=['void KineticModel_' ModelName '(' StatesAndParamsStr ') {'];
     TmpVars=AllOutVars;
@@ -26,7 +28,7 @@ if(~isempty(KineticLineI))
         LocalsLine=[LocalsLine(1:end-1) ';'];
     end
     
-    
+    KineticDeclare=[FirstLine(1:end-1) ';'];
     
     C_SUFFIX='.c';
     CurFN=ModFN;
@@ -44,7 +46,7 @@ if(~isempty(KineticLineI))
     end
     
     CTmpLines=regexprep(CTmpLines,'_threadargscomma_','');
-    
+    CTmpLines=CTmpLines(2:end);%get rid of c signature.
     
     CKineticLines=[FirstLine; CTmpLines];
     CKineticLines=AddParamsToFuncCall(CKineticLines,FuncNames,InputVarsC,AllParamLineCall);

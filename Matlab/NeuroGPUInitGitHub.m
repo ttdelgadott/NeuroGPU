@@ -7,5 +7,4 @@ cd([BaseP,'Matlab']);
 OptP = BaseP;
 addpath(genpath(BaseP));
 addpath(genpath([BaseP,'/Matlab']));
-
-Model = 'Markov2st';
+Model = 'Mainen';
