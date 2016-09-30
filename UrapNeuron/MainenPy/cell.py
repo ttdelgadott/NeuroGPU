@@ -5,13 +5,13 @@ def cell_numel(input):
 	if input.size == 0:
 		return None
 	for i in range(input.size):
-		out[i] = input[i].size
+		out[i] = len(input[i])
 	return out
 
 def cell_2_vec(input):
 	cn = cell_numel(input)
 	cs = np.cumsum(input)
-	starts = np.array([1] + cs[0:cs.size - 1])
+	starts = np.array(list([1]) + list(cs[0:cs.size - 1] + 1))
 	end = cs
 	vec = []
 	for i in range(input.size):
