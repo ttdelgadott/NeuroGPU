@@ -24,7 +24,7 @@ gkca_dend=transvec.x(7)
 gca_soma=transvec.x(8)
 gkm_soma=transvec.x(9)
 gkca_soma=transvec.x(10)
-depth_cad=transvec.x(11)
+//depth_cad=transvec.x(11)
 
 //gna_dend=0
 //gna_node=0
