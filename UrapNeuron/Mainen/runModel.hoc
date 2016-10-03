@@ -9,8 +9,8 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMainen.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./params/orig.dat"
-stimFile = "./Stims/Step.dat"
+paramsFile = "./params/opt_params.dat"
+stimFile = "./Stims/stepsmall.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3176
 nparams =12
@@ -226,6 +226,9 @@ if(ext_num>0){
 	access Exts[0]
 		delete_section()
 	}
+//****************************************************
+forall{nseg=1}
+//******************************************************
 hinesDisperseBranching()
 
 mul32()
@@ -233,6 +236,7 @@ access soma
 transvec = pmat.getrow(0)
 tfunc()
 finitialize(v_init)
+
 
 
 //runMatrix(pmat,stims)

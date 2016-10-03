@@ -199,4 +199,4 @@ forall most.append()
 
 }
 
-load_3dcell("./j4a.hoc") 
+load_3dcell("./sp.hoc") 
