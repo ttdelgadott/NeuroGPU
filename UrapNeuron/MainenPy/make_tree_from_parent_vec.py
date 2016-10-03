@@ -15,7 +15,7 @@ def make_tree_from_parent_vec(N, aux):
 	Fathers = np.unique(Fathers)
 	Related = []
 	for i in Fathers:
-		Related.append(np.where(Ks == i))
+		Related.append(np.where(aux.Ks == i))
 	if Fathers.size != 0:
 		RelStarts, RelEnds, RelCN, RelVec = cell.cell_2_vec(Related)
 	else:

@@ -1,4 +1,5 @@
 import scipy.io as sio
+from auxilliary import Aux
 
 def load_make_tree_mat(fname):
 	return sio.loadmat(fname)
@@ -61,4 +62,9 @@ def clean_make_tree_mat(mat):
 	ret['RelStarts'] = mat['RelStarts'][0]
 	ret['Fathers'] = mat['Fathers'][0]
 	ret['RelVec'] = mat['RelVec'][0]
+	return ret
+
+def create_aux(cleaned):
+	ret = Aux();
+	ret.Ks = cleaned['Ks']
 	return ret
