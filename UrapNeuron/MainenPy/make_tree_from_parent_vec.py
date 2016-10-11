@@ -1,44 +1,48 @@
-import numpy as np
+from file_io import *
 from auxilliary import Aux
+import numpy as np
 import cell
 
-def make_tree_from_parent_vec(N, aux):
-	def is_member(A, B):
-		return [np.sum(a == B) for a in A]
+def is_member(A, B):
+	return np.array([np.sum(a == B) for a in A])
+
+"""input_dict = load_input_csv('/home/devloop0/inputMakeTree.csv')
+Nx = int(input_dict['Nx'][0])
+Fathers = input_dict['Fathers']
+Ks = np.array(input_dict['Ks'])
+aux = Aux()
+aux.Ks = Ks
+N = Nx"""
+
+def make_tree_from_parent_vec(aux, Ks, N):
 	Nx = N
-	NN = np.bincount(aux.Ks, minlength=Nx)
-	Fathers = []
-	for i in Ks:
-		if i not in range(1, Ks.size + 1) and i > 0:
-			Fathers.append(i)
-	Fathers = np.array(Fathers)
-	Fathers = np.unique(Fathers)
-	Related = []
-	for i in Fathers:
-		Related.append(np.where(Ks == i))
+	NN = np.bincount(aux.Ks, minlength=Nx)[1:]
+	Fathers = np.unique(Ks[np.logical_and(Ks != np.arange(1, Ks.size + 1), Ks > 0)])
+	Related = np.array([np.where(Fathers[i] == Ks)[0] for i in range(Fathers.size)])
 	if Fathers.size != 0:
 		RelStarts, RelEnds, RelCN, RelVec = cell.cell_2_vec(Related)
 	else:
 		RelStarts, RelEnds, RelCN, RelVec = [], [], [], []
-	CallForFathers = np.where(is_member(aux.Ks, Fathers))
-	RFathers = [ [] for i in range(np.max(Fathers)) ]
-	for i in Fathers:
-		RFathers[i] = [i for i in range(Fathers.size)]
-	RFathers = np.array(RFathers)
-	SegStartI = np.hstack((np.array(2), CallForFathers + 1))
-	SegEndI = np.hstack((CallForFathers - 1, np.array(Nx - 1)))
-	Level = SegStartI * 0
-	Level[is_member(SegStart - 1, Fathers)] = 1
-	for i in range(50):
+	
+	CallForFathers = np.add(np.where(is_member(aux.Ks, Fathers)), 1)
+	RFathers = np.zeros((np.max(Fathers),))
+	for i in range(Fathers.size):
+		RFathers[Fathers[i] - 1] = i + 1
+	
+	SegStartI = np.array([2] + np.add(CallForFathers, 1).tolist()[0])
+	SegEndI = np.array(np.subtract(CallForFathers, 1).tolist()[0] + [Nx - 1])
+	Level = np.multiply(SegStartI, 0)
+	Level[np.where(is_member(np.subtract(SegStartI, 1), Fathers))] = 1
+	for i in range(1, 51):
 		FF = np.where(Level == i)
-		ToWhoTheyCall = Aux.Ks[SegEndI[FF] + 1]
-		Level[np.where(is_member(SegStartI - 1, ToWhoTheyCall))] = i + 1
-	FLevel = Fathers * 0 + 1
-	for i in range(np.max(Level)):
-		FF = np.where(Level == i + 1)
-		ToWhoTheyCall = aux.Ks[SegEndI[FF] + 1]
-		ToWhichFatherDoTheyCall = RFathers[ToWhoTheyCall[np.where(ToWhoTheyCall <= np.max(Fathers))]]
-		FLevel[ToWhichFatherDoTheyCall] = i + 1
+		ToWhoTheyCall = aux.Ks[SegEndI[FF]]
+		Level[np.where(is_member(np.subtract(SegStartI, 1), ToWhoTheyCall))] = i + 1
+	FLevel = np.add(np.multiply(Fathers, 0), 1)
+	for i in range(1, np.max(Level) + 1):
+		FF = np.where(Level == i)
+		ToWhoTheyCall = aux.Ks[SegEndI[FF]]
+		ToWhichFatherDoTheyCall = RFathers[np.subtract(ToWhoTheyCall[np.subtract(np.where(ToWhoTheyCall <= np.max(Fathers)), 1)], 1)][0]
+		FLevel[np.subtract(ToWhichFatherDoTheyCall.astype(int), 1)] = i + 1
 	SegEndI[-1] = N
-	Depth = np.max(Level)
-	# TODO, return all relevant values
+	Depth = max(Level)
+	return FLevel, Depth, SegStartI, SegEndI

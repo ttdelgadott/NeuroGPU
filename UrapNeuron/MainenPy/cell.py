@@ -25,6 +25,6 @@ def cell_2_vec(input):
 	starts, ends = np.array(starts), np.array(ends)
 	vec = []
 	for i in input:
-		vec += i
+		vec += list(i)
 	vec = np.array(vec)
 	return (starts, ends, cn, vec)
