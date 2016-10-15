@@ -1,7 +1,7 @@
 import numpy as np
 
 def cell_numel(input):
-	out = np.zeros(input.shape)
+	out = np.zeros(input.shape[0])
 	if input.size == 0:
 		return None
 	for i in range(input.size):

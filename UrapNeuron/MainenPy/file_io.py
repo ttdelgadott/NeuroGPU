@@ -1,5 +1,10 @@
 import scipy.io as sio
 from auxilliary import Aux
+from neuron import Neuron
+import numpy as np
+
+def load_creat_aux_3_mat(fname):
+	return sio.loadmat(fname)
 
 def load_make_tree_mat(fname):
 	return sio.loadmat(fname)
@@ -78,3 +83,32 @@ def load_input_csv(file_name):
 		values = [int(j) for j in temp[1:]]
 		d[name] = values
 	return d
+
+def clean_creat_aux_3_mat(mat):
+	ret = {}
+	ret['Parent'] = mat['Parent'][0]
+	ret['__globals__'] = mat['__globals__']
+	ret['NSeg'] = mat['NSeg'][0]
+	ret['__header__'] = mat['__header__']
+	ret['N'] = mat['N'][0][0]
+	ret['cmVec'] = mat['cmVec'][0]
+	ret['FN_TopoList'] = mat['FN_TopoList'][0]
+	ret['A'] = mat['A']
+	ret['Neuron'] = {}
+	ret['Neuron']['Cms'] = np.array([i[0] for i in mat['Neuron']['Cms'][0][0]])
+	ret['Neuron']['HasHH'] = mat['Neuron']['HasHH'][0][0]
+	ret['Neuron']['SegStart'] = mat['Neuron']['SegStart'][0][0][0]
+	ret['Neuron']['NSegs'] = mat['Neuron']['NSegs'][0][0]
+	ret['Neuron']['SegToComp'] = mat['Neuron']['SegToComp'][0][0][0]
+	ret['Neuron']['HasHH'] = mat['Neuron']['HasHH'][0][0]
+	return ret
+
+def create_neuron(cleaned):
+	ret = Neuron()
+	ret.Cms = cleaned['Neuron']['Cms']
+	ret.HasHH = cleaned['Neuron']['HasHH']
+	ret.SegStart = cleaned['Neuron']['SegStart']
+	ret.NSegs = cleaned['Neuron']['NSegs']
+	ret.SegToComp = cleaned['Neuron']['SegToComp']
+	ret.HasHH = cleaned['Neuron']['HasHH']
+	return ret

@@ -45,4 +45,15 @@ def make_tree_from_parent_vec(aux, Ks, N):
 		FLevel[np.subtract(ToWhichFatherDoTheyCall.astype(int), 1)] = i + 1
 	SegEndI[-1] = N
 	Depth = max(Level)
-	return FLevel, Depth, SegStartI, SegEndI
+	ret = {}
+	ret['FLevel'] = FLevel
+	ret['Level'] = Level
+	ret['Depth'] = Depth
+	ret['SegStartI'] = SegStartI
+	ret['SegEndI'] = SegEndI
+	ret['Fathers'] = Fathers
+	ret['RelVec'] = RelVec
+	ret['RelStarts'] = RelStarts
+	ret['RelEnds'] = RelEnds
+	ret['CallForFathers'] = CallForFathers[0]
+	return ret
