@@ -244,7 +244,7 @@ finitialize(v_init)
 finitialize(v_init)
 //ADD STUFF HERE
 // Start topology output
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64T.csv")
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64T.csv")
 topology()
 forall{
 	printf("%s\n",secname())
@@ -253,7 +253,7 @@ forall{
 hoc_stdout()
 // End topology output
 // Start topologyList output
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64TL.csv")
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64TL.csv")
 MyTopology()
 hoc_stdout()
 // End topologyList output
@@ -262,7 +262,7 @@ objref mt,ms,fn,pp
 strdef s,ss,mname
 mt = new MechanismType(0)
 fn = new File()
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64MDL.csv")
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64MDL.csv")
 forall{
 	fn.printf("#%s\n",secname())
 	if (ismembrane("pas")){
@@ -294,7 +294,7 @@ fn.close()
 // End mechanisms output
 // Start point processess mechanisms output
 fn = new File()
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64PP.csv")
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/64PP.csv")
 forall{
 	fn.printf("#%s\n",secname())
 	mt = new MechanismType(1)
@@ -1002,7 +1002,7 @@ a=Rd_na
 fn.vwrite(&a)
 }
 proc printParams(){
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
 writeReversals()
 writeGGlobals()
 writeNGlobals()
@@ -1025,16 +1025,16 @@ printParams()
 // End params output
 // Start Mat Output
 fcurrent()
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Mat.dat")
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Mat.dat")
 MyPrintMatrix()
 hoc_stdout()
 // endMat Output
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Fmatrix.csv")
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Fmatrix.csv")
 MyPrintMatrix()
 hoc_stdout()
 // End Fmatrix
 // Start Recording Sites
-hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/RecList.csv")
+hoc_stdout("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/RecList.csv")
 PrintRecSites()
 hoc_stdout()
 

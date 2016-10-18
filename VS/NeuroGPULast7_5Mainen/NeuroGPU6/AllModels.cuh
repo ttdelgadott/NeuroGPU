@@ -7,14 +7,14 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-#define NSEG 416
-#define LOG_N_DEPTH 7
+#define NSEG 64
+#define LOG_N_DEPTH 5
 #define N_MODELS 6
-#define N_FATHERS 99
-#define N_CALL_FOR_FATHER 186
+#define N_FATHERS 6
+#define N_CALL_FOR_FATHER 9
 #define COMP_DEPTH 28
-#define N_L_REL 24
-#define N_F_L_REL 23
+#define N_L_REL 6
+#define N_F_L_REL 5
 __device__ void CuInitModel_ca(float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) ;
 __device__ void CuDerivModel_ca(float dt, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) ;
 __device__ void CuBreakpointModel_ca(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) ;

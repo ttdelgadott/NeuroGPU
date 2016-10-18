@@ -13,8 +13,8 @@
 // Reversals:
 #define DEF_cai		5.e-5	   /* mM */
 #define DEF_cao		2.	   /* mM */
-#define ek (-90.00000f)
-#define ena (60.00000f)
+#define ek (-90.00000000f)
+#define ena (60.00000000f)
 
 // Locals:
 float a,b,drive_channel,gca,gk,gna,hinf,htau,minf,mtau,ninf,ntau;

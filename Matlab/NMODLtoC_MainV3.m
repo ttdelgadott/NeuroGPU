@@ -172,7 +172,7 @@ if(~isempty(Reversals))
             fprintf(fid,[MemBDefLines{Fi} '\n']);
             fprintf(fid,[MemBDefLines{Fo} '\n']);
         else
-            fprintf(fid,['#define ' Reversals{i} ' (' num2str(ReversalsV(i),'%.5f') 'f)\n']);
+            fprintf(fid,['#define ' Reversals{i} ' (' num2str(ReversalsV(i),'%.8f') 'f)\n']);
             %         fprintf(fid,['const ' FTYPESTR ' ' Reversals{i} ' = ' num2str(ReversalsV(i)) 'f;\n']);
         end
     end
@@ -327,7 +327,7 @@ for CurModI=1:numel(availableMechanisms)
     fprintf(fid,'%s\n',BreakPointDeclareC{CurModI});
     fprintf(fid,'%s\n',DerivDeclareC{CurModI});
     fprintf(fid,'%s\n\n',InitDeclareC{CurModI});
-     fprintf(fid,'%s\n\n',KineticDeclareC{CurModI});
+     %fprintf(fid,'%s\n\n',KineticDeclareC{CurModI});
 end
 %%RBS Start
 callToInitStr='';
@@ -347,7 +347,7 @@ fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',strrep(callToInitStr,'ParamsM[
 fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',strrep(callToDerivStr,'ParamsM[','ParamsMSerial['));
 fprintf(fid,'#define CALL_TO_BREAK %s\n\n',strrep(callToBreakStr,'ParamsM[','ParamsMSerial['));
 fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',strrep(callToBreakDVStr,'ParamsM[','ParamsMSerial['));
-fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',strrep(callToKineticStr,'ParamsM[','ParamsMSerial['));
+%fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',strrep(callToKineticStr,'ParamsM[','ParamsMSerial['));
 
 % 
 % fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',strrep([CallToInitC{:}],'ParamsM[','ParamsMSerial['));
@@ -503,41 +503,41 @@ fprintf(fid,'\n#endif');
 fclose(fid);
 %%
 %%
-% H file
-fid=fopen([BaseP 'Matlab/CParsed/AllModels.h'],'w');
-fprintf(fid,['\n#ifndef __' 'ALLMODELS' '__\n#define __' 'ALLMODELS' '__\n#include "Util.h"\n\n ']);
-
-% #define BasicConst_FN "..\\..\\..\\Data\\BasicConst"
-% #define BasicConstP_FN "..\\..\\..\\Data\\BasicConst"
-% #define ParamsMat_FN "..\\..\\..\\Data\\ParamsM"
-% #define Stim_FN "..\\..\\..\\Data\\Stim"
-% #define Sim_FN "..\\..\\..\\Data\\Sim"
-
-fprintf(fid,['#define NSTATES ' num2str(nTotalStates) '\n']);
-fprintf(fid,['#define NPARAMS ' num2str(nParams) '\n']);
-fprintf(fid,'// GGlobals\n');
+% % H file
+% fid=fopen([BaseP 'Matlab/CParsed/AllModels.h'],'w');
+% fprintf(fid,['\n#ifndef __' 'ALLMODELS' '__\n#define __' 'ALLMODELS' '__\n#include "Util.h"\n\n ']);
+% 
+% % #define BasicConst_FN "..\\..\\..\\Data\\BasicConst"
+% % #define BasicConstP_FN "..\\..\\..\\Data\\BasicConst"
+% % #define ParamsMat_FN "..\\..\\..\\Data\\ParamsM"
+% % #define Stim_FN "..\\..\\..\\Data\\Stim"
+% % #define Sim_FN "..\\..\\..\\Data\\Sim"
+% 
+% fprintf(fid,['#define NSTATES ' num2str(nTotalStates) '\n']);
+% fprintf(fid,['#define NPARAMS ' num2str(nParams) '\n']);
+% fprintf(fid,'// GGlobals\n');
+% % for i=1:numel(GGlobals)
+% %     fprintf(fid,['const float ' GGlobals{i} ' = ' num2str(GGlobalsV(i)) 'f;\n']);
+% % end
 % for i=1:numel(GGlobals)
-%     fprintf(fid,['const float ' GGlobals{i} ' = ' num2str(GGlobalsV(i)) 'f;\n']);
+%     fprintf(fid,['#define ' GGlobals{i} ' (' num2str(GGlobalsV(i)) ')\n']);
 % end
-for i=1:numel(GGlobals)
-    fprintf(fid,['#define ' GGlobals{i} ' (' num2str(GGlobalsV(i)) ')\n']);
-end
-fprintf(fid,'\n');
-
-for CurModI=1:numel(availableMechanisms)
-    fprintf(fid,'%s\n',BreakPointDeclareC{CurModI});
-    fprintf(fid,'%s\n',DerivDeclareC{CurModI});
-    fprintf(fid,'%s\n\n',InitDeclareC{CurModI});
-     fprintf(fid,'%s\n',KineticDeclareC{CurModI});
-end
-
-fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',[CallToInitC{:}]);
-fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',[CallToDerivC{:}]);
-fprintf(fid,'#define CALL_TO_BREAK %s\n\n',[CallToBreakC{:}]);
-fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',[CallToBreakDvC{:}]);
-fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',[CallToKineticC{:}]);
-fprintf(fid,'\n#endif');
-fclose(fid);
+% fprintf(fid,'\n');
+% 
+% for CurModI=1:numel(availableMechanisms)
+%     fprintf(fid,'%s\n',BreakPointDeclareC{CurModI});
+%     fprintf(fid,'%s\n',DerivDeclareC{CurModI});
+%     fprintf(fid,'%s\n\n',InitDeclareC{CurModI});
+%      fprintf(fid,'%s\n',KineticDeclareC{CurModI});
+% end
+% 
+% fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',[CallToInitC{:}]);
+% fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',[CallToDerivC{:}]);
+% fprintf(fid,'#define CALL_TO_BREAK %s\n\n',[CallToBreakC{:}]);
+% fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',[CallToBreakDvC{:}]);
+% fprintf(fid,'#define CALL_TO_KINETIC %s\n\n',[CallToKineticC{:}]);
+% fprintf(fid,'\n#endif');
+% fclose(fid);
 
 
 disp('Finished writing AllModels.h,cpp,cu,cuh');
