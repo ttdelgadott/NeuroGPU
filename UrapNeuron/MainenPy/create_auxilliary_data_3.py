@@ -15,7 +15,7 @@ import scipy.io as sio
 # nrn = create_neuron(input_dict)
 # FN_TopoList = '/home/devloop0/neuroGPU/neuroGPU/Neuron/printCell/Amit/output/64TL.csv'
 
-def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec, FN_TopoList):
+def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
 	FTYPESTR = 'float'
 	FatherBase = [0 for i in range(N - 1)]
 	for i in range(N - 1, 0, -1):
@@ -36,7 +36,7 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec, FN_TopoList):
 	f = np.array(f)
 	e = np.array(e)
 
-	Ksx = get_parent_from_neuron(FN_TopoList)
+	Ksx = parent_seg
 	Ks = [0]
 	for i in range(2, Ksx.size + 1):
 		Ks.append(N + 1 - Ksx[N + 2 - i - 1])
@@ -113,7 +113,7 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec, FN_TopoList):
 	aux.d = d
 	aux.e = e
 	aux.f = f
-	aux.Cms = nrn.Cms
+	aux.Cms = cmVec
 	
 	FN_dict = {}
 	FN_dict['N'] = np.array([np.uint16(N)])
