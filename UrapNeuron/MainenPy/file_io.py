@@ -1,6 +1,6 @@
 import scipy.io as sio
 from auxilliary import Aux
-from neuron import Neuron
+from neuron_object import Neuron
 import numpy as np
 
 def load_creat_aux_3_mat(fname):
