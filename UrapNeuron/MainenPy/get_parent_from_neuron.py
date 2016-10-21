@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def get_parent_from_neuron(file_name):
 	parent = [[float(i) for i in line.split()] for line in open(file_name)]
 	max_length = 0

@@ -9,7 +9,7 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMainen.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./opt_params.dat"
+paramsFile = "./params/opt_params.dat"
 stimFile = "./Stims/stepsmall.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3176
@@ -20,6 +20,7 @@ ntraces =2
 create Exts[1]
 objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most
 load_file(modelFile)
+
 objref recSites
 recSites = new SectionList()
 outFPre = "./volts/orig_step"
@@ -127,70 +128,71 @@ comps=0
 		comps+=1
 	}
 }
-create Exts[1]
-proc hinesDisperseBranching(){local i localobj sl,secRef, clist, avec, bvec
-	counter = 0
-	forsec most{
-		secRef = new SectionRef()
-		if(secRef.nchild>2){
-clist = new List()
-  for i=0, secRef.nchild-1 {
-    secRef.child[i] clist.append(new SectionRef())
-  }
-			Exts[counter]{
-				L = 1e-9
-				diam = 1
-				Ra = 1e-9
-				cm = 1e-9
-				nseg = secRef.nchild-1
-			}
-			i=0
-			Exts[counter]{
-				for(x){ 
-					if (x > 0) {
-						avec =new Vector()
-						bvec =new Vector()
-						printf("x is %f i is %d\n",x,i)
-						clist.o(i).sec{
-							avec =new Vector()
-							bvec =new Vector()
-							for(y){
-								avec.append(GetA(y))
-								bvec.append(GetB(y))
-							}
-						}
-						connect clist.o(i).sec(0), x
-						 k=0
-					  clist.o(i).sec{
-							for(y){
-								SetA(y,avec.x(k))
-								SetB(y,bvec.x(k))
-							}
-						}
-						i +=1
+create Exts[1]		
+proc hinesDisperseBranching(){local i localobj sl,secRef, clist, avec, bvec		
+	counter = 0		
+	forsec most{		
+		secRef = new SectionRef()		
+		if(secRef.nchild>2){		
+clist = new List()		
+  for i=0, secRef.nchild-1 {		
+    secRef.child[i] clist.append(new SectionRef())		
+  }		
+			Exts[counter]{		
+				L = 1e-9		
+				diam = 1		
+				Ra = 1e-9		
+				cm = 1e-9		
+				nseg = secRef.nchild-1		
+			}		
+			i=0		
+			Exts[counter]{		
+				for(x){ 		
+					if (x > 0) {		
+						avec =new Vector()		
+						bvec =new Vector()		
+						printf("x is %f i is %d\n",x,i)		
+						clist.o(i).sec{		
+							avec =new Vector()		
+							bvec =new Vector()		
+							for(y){		
+								avec.append(GetA(y))		
+								bvec.append(GetB(y))		
+							}		
+						}		
+						connect clist.o(i).sec(0), x		
+						 k=0		
+					  clist.o(i).sec{		
+							for(y){		
+								SetA(y,avec.x(k))		
+								SetB(y,bvec.x(k))		
+							}		
+						}		
+						i +=1		
+							
+					}		
+							
+							
+				}		
+						
+			}		
+			fcurrent()		
+			secRef {		
+				connect Exts[counter](0), 1		
+			}		
+			Exts[counter]{		
+				for(x){ 		
+			printf("x is %f and sec is %s\n",x,secname())		
+					SetA(x,0)		
+					SetB(x,0)		
+					}		
+				}		
 					
-					}
-					
-					
-				}
-				
-			}
-			fcurrent()
-			secRef {
-				connect Exts[counter](0), 1
-			}
-			Exts[counter]{
-				for(x){ 
-			printf("x is %f and sec is %s\n",x,secname())
-					SetA(x,0)
-					SetB(x,0)
-					}
-				}
-			
-	counter+=1		
-		}
-	}
+	counter+=1				
+		}		
+	}		
 }
+
 proc countExts(){
 ext_num=0
 forsec most {
@@ -219,6 +221,7 @@ topology()
 countExts()
 fcurrent()
 fmatrix()
+printf("Creating Exts %d\n",ext_num)
 printf("Creating Exts %d\n",ext_num)
 if(ext_num>0){
 	create Exts[ext_num]
@@ -312,7 +315,7 @@ forall{
 fn.close()
 // End point processess mechanisms output
 // Start params output
-proc writeReversals(){
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
 access soma
 a=eca
 fn.vwrite(&a)
@@ -322,8 +325,6 @@ fn.vwrite(&a)
 access soma
 a=ena
 fn.vwrite(&a)
-}
-proc writeGGlobals(){
 a=celsius
 fn.vwrite(&a)
 a=stoprun
@@ -332,8 +333,6 @@ a=clamp_resist
 fn.vwrite(&a)
 a=secondorder
 fn.vwrite(&a)
-}
-proc writeNGlobals(){
 a=q10_ca
 fn.vwrite(&a)
 a=temp_ca
@@ -394,8 +393,6 @@ a=vmax_na
 fn.vwrite(&a)
 a=vshift_na
 fn.vwrite(&a)
-}
-proc proc0(){
 access soma
 a=gbar_ca
 fn.vwrite(&a)
@@ -453,8 +450,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc1(){
 access dend[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -549,8 +544,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc2(){
 access apic[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -645,8 +638,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc3(){
 access iseg
 a=gbar_kv
 fn.vwrite(&a)
@@ -717,8 +708,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc4(){
 access myelin[0]
 a=gbar_na
 fn.vwrite(&a)
@@ -794,8 +783,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc5(){
 access myelin[3]
 a=gbar_na
 fn.vwrite(&a)
@@ -871,8 +858,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc6(){
 access node[1]
 a=gbar_na
 fn.vwrite(&a)
@@ -948,8 +933,6 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc proc7(){
 access node[4]
 a=gbar_na
 fn.vwrite(&a)
@@ -1000,28 +983,7 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
-}
-proc printParams(){
-fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
-writeReversals()
-writeGGlobals()
-writeNGlobals()
-for (ii=0;ii<pmat.nrow();ii+=1){
-transvec = pmat.getrow(ii)
-tfunc()
-finitialize()
-proc0()
-proc1()
-proc2()
-proc3()
-proc4()
-proc5()
-proc6()
-proc7()
-}
 fn.close()
-}
-printParams()
 // End params output
 // Start Mat Output
 fcurrent()

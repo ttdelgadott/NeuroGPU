@@ -6,16 +6,18 @@ import glob
 import re
 import os
 import copy
+import numpy as np
 
 from cStringIO import StringIO
 from nrn_structs import *
-
+from create_auxilliary_data_3 import create_auxilliary_data_3
 # Definitions
 ModData = collections.namedtuple('ModData', 'mod_per_seg,available_mechs')
 ParsedModel = collections.namedtuple('ParsedModel', 'Writes,Reads')
 ModNeuron = collections.namedtuple('ModNeuron', 'Suffix,UseIon,NonspecificCurrent,Reads,Writes,Range,Global')
 FTYPESTR = 'float'
 end_str = '|X|X|'
+global sec_list
 # Globals
 global ParamStartVal
 ParamStartVal = 0
@@ -71,10 +73,13 @@ def nrn_dll_sym(name, type=None):
 
 ### Model extraction functions ###
 
-def get_topo_list(thread):
+def get_parent(thread):
+    parent = []
     for i in range(thread.contents.end):
-        print i, thread.contents._v_parent_index[i]
-
+        x = thread.contents._v_parent_index[i]
+       # print i, x
+        parent.append(x)
+    return parent
 
 def get_topo_f_matrix(thread):
     lst = []
@@ -94,14 +99,45 @@ def get_topo_f_matrix(thread):
 
 def get_topo():
     sections = {}
-    for s in nrn.h.allsec():
+    nsegs = []
+    cms = []
+    for s  in nrn.h.sec_list:
         name = nrn.h.secname()
         topology = [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal,
                     s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
+        nsegs.append(int(s.nseg))
+        cms.append(float(s.cm))
+
         sections[name] = topology
-    return sections
+    return [nsegs,cms]
+
+def create_sec_list():
+    sec_list = []
+    nrn.h('objref sec_list')
+    nrn.h('sec_list = new SectionList()')
+    nrn.h('access soma')
+    nrn.h('sec_list.wholetree()')
+    parent_comp = []
+    for curr_sec in nrn.h.sec_list:
+        curr_name = nrn.h.secname(sec=curr_sec)
+        sec_list.append(curr_name)
+    return sec_list
 
 
+def create_parent_comp():
+    parent_comp = []
+    nrn.h('objref sect')
+    nrn.h('strdef str1')
+    nrn.h('sect = new SectionRef()')
+    print sec_list
+    for sect_name in sec_list[1:]:
+        nrn.h( 'access ' + sect_name)
+        nrn.h('sect = new SectionRef()')
+        nrn.h( 'sect.parent {str1 = secname()}')
+        p_name = nrn.h.str1
+        print p_name
+        parent_comp.append(index_containing_substring(sec_list, p_name))
+    return [-1] + parent_comp
 def get_topo_mdl():
     # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     available_mechs = set([])
@@ -139,7 +175,7 @@ def get_topo_mdl():
                 available_mechs.add(mech_name)
                 curr_comp_mechs.append(mech_name)
             for j in range(int(ms.count())):
-                param = nrn.h.ref('')  # string reference to store parameter name
+                param = nrn.h.ref ('')  # string reference to store parameter name
                 ms.name(param, j)
                 if(tmpind==-1):
                     all_params.add(param[0])
@@ -185,6 +221,11 @@ def get_topo_mdl2():
         #sections[name] = mech_params
     return [sections,comp_mechs,mech_params_list]
 
+def get_fmatrix():
+    for s in nrn.h.allsec():
+        print s.fmatrix(0,1)
+
+
 def get_recsites():
     sites = []
     for s in nrn.h.recSites:
@@ -195,7 +236,7 @@ def get_recsites():
 ### Functions for Parsing Mod/C files ###
 
 
-def parse_models():
+def parse_models(thread):
     global StateStartVal
     c_parsed_folder = './CParsed/'
     model_name=[]
@@ -405,12 +446,72 @@ def parse_models():
     actual_reversals = output[1]
     neuron_globals_vals = output[2]
 
-    output = wrtie_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
+    output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
-    output = wrtie_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
-    output = wrtie_all_models_h(c_parsed_folder, n_total_states, n_params, g_globals, actual_gglobals, break_point_declare_list, deriv_declare_list, init_declare_list, call_to_init_list, call_to_deriv_list, call_to_break_list, call_to_break_dv_list)
+    output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
+    output = write_all_models_h(c_parsed_folder, n_total_states, n_params, g_globals, actual_gglobals, break_point_declare_list, deriv_declare_list, init_declare_list, call_to_init_list, call_to_deriv_list, call_to_break_list, call_to_break_dv_list)
+    output = get_topo()
+    n_segs = output[0]
+    n_segs_mat = [x + 1 for x in n_segs]
+    n_segs_mat[0] = n_segs_mat[0] + 1
+    cm = output[1]
+    nx = np.cumsum(n_segs_mat)
+    fmatrix_fn = c_parsed_folder+'fmatrix.txt'
+    parent = create_parent_comp()
+    mat = get_matrix(fmatrix_fn,n_segs_mat,parent)
+    NX = len(mat)
+    mat = np.matrix(mat)
 
-def wrtie_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
+    rev_parent = [ns+1 - p for ns, p in zip(n_segs, np.fliplr(np.array(parent)))]
+    print available_mechs
+    print comp_mechs
+    #bool_model = get_bool_model(available_mechs,n_segs_mat,NX)
+    create_auxilliary_data_3(np.rot90(mat), NX, np.fliplr(np.array(n_segs_mat)), rev_parent, nrn, cm, FN_TopoList)
+
+    #NIKHIL add createaux here
+    output = write_all_models_cuh(c_parsed_folder)
+
+def get_matrix(FN,n_segs_mat,parent):
+    data = open(FN).read()
+    lines = data.split('\n')
+    NX = len(lines)
+    table = []
+    for line in lines:
+        tmp = line.split(' ')
+        table.append([x.replace('1.#INF00000000000',str(1e23)) for x in tmp[1:]])
+
+    #table = table[1:]
+    mat = [[0 for x in range(NX-1)] for y in range(NX-1)]
+    tmp = lines[0].split(' ')
+    mat[0][0] = float(tmp[3])
+    for i in range(1,len(table)-1):
+        tmp = lines[i].split(' ')
+        mat[i][i] = float(tmp[3])
+        mat[i-1][i] = float(tmp[2])
+        mat[i][i-1] = float(tmp[1])
+    cn = list(np.cumsum(n_segs_mat))
+    seg_start = [0] + cn[:-1]
+    last_seg = cn
+    last_seg = [x-1 for x in cn]
+    for i in range(len(parent)-1):
+        if not parent[i] == i-1:
+            mat_ind = seg_start[i]
+            parent_ind = last_seg[parent[i]]
+            mat[mat_ind-1][mat_ind]=0
+            mat[mat_ind][mat_ind-1] = 0
+            mat[parent_ind][mat_ind] = table[mat_ind][1]
+            mat[mat_ind][parent_ind] = table[mat_ind][2]
+    return mat
+
+def write_all_models_cuh(c_parsed_folder):
+    FN = c_parsed_folder + 'AllModels.h'
+    f = open(FN, 'w')
+    f.write('// Automatically generated CUH for ' + os.getcwd() + modelFile + '\n')
+    f.write('\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n')
+    f.write('#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n')
+
+
+def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
     f = open(FN, 'w')
     f.write('// Automatically generated H for ' + os.getcwd() + modelFile +'\n')
@@ -449,7 +550,7 @@ def wrtie_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
 
 
 
-def wrtie_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
+def write_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
     reversals_vals= reversals_vals[0]
     FN = c_parsed_folder + 'AllModels.cu'
     f = open(FN, 'w')
@@ -529,7 +630,7 @@ def wrtie_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_
     return []
 
 
-def wrtie_all_models_cpp(c_parsed_folder,reversals_names,reversals_vals,all_writes,all_locals,currents,nglobals_flat,neuron_globals_vals,c_init_lines_c,c_proc_lines_c,c_deriv_lines_c,c_break_lines_c,proc_declare,c_func_lines_c):
+def write_all_models_cpp(c_parsed_folder,reversals_names,reversals_vals,all_writes,all_locals,currents,nglobals_flat,neuron_globals_vals,c_init_lines_c,c_proc_lines_c,c_deriv_lines_c,c_break_lines_c,proc_declare,c_func_lines_c):
     reversals_vals= reversals_vals[0]
     FN = c_parsed_folder + 'AllModels.cpp'
     f = open(FN, 'w')
@@ -1448,6 +1549,12 @@ def parse_mod_proc(lines,all_param_line_declare,globals,all_params_line_call):
 
 
         ### Helpers ###
+
+
+def printMatrix(testMatrix):
+    for row in testMatrix:
+        print row
+
 def add_model_name_to_function(input,src,trg):
     output = input
     if isinstance(input, basestring):
@@ -1576,20 +1683,18 @@ def add_params_to_func_call(input,func_names,input_vars_c,all_param_line_call):
 
 
 def main():
-
+    global sec_list
     nrn.h.load_file(1, modelFile)
     thread = nrn_dll_sym('nrn_threads', ctypes.POINTER(NrnThread))
-    get_topo_list(thread)
-    tmp = get_topo_f_matrix(thread)
-    topo = get_topo()  # dictionary whose keys are section names
+    sec_list = create_sec_list()
+    #topo = get_topo()  # dictionary whose keys are section names
+    #output = get_topo_mdl()  # dictionary whose keys are section names, and available mechanisms
+    #topo_mdl = output[0]
 
-    output = get_topo_mdl()  # dictionary whose keys are section names, and available mechanisms
-    topo_mdl = output[0]
-
-    recsites = get_recsites()  # list of section names
+    #recsites = get_recsites()  # list of section names
     # mod_file_map = get_mod_file_map(topo_mdl.available_mechs) # dictionary whose keys are mechanisms suffixs and values are their .mod file name=
-    mechanisms = parse_models()
-    #file_to_list_no_comments('ca.mod')
+    mechanisms = parse_models(thread)
+
 
 if __name__ == '__main__':
     main()
