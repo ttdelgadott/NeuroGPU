@@ -73,7 +73,7 @@ def nrn_dll_sym(name, type=None):
 
 ### Model extraction functions ###
 
-def get_parent(thread):
+def get_parent_seg(thread):
     parent = []
     for i in range(thread.contents.end):
         x = thread.contents._v_parent_index[i]
@@ -129,25 +129,28 @@ def create_parent_comp():
     nrn.h('objref sect')
     nrn.h('strdef str1')
     nrn.h('sect = new SectionRef()')
-    print sec_list
     for sect_name in sec_list[1:]:
         nrn.h( 'access ' + sect_name)
         nrn.h('sect = new SectionRef()')
         nrn.h( 'sect.parent {str1 = secname()}')
         p_name = nrn.h.str1
-        print p_name
         parent_comp.append(index_containing_substring(sec_list, p_name))
     return [-1] + parent_comp
+
+
 def get_topo_mdl():
+
     # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     available_mechs = set([])
     sections = {}
     all_params = set([])
     comp_mechs = []
+    comp_map = []
     exclude_str = "_ion"
     for s in nrn.h.allsec():
         mech_params = {}
         name = nrn.h.secname()
+        comp_map.append(index_containing_substring(sec_list,name))
         if nrn.h.ismembrane("pas"):
             mech_params['g_pas'] = s.g_pas
             mech_params['e_pas'] = s.e_pas
@@ -184,7 +187,9 @@ def get_topo_mdl():
         sections[name] = mech_params
         comp_mechs.append(set(curr_comp_mechs))
         output = ModData(mod_per_seg=sections, available_mechs=available_mechs)
-    return [output,all_params,comp_mechs,available_mechs]
+    return [output,all_params,comp_mechs,available_mechs,comp_map]
+
+
 def get_topo_mdl2():
     # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     available_mechs = set([])
@@ -231,6 +236,21 @@ def get_recsites():
     for s in nrn.h.recSites:
         sites.append(s.name())
     return sites
+
+
+def get_bool_model(available_mechs,NX,comp_mechs,comp_map,seg_start,seg_end):
+    bool_model =[]
+    for mech_name in available_mechs:
+        curr_bool_list = [0]*NX
+        for ind in range(len(seg_start)):
+            comp = comp_map[ind]
+            curr_bool = 1*(index_containing_substring(comp_mechs[ind],mech_name) > -1)
+
+            for i in range(seg_start[comp],seg_end[comp]):
+                curr_bool_list[i] = curr_bool
+        curr_bool_list[0] = 0
+        bool_model.append(curr_bool_list)
+    return bool_model
 
 
 ### Functions for Parsing Mod/C files ###
@@ -416,6 +436,7 @@ def parse_models(thread):
     params_from_neuron = output[1]
     comp_mechs = output[2]
     available_mechs = output[3]
+    comp_map = output[4] #maps from forall call at neuron to sec_list(topology ordered)
     params_from_mods = set()
     all_params_non_global_flat=[]
     all_params_global_flat = []
@@ -454,24 +475,43 @@ def parse_models(thread):
     n_segs = output[0]
     n_segs_mat = [x + 1 for x in n_segs]
     n_segs_mat[0] = n_segs_mat[0] + 1
-    cm = output[1]
+    cm_tmp = output[1]
+    cm = []
+
+    for i in range(len(n_segs)):
+        cm = cm + [0] + [cm_tmp[i]]*n_segs[i]
+    cm.append(0)
+    cn = list(np.cumsum(n_segs_mat))
+    seg_start = [0] + cn[:-1]
+    seg_end = cn
+    seg_end = [x - 1 for x in cn]
     nx = np.cumsum(n_segs_mat)
     fmatrix_fn = c_parsed_folder+'fmatrix.txt'
     parent = create_parent_comp()
-    mat = get_matrix(fmatrix_fn,n_segs_mat,parent)
+    mat = get_matrix(fmatrix_fn,parent,seg_start,seg_end)
     NX = len(mat)
+    seg_to_comp = [0]*NX
+    for i in range(len(seg_start)):
+        seg_to_comp[seg_start[i]:seg_end[i]+1]= [i]*(1+seg_end[i]-seg_start[i])
+
     mat = np.matrix(mat)
 
-    rev_parent = [ns+1 - p for ns, p in zip(n_segs, np.fliplr(np.array(parent)))]
-    print available_mechs
-    print comp_mechs
-    #bool_model = get_bool_model(available_mechs,n_segs_mat,NX)
-    create_auxilliary_data_3(np.rot90(mat), NX, np.fliplr(np.array(n_segs_mat)), rev_parent, nrn, cm, FN_TopoList)
+    rev_parent = [len(n_segs) - p for p in np.flipud(np.array(parent))]
 
+    available_mechs = list(available_mechs)
+    available_mechs.sort()
+    bool_model = get_bool_model(available_mechs,NX,comp_mechs,comp_map,seg_start,seg_end)
+    rot_mat = np.rot90(mat,2)
+    n_segs_mat_flipped  = np.flipud(np.array(n_segs_mat))
+    parent_seg =  get_parent_seg(thread)
+    parent_seg = [x+1 for x in parent_seg]
+    parent_seg[0] = 0
+    create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
+    #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
     output = write_all_models_cuh(c_parsed_folder)
 
-def get_matrix(FN,n_segs_mat,parent):
+def get_matrix(FN,parent,seg_start,last_seg):
     data = open(FN).read()
     lines = data.split('\n')
     NX = len(lines)
@@ -489,10 +529,6 @@ def get_matrix(FN,n_segs_mat,parent):
         mat[i][i] = float(tmp[3])
         mat[i-1][i] = float(tmp[2])
         mat[i][i-1] = float(tmp[1])
-    cn = list(np.cumsum(n_segs_mat))
-    seg_start = [0] + cn[:-1]
-    last_seg = cn
-    last_seg = [x-1 for x in cn]
     for i in range(len(parent)-1):
         if not parent[i] == i-1:
             mat_ind = seg_start[i]
@@ -523,7 +559,6 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
         f.write('#define ' + n + ' (' + str(v) + ')\n')
     f.write('\n')
     for i in range(len(break_point_declare)):
-        print i
         f.write(break_point_declare[i] + '\n')
         f.write(deriv_declare[i]+ '\n')
         f.write(init_declare[i]+ '\n\n')
@@ -543,7 +578,6 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
     f.write('#define CALL_TO_BREAK  '+call_to_break_str.replace('ParamsM[', 'ParamsMSerial[')+'\n\n')
     f.write('#define CALL_TO_BREAK_DV  '+call_to_break_dv_str.replace('ParamsM[', 'ParamsMSerial[')+'\n\n')
     #KINETIC
-    print call_to_init_str
     f.write('\n#endif')
     f.close()
 
@@ -766,10 +800,6 @@ def get_actual_params(all_reversals,g_globals,nglobals_flat,comp_mechs,all_param
         actual_non_globals_vals.append(curr_not_globals_vals)
         actual_non_globals_names.append(curr_not_globals_names)
         counter = counter+1
-
-    #print actual_gglobals
-    #print actual_non_globals_names
-    #print actual_non_globals_vals
     return [actual_gglobals,actual_reversals,actual_globals,actual_non_globals_names,actual_non_globals_vals]
 
 def write_cpp_file(cpp_file,model_name,c_param_lines,before_first_line,proc_declare,c_func_line,c_init_lines,c_proc_lines,c_deriv_lines,c_break_lines):

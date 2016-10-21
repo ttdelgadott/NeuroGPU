@@ -15,8 +15,10 @@ import scipy.io as sio
 # nrn = create_neuron(input_dict)
 # FN_TopoList = '/home/devloop0/neuroGPU/neuroGPU/Neuron/printCell/Amit/output/64TL.csv'
 
-def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
+def create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
 	FTYPESTR = 'float'
+	print 'createAuxData3'
+	print N
 	FatherBase = [0 for i in range(N - 1)]
 	for i in range(N - 1, 0, -1):
 		if A[i - 1, i] != 0:
@@ -26,6 +28,7 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
 			k = k[0]
 		FatherBase[i - 1] = k
 	FatherBase = np.array(FatherBase)
+	print FatherBase
 
 	d = np.diag(A).T
 	e, f = [0 for i in range(N)], [0 for i in range(N)]
@@ -121,7 +124,7 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
 	FN_dict['f'] = np.double(f)
 	FN_dict['Ks'] = np.uint16(Ks)
 	FN_dict['auxCms'] = np.double(aux.Cms);
-	FN_dict['nrnHasHH'] = np.uint16(nrn.HasHH)
+	FN_dict['nrnHasHH'] = np.uint16(bool_model)
 	
 	sio.savemat(FN, FN_dict)
 	
@@ -171,7 +174,7 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
 	NComps = NSeg.size
 	CompsMid = np.zeros((NComps, 1))
 	for i in range(1, NComps + 1):
-		CompsMid[i - 1] = nrn.SegStart[i - 1] + np.floor(nrn.NSegs[i - 1] / 2)
+		CompsMid[i - 1] = seg_start[i - 1] + np.floor(n_segs[i - 1] / 2)
 	
 	aux.LRelStarts = LRelStarts
 	aux.LRelEnds = LRelEnds
@@ -193,10 +196,10 @@ def create_auxilliary_data_3(A, N, NSeg, Parent, nrn, cmVec,parent_seg):
 	FNP_dict['e'] = np.double(e)
 	FNP_dict['f'] = np.double(f)
 	FNP_dict['Ks'] = np.uint16(Ks)
-	FNP_dict['SegToComp'] = np.uint16(np.subtract(nrn.SegToComp, 1))
+	FNP_dict['SegToComp'] = np.uint16(np.subtract(seg_to_comp, 1))
 	FNP_dict['cmVec'] = np.double(cmVec)
-	FNP_dict['nrnHasHHSize'] = np.array(np.uint16([nrn.HasHH.shape[0]]))
-	FNP_dict['nrnHasHHT'] = nrn.HasHH.T
+	FNP_dict['nrnHasHHSize'] = np.array(np.uint16([bool_model.shape[0]]))
+	FNP_dict['nrnHasHHT'] = bool_model.T
 	FNP_dict['SonNoVec'] = np.uint16(SonNoVec)
 	FNP_dict['Depth'] = np.array(np.uint16([Depth]))
 	FNP_dict['LognDepth'] = np.array(np.uint16([LognDepth]))

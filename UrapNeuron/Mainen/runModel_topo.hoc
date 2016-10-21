@@ -324,5 +324,5 @@ PrintRecSites()
 hoc_stdout()
 
 
-//quit()
+quit()
 
