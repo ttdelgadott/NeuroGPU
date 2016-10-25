@@ -31,10 +31,8 @@ end
 FirstLine=['void InitModel_' ModelName '(float v' StatesAndParamsStr ') {'];
 InitDeclare=[FirstLine(1:end-1) ';'];
 TmpLines=strcat(CurLines,';');
-tmpInd = find(strhas(TmpLines,'SOLVE'));%we are in a Markov mod file
+tmpInd = find(strhas(TmpLines,'SOLVE'));
 if(tmpInd)
-    solveLine =  TmpLines{tmpInd};
-    %RBS YOUR HERE
     TmpLines{tmpInd} = '}';
 end
 CInitLines=[FirstLine; Straighten(TmpLines)'];

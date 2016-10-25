@@ -1,0 +1,73 @@
+strdef timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
+modelFile = "./myMainen.hoc"
+timesFile = "./times.dat"
+paramsFile = "./params/opt_params.dat"
+stimFile = "./Stims/stepsmall.dat"
+outFile = "./volts/orig_step.dat"
+ntimestep =3168
+nparams =12
+psize =1
+ntraces =1
+create Exts[1]
+objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,strFunc,most
+load_file(modelFile)
+
+
+objref recSites
+recSites = new SectionList()
+outFPre = "./volts/orig_step"
+soma recSites.append()
+//node[1] recSites.append()
+//dend[1] recSites.append()
+strFunc = new StringFunctions()
+access soma
+st = new IClamp(0.5)
+st.del=10
+st.dur=30
+st.amp = 0.5
+fin = new File()
+fout = new File()
+proc runMatrix(){
+	sprint(outFile,"%s_%s.dat",outFPre,secname())
+	st = new IClamp(0.5)
+	st.del=0 
+	st.dur=1e9
+	printf ("$o1.nrow,$o2.nrow,$o2.ncol,%d,%d,%d",$o1.nrow,$o2.nrow,$o2.ncol)
+	matOut = new Matrix($o1.nrow,($o2.nrow*$o2.ncol))
+	for(sim=0;sim<$o1.nrow;sim+=1){
+		counter=0
+		transvec = $o1.getrow(sim)
+		tfunc()
+		for(i=0;i<stims.nrow;i+=1){
+			finitialize(v_init)
+			for(tt =0;tt<stimtime.ncol;tt+=1){
+			dt  =stimtime.x(0,tt)
+				st.amp = 1*stims.x(i,tt)
+				matOut.x(sim,counter)=v(0.5)
+				counter+=1
+				fadvance()
+			}
+		}
+	}
+}
+create Exts[1]	
+stimtime = new Matrix(1,ntimestep)
+readMatrix(timesFile,stimtime)
+pmat = new Matrix(psize,nparams)
+readMatrix(paramsFile,pmat)
+stims = new Matrix(ntraces,ntimestep)
+readMatrix(stimFile,stims)
+countExts()							//counts how many node has more the 2 childs
+DisperseBranching()					//Creating exts - sections with ~zero resistance,area to  
+mul32()
+access soma
+transvec = pmat.getrow(0)
+tfunc()
+finitialize(v_init)
+runMatrix(pmat,stims)
+writeMatrix(outFile,matOut)
+finitialize(v_init)
+//ADD STUFF HERE
+
+
+quit()

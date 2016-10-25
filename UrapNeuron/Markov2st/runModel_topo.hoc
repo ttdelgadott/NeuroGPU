@@ -230,8 +230,8 @@ tfunc()
 finitialize(v_init)
 
 
-//runMatrix(pmat,stims)
-//writeMatrix(outFile,matOut)
+runMatrix(pmat,stims)
+writeMatrix(outFile,matOut)
 finitialize(v_init)
 //ADD STUFF HERE
 // Start topology output

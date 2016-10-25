@@ -22,7 +22,7 @@ NMODLtoC_MainV3;
 slnFN = fullfile(BaseP,'VS','NeuroGPULast7_5Mainen','NeuroGPU6.sln');
  eval(['!msbuild /property:Configuration=Debug /p:Platform=x64 ',slnFN,]);
 %model = 'NewModelCA';
-model = 'Mainen';
+model = 'Markov2st';
 ntimestep=3168;
 stimSize =2;
 StimFolder = fullfile(OptP, 'UrapNeuron',model,'Stims');
