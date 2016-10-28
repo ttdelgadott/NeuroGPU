@@ -506,10 +506,13 @@ def parse_models(thread):
     parent_seg =  get_parent_seg(thread)
     parent_seg = [x+1 for x in parent_seg]
     parent_seg[0] = 0
-    create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
+    output = create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
+    aux = output[3]
     #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
-    output = write_all_models_cuh(c_parsed_folder)
+
+    output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
+    #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
 
 def get_matrix(FN,parent,seg_start,last_seg):
     data = open(FN).read()
@@ -539,12 +542,25 @@ def get_matrix(FN,parent,seg_start,last_seg):
             mat[mat_ind][parent_ind] = table[mat_ind][2]
     return mat
 
-def write_all_models_cuh(c_parsed_folder):
+def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
     f = open(FN, 'w')
     f.write('// Automatically generated CUH for ' + os.getcwd() + modelFile + '\n')
     f.write('\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n')
     f.write('#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n')
+    f.write('#define NSEG '+str(NX) +'\n')
+    f.write('#define LOG_N_DEPTH ' + str(aux.LognDepth) +'\n')
+    f.write('#define N_MODELS ' + str(len(bool_model))+ '\n')
+    f.write('#define N_FATHERS ' + str(len(aux.Fathers)) +'\n')
+    f.write('#define N_CALL_FOR_FATHER ' +str(aux.nCallForFather) + '\n')
+    f.write('#define COMP_DEPTH ' + str(n_params) +'\n')
+    f.write('#define N_L_REL ' + str(len(aux.LRelStarts)) +'\n')
+    f.write('#define N_F_L_REL ' +str(len(aux.FLRelStarts)) +'\n')
+    for cur_mod_i in range(len(c_init_lines_cu)):
+        print call_to_init_list
+        f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
+
+
 
 
 def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):

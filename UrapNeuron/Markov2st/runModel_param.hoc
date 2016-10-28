@@ -4,7 +4,7 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMarkov.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./params/orig.dat"
+paramsFile = "./opt_params.dat"
 stimFile = "./Stims/Step.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3176
@@ -303,10 +303,12 @@ forall{
 fn.close()
 // End point processess mechanisms output
 // Start params output
-fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+proc writeReversals(){
 access soma
 a=ek
 fn.vwrite(&a)
+}
+proc writeGGlobals(){
 a=celsius
 fn.vwrite(&a)
 a=stoprun
@@ -315,6 +317,10 @@ a=clamp_resist
 fn.vwrite(&a)
 a=secondorder
 fn.vwrite(&a)
+}
+proc writeNGlobals(){
+}
+proc proc0(){
 access soma
 a=gbar_CO
 fn.vwrite(&a)
@@ -370,6 +376,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc1(){
 access dend1[4]
 a=gbar_CO
 fn.vwrite(&a)
@@ -425,6 +433,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc2(){
 access dend2[0]
 a=gbar_CO
 fn.vwrite(&a)
@@ -480,6 +490,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc3(){
 access dend2[5]
 a=gbar_CO
 fn.vwrite(&a)
@@ -535,6 +547,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc4(){
 access dend2[10]
 a=gbar_CO
 fn.vwrite(&a)
@@ -590,6 +604,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc5(){
 access dend3[2]
 a=gbar_CO
 fn.vwrite(&a)
@@ -645,6 +661,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc6(){
 access dend4[2]
 a=gbar_CO
 fn.vwrite(&a)
@@ -700,6 +718,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc7(){
 access dend5[0]
 a=gbar_CO
 fn.vwrite(&a)
@@ -755,6 +775,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc8(){
 access dend6[4]
 a=gbar_CO
 fn.vwrite(&a)
@@ -810,6 +832,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc9(){
 access dend6[9]
 a=gbar_CO
 fn.vwrite(&a)
@@ -865,6 +889,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc10(){
 access dend7[3]
 a=gbar_CO
 fn.vwrite(&a)
@@ -920,6 +946,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc11(){
 access dend7[8]
 a=gbar_CO
 fn.vwrite(&a)
@@ -975,6 +1003,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc12(){
 access dend8[0]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1030,6 +1060,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc13(){
 access dend9[0]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1085,6 +1117,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc14(){
 access dend10[0]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1140,6 +1174,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc15(){
 access dend10[5]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1195,6 +1231,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc16(){
 access dend10[10]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1250,6 +1288,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc17(){
 access dend11[4]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1305,6 +1345,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc18(){
 access dend11[9]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1360,6 +1402,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc19(){
 access dend11[14]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1415,6 +1459,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc20(){
 access dend11[19]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1470,6 +1516,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc21(){
 access dend11[24]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1525,6 +1573,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc22(){
 access dend11[29]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1580,6 +1630,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc23(){
 access dend11[34]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1635,6 +1687,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc24(){
 access dend11[39]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1690,6 +1744,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc25(){
 access dend11[44]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1745,6 +1801,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc26(){
 access dend11[49]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1800,6 +1858,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc27(){
 access dend11[54]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1855,6 +1915,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc28(){
 access dend11[59]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1910,6 +1972,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc29(){
 access dend11[64]
 a=gbar_CO
 fn.vwrite(&a)
@@ -1965,6 +2029,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc30(){
 access dend11[69]
 a=gbar_CO
 fn.vwrite(&a)
@@ -2020,6 +2086,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc31(){
 access dend11[74]
 a=gbar_CO
 fn.vwrite(&a)
@@ -2075,6 +2143,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc32(){
 access dend11[79]
 a=gbar_CO
 fn.vwrite(&a)
@@ -2130,6 +2200,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc33(){
 access hill
 a=gbar_CO
 fn.vwrite(&a)
@@ -2185,6 +2257,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc34(){
 access myelin[4]
 a=gbar_CO
 fn.vwrite(&a)
@@ -2240,6 +2314,8 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
+}
+proc proc35(){
 access node[4]
 a=gbar_CO
 fn.vwrite(&a)
@@ -2252,7 +2328,56 @@ fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
 access Exts[0]
+}
+proc printParams(){
+fn.wopen("C:/Users/bensr/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+writeReversals()
+writeGGlobals()
+writeNGlobals()
+for (ii=0;ii<pmat.nrow();ii+=1){
+transvec = pmat.getrow(ii)
+tfunc()
+finitialize()
+proc0()
+proc1()
+proc2()
+proc3()
+proc4()
+proc5()
+proc6()
+proc7()
+proc8()
+proc9()
+proc10()
+proc11()
+proc12()
+proc13()
+proc14()
+proc15()
+proc16()
+proc17()
+proc18()
+proc19()
+proc20()
+proc21()
+proc22()
+proc23()
+proc24()
+proc25()
+proc26()
+proc27()
+proc28()
+proc29()
+proc30()
+proc31()
+proc32()
+proc33()
+proc34()
+proc35()
+}
 fn.close()
+}
+printParams()
 // End params output
 // Start Mat Output
 fcurrent()

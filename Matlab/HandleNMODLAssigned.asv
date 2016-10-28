@@ -126,7 +126,7 @@ if ~isempty(StartL)
     matrixBuildLines{end+1} = 'set(q, -sum, i, i);'	
     matrixBuildLines{end+1} = '}';
     matrixBuildLines{end+1} = '}';
-    KinLocals = strcat('float matq[',num2str(length(AllState)),'][',num2str(length(AllState)),'],rhs[',num2str(length(AllState)),'],y[',num2str(length(AllState)),'];');
+    KinLocals = strcat('float matq[',num2str(length(AllState)),'][',num2str(length(AllState))
     
    
 end

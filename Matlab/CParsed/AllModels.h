@@ -14,12 +14,12 @@
 #define secondorder (0)
 
 void BreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
-
+void DerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 
 #define CALL_TO_INIT_STATES   if(TheMMat.boolModel[seg+0*TheMMat.N]){InitModel_CO(V[seg],StatesM[0][seg] ,StatesM[1][seg] ,ParamsMSerial[0][comp],ParamsMSerial[1][comp],ParamsMSerial[2][comp],ParamsMSerial[3][comp],ParamsMSerial[4][comp]);}
 
-#define CALL_TO_DERIV   if(TheMMat.boolModel[seg+0*TheMMat.N]){}
+#define CALL_TO_DERIV   if(TheMMat.boolModel[seg+0*TheMMat.N]){DerivModel_CO(dt, V[seg],StatesM[0][seg] ,StatesM[1][seg] ,ParamsMSerial[0][comp],ParamsMSerial[1][comp],ParamsMSerial[2][comp],ParamsMSerial[3][comp],ParamsMSerial[4][comp]);}
 
 #define CALL_TO_BREAK  if(TheMMat.boolModel[seg+0*TheMMat.N]){BreakpointModel_CO(sumCurrents, sumConductivity, V[seg],StatesM[0][seg] ,StatesM[1][seg] ,ParamsMSerial[0][comp],ParamsMSerial[1][comp],ParamsMSerial[2][comp],ParamsMSerial[3][comp],ParamsMSerial[4][comp]);}
 

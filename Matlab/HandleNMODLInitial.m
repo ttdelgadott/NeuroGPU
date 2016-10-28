@@ -34,11 +34,11 @@ TmpLines=strcat(CurLines,';');
 tmpInd = find(strhas(TmpLines,'SOLVE'));%we are in a Markov mod file
 if(tmpInd)
     solveLine =  TmpLines{tmpInd};
-    %RBS YOUR HERE
-    TmpLines{tmpInd} = '}';
+    TmpLines = matrixBuildLines;
+    CInitLines=[FirstLine; Straighten(matrixBuildLines)'];
+else
+    CInitLines=[FirstLine; Straighten(TmpLines)'];
 end
-CInitLines=[FirstLine; Straighten(TmpLines)'];
-
 CInitLines=AddParamsToFuncCall(CInitLines,FuncNames,InputVarsC,AllParamLineCall);
 % CInitLinesCu=AddParamsToFuncCallC(CInitLines,FuncNames,InputVarsC,AllParamLineCallC);
 if(~exist('StatesAndParamsStrSeg'))
@@ -59,7 +59,9 @@ for i=1:numel(TmpLinesCu)
 %             TmpLinesCu{i}=[BeforeFirstLinesC{j} sprintf('\n') TmpLine ',' ListOfOutVars{j} ');'];
 %             TmpLinesCu{i}=[BeforeFirstLinesC{j} sprintf('\n') TmpLine ',' AllParamLineCallC{j} ');'];
 %             TmpLinesCu{i}=[TmpLine ',' AllParamLineCallC{j} ');'];
-            TmpLinesCu{i}=[TmpLine ',' AllParamLineCallAll ');'];
+          
+                TmpLinesCu{i}=[TmpLine ',' AllParamLineCallAll ');'];
+
         end
     end
 end

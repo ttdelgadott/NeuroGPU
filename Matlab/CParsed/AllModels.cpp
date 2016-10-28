@@ -1,4 +1,4 @@
-// Automatically generated C for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
+// Automatically generated C for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -11,45 +11,94 @@
 #define ktf (1000.*8.3134*(celsius + 273.15)/FARADAY)
 
 // Reversals:
-#define DEF_cai		5.e-5	   /* mM */
-#define DEF_cao		2.	   /* mM */
-#define ek (-90.00000000f)
-#define ena (60.00000000f)
+#define ek (-77.00000000f)
 
 // Locals:
-float a,b,drive_channel,gca,gk,gna,hinf,htau,minf,mtau,ninf,ntau;
+float g,k12,k21;
 
 // Ion currents as Locals:
-float ica,ik,ina;
+float ik;
 
 // NGlobals:
-#define q10_ca (2.3)
-#define temp_ca (23)
-#define tadj_ca (3.2094)
-#define vmin_ca (-120)
-#define vmax_ca (100)
-#define vshift_ca (0)
-#define depth_cad (0.1)
-#define cainf_cad (0.0001)
-#define taur_cad (200)
-#define q10_kca (2.3)
-#define temp_kca (23)
-#define tadj_kca (3.2094)
-#define vmin_kca (-120)
-#define vmax_kca (100)
-#define q10_km (2.3)
-#define temp_km (23)
-#define tadj_km (3.2094)
-#define vmin_km (-120)
-#define vmax_km (100)
-#define q10_kv (2.3)
-#define temp_kv (23)
-#define tadj_kv (3.2094)
-#define vmin_kv (-120)
-#define vmax_kv (100)
-#define q10_na (2.3)
-#define temp_na (23)
-#define tadj_na (3.2094)
-#define vmin_na (-120)
-#define vmax_na (100)
-#define vshift_na (-5)
+
+// Declarations:
+void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
+float nernst(float ci,float co, float z) {
+	if (z == 0) {
+		return 0.;
+	}
+	if (ci <= 0.) {
+		return 1e6;
+	}else if (co <= 0.) {
+		return -1e6;
+	}else{
+		return ktf/z*log(co/ci);
+	}	
+}
+
+// Functions:
+
+// Inits:
+void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+double sum = 0;
+        rates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO)
+matq[0][1] =k12
+matq[1][0] =k21
+for (int i = 0; i <2; i++) {
+sum = 0 ;
+for (int j = 0; j <2 j++) {
+if (i != j) {
+sum += get(q, i, j);
+;}
+;}
+set(q, -sum, i, i);
+;}
+;}
+
+// Procedures:
+void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+      k12 = a12_CO*exp(z12_CO*v);
+      k21 = a21_CO*exp(-z21_CO*v);
+     ;
+;};
+
+// Derivs:
+void DerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+ {int _reset=0;
+ {
+   double b_flux, f_flux, _term; int _i;
+ {int _i; double _dt1 = 1.0/dt;
+for(_i=1;_i<2;_i++){
+  	_RHS1(_i) = 0;
+	_MATELM1(_i, _i) = _dt1;
+      
+;} ;}
+ rates_CO (  v ,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,&k12,&k21) ;
+   /* ~ c1 <-> o ( k12 , k21 )*/
+ f_flux =  k12 * c1 ;
+ b_flux =  k21 * o ;
+ _RHS1( 1) -= (f_flux - b_flux);
+ 
+ _term =  k12 ;
+ _MATELM1( 1 ,1)  += _term;
+ _term =  k21 ;
+ _MATELM1( 1 ,0)  -= _term;
+ /*REACTION*/
+   /* c1 + o = 1.0 */
+ _RHS1(0) =  1.0;
+ _MATELM1(0, 0) = 1;
+ _RHS1(0) -= o ;
+ _MATELM1(0, 1) = 1;
+ _RHS1(0) -= c1 ;
+ backwards_euler(dt,3,2);
+   ;} return _reset;
+ ;}
+ 
+;}
+
+// Breakpoints:
+void BreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+g=gbar_CO*o;
+ik=(1e-4)*g*(v-ek);
+sumCurrents+= ik;
+;};

@@ -128,13 +128,15 @@ SeparatorStr=',';
 if(isempty(TmpStr))
     SeparatorStr='';
 end
+TmpKin = strcat('&',AllOutVars,',');
 Tmp=strcat(AllOutVars,',');
 Tmp=cat(2,Tmp{:});
-
+TmpKin = cat(2,TmpKin{:});
 SeparatorStr=',';
 if(isempty(AllOutVars))
     SeparatorStr='';
 end
+AllParamLineCallAllForKin = [AllParamLineCall SeparatorStr TmpKin(1:end-1)];
 AllParamLineCallAll=[AllParamLineCall SeparatorStr Tmp(1:end-1)];
 
 BeforeFirstLineAll='';

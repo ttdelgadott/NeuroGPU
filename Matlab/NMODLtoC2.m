@@ -70,7 +70,6 @@ HandleNMODLProcedure; % CProcLines
 HandleNMODLInitial; % CInitLines;
 HandleNMODLDerivative; % CDerivLines
 HandleNMODLBreakpoint; % CBreakLines
-HandleNMODLKinetic;% CKineticLines
 AllAssignedC{CurModI}=AllAssigned;
 %%
 % Update states by derivatives!
@@ -99,10 +98,10 @@ if ~isempty(CDerivLines)
     CDerivLines=AddModelNameToFunctions(CDerivLines,Src,Trg);
     CDerivLinesCu=AddModelNameToFunctions(CDerivLinesCu,SrcCu,TrgCu);
 end
-if ~isempty(CKineticLines)
-    CKineticLines = AddModelNameToFunctions(CKineticLines,Src,Trg);
-    CKineticLines = AddModelNameToFunctions(CKineticLines,SrcCu,TrgCu);
-end
+% if ~isempty(CKineticLines)
+%     CKineticLines = AddModelNameToFunctions(CKineticLines,Src,Trg);
+%     CKineticLines = AddModelNameToFunctions(CKineticLines,SrcCu,TrgCu);
+% end
 CBreakLines=AddModelNameToFunctions(CBreakLines,Src,Trg);
 CBreakLinesCu=AddModelNameToFunctions(CBreakLinesCu,SrcCu,TrgCu);
 
@@ -119,10 +118,10 @@ if ~isempty(CDerivLines)
 CDerivLines=AddModelNameToFunctions(CDerivLines,Src,Trg);
 CDerivLinesCu=AddModelNameToFunctions(CDerivLinesCu,Src,Trg);
 end
-if ~isempty(CKineticLines)
-CKineticLines=AddModelNameToFunctions(CKineticLines,Src,Trg);
-CKineticLinesCu=AddModelNameToFunctions(CKineticLinesCu,Src,Trg);
-end
+% if ~isempty(CKineticLines)
+% CKineticLines=AddModelNameToFunctions(CKineticLines,Src,Trg);
+% CKineticLinesCu=AddModelNameToFunctions(CKineticLinesCu,Src,Trg);
+% end
 CBreakLines=AddModelNameToFunctions(CBreakLines,Src,Trg);
 CBreakLinesCu=AddModelNameToFunctions(CBreakLinesCu,Src,Trg);
 CInitLines=AddModelNameToFunctions(CInitLines,Src,Trg);
@@ -144,9 +143,9 @@ BreakPointDeclare=AddModelNameToFunctions(BreakPointDeclare,Src,Trg);
 if ~isempty(DerivDeclare)
     DerivDeclare=AddModelNameToFunctions(DerivDeclare,Src,Trg);
 end
-if ~isempty(KineticDeclare)
-    KineticDeclare=AddModelNameToFunctions(KineticDeclare,Src,Trg);
-end
+% if ~isempty(KineticDeclare)
+%     KineticDeclare=AddModelNameToFunctions(KineticDeclare,Src,Trg);
+% end
 InitDeclare=AddModelNameToFunctions(InitDeclare,Src,Trg);
 
 ProcDeclareC{CurModI}=ProcDeclare;
@@ -162,17 +161,17 @@ CDerivLinesC{CurModI}=CDerivLines;
 CDerivLinesCuC{CurModI}=CDerivLinesCu;
 CBreakLinesC{CurModI}=CBreakLines;
 CBreakLinesCuC{CurModI}=CBreakLinesCu;
-CKineticLinesC{CurModI}=CKineticLines;
-CKineticLinesCuC{CurModI}=CKineticLinesCu;
+% CKineticLinesC{CurModI}=CKineticLines;
+% CKineticLinesCuC{CurModI}=CKineticLinesCu;
 CallToInitC{CurModI}=CallToInit;
 CallToDerivC{CurModI}=CallToDeriv;
 CallToBreakC{CurModI}=CallToBreak;
 CallToBreakDvC{CurModI}=CallToBreakDv;
-CallToKineticC{CurModI}=CallToKinetic;
+%CallToKineticC{CurModI}=CallToKinetic;
 BreakPointDeclareC{CurModI}=BreakPointDeclare;
 DerivDeclareC{CurModI}=DerivDeclare;
 InitDeclareC{CurModI}=InitDeclare;
-KineticDeclareC{CurModI}=KineticDeclare;
+%KineticDeclareC{CurModI}=KineticDeclare;
 
 AllParametersC{CurModI}=AllParameters;
 %% Writing out files
@@ -221,9 +220,9 @@ for i=1:numel(CBreakLines)
 end
 fprintf(fid,'\n');
 
-for i=1:numel(CKineticLines)
-    fprintf(fid,'%s\n',CKineticLines{i});
-end
+% for i=1:numel(CKineticLines)
+%     fprintf(fid,'%s\n',CKineticLines{i});
+% end
 fprintf(fid,'\n');
 
 fclose(fid);
@@ -251,7 +250,7 @@ fprintf(fid,'#define CALL_TO_INIT_STATES  %s\n\n',CallToInit);
 fprintf(fid,'#define CALL_TO_DERIV  %s\n\n',CallToDeriv);
 fprintf(fid,'#define CALL_TO_BREAK %s\n\n',CallToBreak);
 fprintf(fid,'#define CALL_TO_BREAK_DV %s\n\n',CallToBreakDv);
-fprintf(fid,'#define CALL_TO_Kinetic %s\n\n',CallToKinetic);
+%fprintf(fid,'#define CALL_TO_Kinetic %s\n\n',CallToKinetic);
 fprintf(fid,'\n#endif');
 fclose(fid);
 %% Cu file
@@ -300,9 +299,9 @@ for i=1:numel(CBreakLines)
 end
 fprintf(fid,'\n');
 
-for i=1:numel(CKineticLines)
-    fprintf(fid,'%s\n',CKineticLines{i});
-end
-fprintf(fid,'\n');
+% for i=1:numel(CKineticLines)
+%     fprintf(fid,'%s\n',CKineticLines{i});
+% end
+% fprintf(fid,'\n');
 
 fclose(fid);
