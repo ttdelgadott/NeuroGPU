@@ -12,11 +12,10 @@
 
 // Reversals:
 #define ek (-77.00000000f)
-#define _RHS1(arg) rhs[arg]
-#define _MATELM1(i, j) matq[i][j]
+
 // Locals:
 float g,k12,k21;
-float matq[][2];
+
 // Ion currents as Locals:
 float ik;
 
@@ -42,7 +41,7 @@ float nernst(float ci,float co, float z) {
 // Inits:
 void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
 double sum = 0;
-//rates_CO(v, gbar_CO, a12_CO, a21_CO, z12_CO, z21_CO);
+        rates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO)
 //matq[0][1] =k12;
 //matq[1][0] =k21;
 for (int i = 0; i <2; i++) {
@@ -57,31 +56,16 @@ if (i != j) {
 ;}
 
 // Procedures:
-void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO,float &k12,float &k21) {
+void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
       k12 = a12_CO*exp(z12_CO*v);
       k21 = a21_CO*exp(-z21_CO*v);
      ;
 ;};
-void backwards_euler(double h, int N, int nkinStates, float* rhs, float* y, float matq[2][2]) {
-	for (int i = 0; i < nkinStates; i++) {
-		float w0 = y[i];
-		for (int j = 0; j < N; j++) {
-			float top = w0 - y[i] - h * rhs[i];
-			float bottom = 1 - h * matq[i][i];
-			float dw = top / bottom;
-			w0 = w0 - dw;
-		}
-		y[i] = w0;
-	}
-}
-
 
 // Derivs:
-int DerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+void DerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
  {int _reset=0;
- {float rhs[2];
- float y[2];
- float matq[2][2];
+ {
    double b_flux, f_flux, _term; int _i;
  {int _i; double _dt1 = 1.0/dt;
 for(_i=1;_i<2;_i++){
@@ -111,7 +95,6 @@ for(_i=1;_i<2;_i++){
  ;}
  
 ;}
-
 
 // Breakpoints:
 void BreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {

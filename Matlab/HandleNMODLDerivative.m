@@ -118,7 +118,7 @@ if KineticFlg
     end
     CTmpLines=regexprep(CTmpLines,'_threadargscomma_','');
     CTmpLines=regexprep(CTmpLines,'-_dt1.*','0;');
-    CTmpLines=strrep(CTmpLines,'/*CONSERVATION*/',['backwards_euler(dt,3,',num2str(length(AllState)),',rhs,y);']);
+    CTmpLines=strrep(CTmpLines,'/*CONSERVATION*/',['backwards_euler(dt,3,',num2str(length(AllState)),',rhs,y,matq);']);
     CDerivLines=[FirstLine; CTmpLines; {'}'}];
     if (KineticFlg)
         CDerivLines=AddParamsToFuncCall(CDerivLines,FuncNames,InputVarsC,AllParamLineCallAllForKin);

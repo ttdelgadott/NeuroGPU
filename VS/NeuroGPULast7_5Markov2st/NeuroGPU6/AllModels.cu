@@ -47,13 +47,13 @@ float Cunernst(float ci,float co, float z) {
 }
 
 // Kinetic Code:
-__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[2][2]) {
+__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[2][2]){
   for (int i = 0; i < nkinStates; i++) {
-        float w0 = y[i];
+        double w0 = y[i];
        for (int j = 0; j < N; j++) {
-            float top = w0 - y[i] - h * rhs[i];
-              float bottom = 1 - h * matq[i][i];
-         float dw = top / bottom;
+            double top = w0 - y[i] - h * rhs[i];
+              double bottom = 1 - h * matq[i][i];
+         double dw = top / bottom;
            w0 = w0 - dw;
              }
          y[i] = w0;

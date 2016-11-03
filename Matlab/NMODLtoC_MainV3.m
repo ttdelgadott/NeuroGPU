@@ -301,7 +301,7 @@ putLines(fid,ProcDeclareCuC);
 fprintf(fid,'float Cunernst(float ci,float co, float z) {\n\tif (z == 0) {\n\t\treturn 0.;\n\t}\n\tif (ci <= 0.) {\n\t\treturn 1e6;\n\t}else if (co <= 0.) {\n\t\treturn -1e6;\n\t}else{\n\t\treturn ktf/z*log(co/ci);\n\t}\t\n}\n');
 if (KineticFlg)
     fprintf(fid,'\n// Kinetic Code:\n');
-    beulerFirstLine = strcat('__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[',num2str(length(AllState)),'][',,num2str(length(AllState)),'];')
+    beulerFirstLine = strcat('__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[',num2str(length(AllState)),'][',num2str(length(AllState)),'])')
     fprintf(fid,beulerFirstLine);
     fprintf(fid,'{\n  for (int i = 0; i < nkinStates; i++) {\n        double w0 = y[i];\n       for (int j = 0; j < N; j++) {\n            double top = w0 - y[i] - h * rhs[i];\n              double bottom = 1 - h * matq[i][i];\n         double dw = top / bottom;\n           w0 = w0 - dw;\n             }\n         y[i] = w0;\n        }\n     }\n');
 end

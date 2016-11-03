@@ -113,17 +113,17 @@ if ~isempty(StartL)
         transitions = strsplit(transStr,',');
         stateMat(indI,indJ)=transitions(1);
         stateMat(indJ,indI)=transitions(2);
-        matrixBuildLines(end+1) = strcat('matq[',num2str(indI-1),'][' ,num2str(indJ-1) ,'] = ' ,stateMat(indI,indJ),';');
-        matrixBuildLines(end+1) = strcat('matq[',num2str(indJ-1),'][',num2str(indI-1),'] = ',stateMat(indJ,indI),';');
+        matrixBuildLines(end+1) = strcat('//matq[',num2str(indI-1),'][' ,num2str(indJ-1) ,'] = ' ,stateMat(indI,indJ),';');
+        matrixBuildLines(end+1) = strcat('//matq[',num2str(indJ-1),'][',num2str(indI-1),'] = ',stateMat(indJ,indI),';');
     end
     matrixBuildLines{end+1} = strcat('for (int i = 0; i < ',num2str(length(AllState)),'; i++) {');
     matrixBuildLines{end+1} = 'sum = 0 ;';
     matrixBuildLines{end+1} = strcat('for (int j = 0; j < ',num2str(length(AllState)),'; j++) {');
     matrixBuildLines{end+1} = 'if (i != j) {' 
-    matrixBuildLines{end+1} = 'sum +=matq[i][j];'
+    matrixBuildLines{end+1} = '//sum +=matq[i][j];'
     matrixBuildLines{end+1} = '}';
     matrixBuildLines{end+1} = '}';
-    matrixBuildLines{end+1} = 'matq[i][i] = -sum;'	
+    matrixBuildLines{end+1} = '//matq[i][i] = -sum;'	
     matrixBuildLines{end+1} = '}';
     matrixBuildLines{end+1} = '}';
     KinLocals = strcat('float matq[',num2str(length(AllState)),'][',num2str(length(AllState)),'],rhs[',num2str(length(AllState)),'],y[',num2str(length(AllState)),'];');

@@ -1,1 +1,0 @@
--nologo -c -TP /EHsc /W3 /nologo /Ox /Zi  /MD -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v7.0/include" -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v7.0/include" -I"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v7.0/include" "-IC:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\bin/../include"   -EHsc -Zi "x64/Release/CudaStuff.cu.cpp.ii" 
