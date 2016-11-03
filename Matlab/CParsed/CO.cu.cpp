@@ -7,16 +7,16 @@ __device__ void CuInitModel_CO(float v,float &c1,float &o,float gbar_CO,float a1
 float k12,k21;
 double sum = 0;
         Curates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,k12,k21);
-matq[0][1] =k12
-matq[1][0] =k21
+matq[0][1] =k12;
+matq[1][0] =k21;
 for (int i = 0; i <2; i++) {
 sum = 0 ;
-for (int j = 0; j <2 j++) {
+for (int j = 0; j <2; j++) {
 if (i != j) {
-sum += get(q, i, j);
+sum +=matq[i][j];
 }
 }
-set(q, -sum, i, i);
+matq[i][i] = -sum;
 }
 }
 
@@ -26,8 +26,12 @@ void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float
      ;
 };
 
-__device__ void CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+__device__ int CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
 float k12,k21;
+float rhs[2];
+float y[2];
+y[0] =c1;
+y[1] =o;
  {int _reset=0;
  {
    double b_flux, f_flux, _term; int _i;
@@ -54,10 +58,11 @@ for(_i=1;_i<2;_i++){
  _RHS1(0) -= o ;
  _MATELM1(0, 1) = 1;
  _RHS1(0) -= c1 ;
- backwards_euler(dt,3,2);
+ backwards_euler(dt,3,2,rhs,y);
    } return _reset;
  }
  
+}
 
 void BreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
 g=gbar_CO*o;

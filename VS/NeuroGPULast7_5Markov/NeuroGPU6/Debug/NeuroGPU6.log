@@ -1,0 +1,147 @@
+﻿Build started 10/28/2016 3:53:43 PM.
+     1>Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6\NeuroGPU6.vcxproj" on node 2 (Build target(s)).
+     1>CudaBuild:
+         Compiling CUDA source file CudaStuff.cu...
+         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp486b8e8d78284ae597c355eb42fa1c0e.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6\CudaStuff.cu"
+         
+         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6\CudaStuff.cu" 
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(20): warning C4005: 'celsius' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(21): warning C4005: 'stoprun' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(22): warning C4005: 'clamp_resist' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(23): warning C4005: 'secondorder' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(48): error : identifier "y" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(49): error : expected a ";"
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(55): warning : parsing restarts here after previous syntax error
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(73): error : identifier "matq" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(74): error : expected a ";"
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(84): warning : parsing restarts here after previous syntax error
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(71): warning : variable "sum" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(94): error : identifier "rhs" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(95): error : identifier "matq" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(98): error : initial value of reference to non-const must be an lvalue
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(98): error : initial value of reference to non-const must be an lvalue
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(102): error : identifier "rhs" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(105): error : identifier "matq" is undefined
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(91): warning : variable "_i" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(116): error : return value type does not match the function type
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(121): error : expected a ";"
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov\neurogpu6\AllModels.cu(127): warning : parsing restarts here after previous syntax error
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(5): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(6): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(7): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(8): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(9): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(10): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(11): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(12): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(13): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(14): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(15): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(16): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(17): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(19): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(20): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(21): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(22): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(23): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(24): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(25): error : a "__constant__" variable declaration is not allowed inside a function body
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(180): error : expected a ";"
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(215): warning : parsing restarts here after previous syntax error
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(5): warning : variable "cCm" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(6): warning : variable "cE" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(7): warning : variable "cF" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(8): warning : variable "cFIdxs" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(9): warning : variable "cKs" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(10): warning : variable "cSegToComp" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(11): warning : variable "cBoolModel" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(12): warning : variable "cRelStarts" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(13): warning : variable "cRelEnds" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(14): warning : variable "cFathers" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(15): warning : variable "cRelVec" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(16): warning : variable "cSegStartI" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(17): warning : variable "cSegEndI" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(19): warning : variable "cCompByLevel32" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(20): warning : variable "cCompByFLevel32" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(21): warning : variable "cLRelStarts" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(22): warning : variable "cLRelEnds" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(23): warning : variable "cFLRelStarts" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(24): warning : variable "cFLRelEnds" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(25): warning : variable "cSonNoVec" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(216): error : expected a declaration
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): warning : parsing restarts here after previous syntax error
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PF" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_1" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_1" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "OldPFj_1" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_2" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_2" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_3" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_3" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_4" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_4" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_5" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_5" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_6" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_6" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_7" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_7" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_8" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_8" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_9" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_9" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_10" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_10" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_11" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_11" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "PIdx_12" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : identifier "NextID_12" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(244): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(245): error : expected a declaration
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(307): warning : parsing restarts here after previous syntax error
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(309): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(313): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(313): error : a value of type "float *" cannot be used to initialize an entity of type "int"
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(314): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(314): error : variable "offset" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(314): error : expected a ";"
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(315): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(315): error : variable "SMemVHot" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(315): error : initialization with "{...}" expected for aggregate object
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(316): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(316): error : a value of type "float *" cannot be used to initialize an entity of type "int"
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(317): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(317): error : variable "offset" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(317): error : expected a ";"
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(319): error : identifier "stim" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(321): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(322): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(322): error : variable "PX" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(322): error : identifier "bHP" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(323): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(323): error : variable "PF" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(323): error : identifier "uHP" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(328): error : identifier "V" is undefined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(333): error : the size of an array must be greater than zero
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(333): error : variable "ModelStates_1" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(333): error : this declaration has no storage class or type specifier
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(333): error : variable "ModelStates_1" has already been defined
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov/NeuroGPU6/CudaStuff.cu(333): error : initialization with "{...}" expected for aggregate object
+         CudaStuff.cu
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\CUDA 7.5.targets(604,9): error MSB3721: The command ""C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6\CudaStuff.cu"" exited with code 4.
+     1>Done Building Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov\NeuroGPU6\NeuroGPU6.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:02.38

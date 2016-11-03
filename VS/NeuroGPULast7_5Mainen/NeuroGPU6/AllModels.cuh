@@ -1,4 +1,4 @@
-// Automatically generated CUH for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
+// Automatically generated CUH for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
 
 #ifndef __ALLMODELSCU__
 #define __ALLMODELSCU__
@@ -16,7 +16,7 @@
 #define N_L_REL 24
 #define N_F_L_REL 23
 __device__ void CuInitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
-__device__ void CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
+__device__ int CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 __device__ void CuBreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 
 

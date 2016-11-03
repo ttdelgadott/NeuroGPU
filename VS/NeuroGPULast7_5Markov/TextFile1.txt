@@ -1,0 +1,24 @@
+
+#define THISCOMMANDHEREE1(VARILP) MYDTYPE PIdx_ ## VARILP =threadIdx.x+(WARPSIZE*( ## VARILP -1));
+	MYDTYPE PIdx_1 =threadIdx.x+(WARPSIZE*(1 -1));MYDTYPE PIdx_2 =threadIdx.x+(WARPSIZE*(2 -1));MYDTYPE PIdx_3 =threadIdx.x+(WARPSIZE*(3 -1));
+	cudaError cudaStatus;
+
+MYFTYPE t=0;
+	//v is the voltage of this segment, dv
+	// MYFTYPE isModel_3, dVec_3, Vmid_3; // MYFTYPE ModelStates_3[NSTATES]; // MYFTYPE v_3=V[PIdx_3]; // RRR -65?
+
+#define THISCOMMANDHEREE2(VARILP) MYFTYPE isModel_ ## VARILP , dVec_ ## VARILP , Vmid_ ## VARILP ; MYFTYPE ModelStates_ ## VARILP [NSTATES]; MYFTYPE v_ ## VARILP =V[PIdx_ ## VARILP ]; MYFTYPE dv_ ## VARILP;
+	MYFTYPE  Vmid_1 ; MYFTYPE ModelStates_1 [NSTATES]; MYFTYPE v_1 =V[PIdx_1 ]; MYFTYPE dv_1;MYFTYPE isModel_2 , dVec_2 , Vmid_2 ; MYFTYPE ModelStates_2 [NSTATES]; MYFTYPE v_2 =V[PIdx_2 ]; MYFTYPE dv_2;MYFTYPE isModel_3 , dVec_3 , Vmid_3 ; MYFTYPE ModelStates_3 [NSTATES]; MYFTYPE v_3 =V[PIdx_3 ]; MYFTYPE dv_3;
+
+// MYFTYPE sumCurrents_3, sumConductivity_3; // MYFTYPE sumCurrentsDv_3, sumConductivityDv_3;
+#define THISCOMMANDHEREE5(VARILP) MYSECONDFTYPE sumCurrents_ ## VARILP=0 ,sumCurrentsDv_ ## VARILP=0; MYFTYPE  sumConductivity_ ## VARILP=0 ,sumConductivityDv_ ## VARILP=0 ;
+	MYSECONDFTYPE sumCurrents_1=0 ,sumCurrentsDv_1=0; MYFTYPE  sumConductivity_1=0 ,sumConductivityDv_1=0 ;MYSECONDFTYPE sumCurrents_2=0 ,sumCurrentsDv_2=0; MYFTYPE  sumConductivity_2=0 ,sumConductivityDv_2=0 ;MYSECONDFTYPE sumCurrents_3=0 ,sumCurrentsDv_3=0; MYFTYPE  sumConductivity_3=0 ,sumConductivityDv_3=0 ;
+	// end for model in init
+
+	// CONSTANTS
+	// MYFTYPEs
+	// MYDTYPE SonNo_3=InMat.SonNoVec[PIdx_3];
+#define THISCOMMANDHEREE12(VARILP) MYDTYPE SonNo_ ## VARILP =InMat.SonNoVec[PIdx_ ## VARILP ];
+	MYDTYPE SonNo_1 =InMat.SonNoVec[PIdx_1 ];MYDTYPE SonNo_2 =InMat.SonNoVec[PIdx_2 ];MYDTYPE SonNo_3 =InMat.SonNoVec[PIdx_3 ];
+#define THISCOMMANDHEREE13(VARILP) Vs[PIdx_ ## VARILP ]=V[PIdx_ ## VARILP ];bHP[PIdx_ ## VARILP]=0;dv_ ## VARILP =0;
+	Vs[PIdx_1 ]=V[PIdx_1 ];bHP[PIdx_1]=0;dv_1 =0;Vs[PIdx_2 ]=V[PIdx_2 ];bHP[PIdx_2]=0;dv_2 =0;Vs[PIdx_3 ]=V[PIdx_3 ];bHP[PIdx_3]=0;dv_3 =0;

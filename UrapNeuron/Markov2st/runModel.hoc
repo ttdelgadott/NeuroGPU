@@ -5,13 +5,13 @@ modelFile = "./myMarkov.hoc"
 timesFile = "./times.dat"
 
 paramsFile = "./params/orig.dat"
-stimFile = "./Stims/Step.dat"
+stimFile = "./Stims/stepone.dat"
 outFile = "./volts/orig_step.dat"
-ntimestep =3176
+ntimestep =3168
 nparams =12
 
 psize =1
-ntraces =2
+ntraces =1
 create Exts[1]
 objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most
 load_file(modelFile)

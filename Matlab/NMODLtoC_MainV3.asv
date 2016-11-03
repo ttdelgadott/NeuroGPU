@@ -243,7 +243,9 @@ fprintf(fid,'#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n#includ
 
 fprintf(fid,'// Universals:\n#define PI (3.1415927f)\n#define R (8.31441f)\n#define FARADAY (96485.309f)\n#define ktf (1000.*8.3134*(celsius + 273.15)/FARADAY)\n\n');
 if (KineticFlg)
+    
     fprintf(fid,'#define _RHS1(arg) rhs[arg]\n#define _MATELM1(i, j) matq[i][j]\n\n\n');
+    
 end
 % if(~isempty(Reversals))
 %     fprintf(fid,'// Reversals:\n');
@@ -264,6 +266,9 @@ fprintf(fid,'\n// NGlobals:\n');
 for i=1:numel(NGlobals)
     fprintf(fid,['#define ' NGlobals{i} ' (' num2str(NGlobalsV(i)) ')\n']);
 end
+if (KineticFlg)
+    fprintf(fid,'#define _RHS1(arg) rhs[arg]\n#define _MATELM1(i, j) matq[i][j]\n\n\n');
+end
 
 if(~isempty(Reversals))
     fprintf(fid,'\n// Reversals:\n');
@@ -272,12 +277,16 @@ if(~isempty(Reversals))
 %         fprintf(fid,['const ' FTYPESTR ' ' Reversals{i} ' = ' num2str(ReversalsV(i)) 'f;\n']);
     end
 end
+% if (KineticFlg)
+%     fprintf(fid,['float matq[',num2str(length(AllState)),'][',num2str(length(AllState)),'];\n']);
+% end
 
 for i=1:numel(CParamLinesC)
     if(~isempty(CParamLinesC{i}))
         CParamLinesCuC{i}=CParamLinesC{i}(strhas(CParamLinesC{i},'='));
     end
 end
+
 % fprintf(fid,'\n// Globals:\n');
 % putLines(fid,gstrcat('__device__ ',CParamLinesCuC));
 
@@ -292,20 +301,9 @@ putLines(fid,ProcDeclareCuC);
 fprintf(fid,'float Cunernst(float ci,float co, float z) {\n\tif (z == 0) {\n\t\treturn 0.;\n\t}\n\tif (ci <= 0.) {\n\t\treturn 1e6;\n\t}else if (co <= 0.) {\n\t\treturn -1e6;\n\t}else{\n\t\treturn ktf/z*log(co/ci);\n\t}\t\n}\n');
 if (KineticFlg)
     fprintf(fid,'\n// Kinetic Code:\n');
-    fprintf(fid,'static void backwards_euler( double h, int N, int nkinStates) {\n  for (int i = 0; i < nkinStates; i++) {\n    ');
-    %static void backwards_euler( double h, int N, int nkinStates) {
-    for (int i = 0; i < nkinStates; i++) {
-        double w0 = y[i]
-        for (int j = 0; j < N; j++) {
-            //double top = w0 - get(y, 0, i) - h*rhs(Q, i, y);
-            double top = w0 - y[i] - h * rhs[i];
-            double bottom = 1 - h * matq[i][i];
-            double dw = top / bottom;
-            w0 = w0 - dw;
-        }
-        y[i] = w0;
-    }
-}
+    beulerFirstLine = '__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[',num2str(length(AllState
+    
+    fprintf(fid,'__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[2][2]) {\n  for (int i = 0; i < nkinStates; i++) {\n        double w0 = y[i];\n       for (int j = 0; j < N; j++) {\n            double top = w0 - y[i] - h * rhs[i];\n              double bottom = 1 - h * matq[i][i];\n         double dw = top / bottom;\n           w0 = w0 - dw;\n             }\n         y[i] = w0;\n        }\n     }\n');
 end
 fprintf(fid,'\n// Functions:\n');
 putLines(fid,CFuncLinesCuC);

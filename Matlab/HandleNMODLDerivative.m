@@ -118,8 +118,8 @@ if KineticFlg
     end
     CTmpLines=regexprep(CTmpLines,'_threadargscomma_','');
     CTmpLines=regexprep(CTmpLines,'-_dt1.*','0;');
-    CTmpLines=strrep(CTmpLines,'/*CONSERVATION*/',['backwards_euler(dt,3,',num2str(length(AllState)),');']);
-    CDerivLines=[FirstLine; CTmpLines;, {'}'}];
+    CTmpLines=strrep(CTmpLines,'/*CONSERVATION*/',['backwards_euler(dt,3,',num2str(length(AllState)),',rhs,y);']);
+    CDerivLines=[FirstLine; CTmpLines; {'}'}];
     if (KineticFlg)
         CDerivLines=AddParamsToFuncCall(CDerivLines,FuncNames,InputVarsC,AllParamLineCallAllForKin);
     else
@@ -143,13 +143,21 @@ if KineticFlg
             end
         end
     end
+    TmpLinesCu{end+1} = '}';
+    tmpkin= strcat('float rhs[', num2str(length(AllState)),'];') ;
+    tmpkin2 = strcat('float y[', num2str(length(AllState)), '];');
+    tmpkin3 = strcat('float matq[', num2str(length(AllState)), '][', num2str(length(AllState)),'];');
+    addKineticsStuff = {};
+    for jj = 0:(length(AllState)-1)
+        addKineticsStuff{end+1} =strcat('y[',num2str(jj),'] = ' ,AllState{jj+1} ,';'); 
+    end
     if(HasAnyFuncCall)
     %     CDerivLinesCu=[FirstLine; LocalsLine; BeforeFirstLineAll; SecondLinex; Straighten(TmpLinesCu(1:end-1))'; AddDerivLines; TmpLines(end)];
-        CDerivLinesCu=[FirstLine; BeforeFirstLineAll; Straighten(TmpLinesCu)'];
+        CDerivLinesCu=[FirstLine; BeforeFirstLineAll; tmpkin; tmpkin2; tmpkin3; Straighten( addKineticsStuff)'; Straighten(TmpLinesCu)'];
     else
     %     CDerivLinesCu=[FirstLine; LocalsLine; SecondLinex; Straighten(TmpLinesCu(1:end-1))'; AddDerivLines; TmpLinesCu(end)];
         CDerivLinesCu=[FirstLine;  Straighten(TmpLinesCu)'];
     end
 
-    CDerivLinesCu{1}=['__device__ ' regexprep(CDerivLinesCu{1},'void\W*','void Cu')];
+    CDerivLinesCu{1}=['__device__ ' regexprep(CDerivLinesCu{1},'void\W*','int Cu')];
 end

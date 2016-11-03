@@ -4,7 +4,7 @@ NeuroGPUInitGitHub;
 
 model = Model;
 HocBaseFromOpt=fullfile(OptP, 'URapNeuron',model,'runModel.hoc');
-stim = 'Step.dat';
+stim = 'stepone.dat';
 addpath(genpath(BaseP));
 [nrnpath bla1 bla2] = fileparts(HocBaseFromOpt);
 params = nrn_mread([nrnpath,'\params\orig.dat'],inf);
@@ -20,7 +20,7 @@ end
 testFunc2V2;
 pause(2);
 NMODLtoC_MainV3;
-model = 'Mainen';
+model = 'Markov2st';
 slnFN = fullfile(BaseP,'VS',['NeuroGPULast7_5',Model],'NeuroGPU7_5.sln');
 %slnFN = fullfile(BaseP,'VS','NeuroGPULast7_5Mainen','NeuroGPU7_5.sln');
 %slnFN = fullfile(BaseP,'VS','NeuroGPULastLast','NeuroGPU6.sln');
@@ -28,7 +28,7 @@ slnFN = fullfile(BaseP,'VS',['NeuroGPULast7_5',Model],'NeuroGPU7_5.sln');
 %model = 'NewModelCA';
 
 ntimestep=3168;
-stimSize =7;
+stimSize =1;
 StimFolder = fullfile(OptP, 'UrapNeuron',model,'Stims');
 StimFN = [StimFolder,filesep,stim];
 %StimFN = [StimFolder,filesep,'Step.dat'];
@@ -46,7 +46,7 @@ GpuOut = fullfile(BaseP,'Data','VHotP.dat');
 
 %paramSet = 'orig.dat';
 StimFN = strrep(StimFN,'.mat','.dat')
-stimSize = 7;
+stimSize = 1;
 Nt = ntimestep;
 AdjustStim;
 

@@ -1,4 +1,4 @@
-// Automatically generated CU for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
+// Automatically generated CU for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -23,9 +23,14 @@
 #define secondorder (0.00000)
 
 // NGlobals:
+#define _RHS1(arg) rhs[arg]
+#define _MATELM1(i, j) matq[i][j]
+
+
 
 // Reversals:
 #define ek (-77.00000f)
+float matq[2][2];
 
 // Declarations:
 __device__ void Curates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO,float &k12,float &k21);
@@ -43,9 +48,9 @@ float Cunernst(float ci,float co, float z) {
 }
 
 // Kinetic Code:
-static void backwards_euler( double h, int N, int nkinStates) {
+__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y) {
   for (int i = 0; i < nkinStates; i++) {
-        double w0 = y[i]
+        double w0 = y[i];
        for (int j = 0; j < N; j++) {
             double top = w0 - y[i] - h * rhs[i];
               double bottom = 1 - h * matq[i][i];
@@ -70,22 +75,26 @@ __device__ void CuInitModel_CO(float v,float &c1,float &o,float gbar_CO,float a1
 float k12,k21;
 double sum = 0;
         Curates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,k12,k21);
-matq[0][1] =k12
-matq[1][0] =k21
+matq[0][1] =k12;
+matq[1][0] =k21;
 for (int i = 0; i <2; i++) {
 sum = 0 ;
-for (int j = 0; j <2 j++) {
+for (int j = 0; j <2; j++) {
 if (i != j) {
-sum += get(q, i, j);
+sum +=matq[i][j];
 ;}
 ;}
-set(q, -sum, i, i);
+matq[i][i] = -sum;
 ;}
 ;}
 
 // Derivs:
-__device__ void CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
+__device__ int CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
 float k12,k21;
+float rhs[2];
+float y[2];
+y[0] =c1;
+y[1] =o;
  {int _reset=0;
  {
    double b_flux, f_flux, _term; int _i;
@@ -112,10 +121,11 @@ for(_i=1;_i<2;_i++){
  _RHS1(0) -= o ;
  _MATELM1(0, 1) = 1;
  _RHS1(0) -= c1 ;
- backwards_euler(dt,3,2);
+ backwards_euler(dt,3,2,rhs,y);
    ;} return _reset;
  ;}
  
+;}
 
 // Breakpoints:
 __device__ void CuBreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {

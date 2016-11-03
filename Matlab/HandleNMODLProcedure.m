@@ -128,7 +128,7 @@ SeparatorStr=',';
 if(isempty(TmpStr))
     SeparatorStr='';
 end
-TmpKin = strcat('&',AllOutVars,',');
+TmpKin = strcat(AllOutVars,',');
 Tmp=strcat(AllOutVars,',');
 Tmp=cat(2,Tmp{:});
 TmpKin = cat(2,TmpKin{:});

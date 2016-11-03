@@ -1,0 +1,150 @@
+﻿Build started 11/1/2016 10:19:45 AM.
+     1>Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" on node 2 (Build target(s)).
+     1>AddCudaCompileDeps:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /DWIN32 /D_DEBUG /D_CONSOLE /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I. /FIcuda_runtime.h /c C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu 
+       CudaBuild:
+         Compiling CUDA source file CudaStuff.cu...
+         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp792c5e6f163841bfb79f6e09e20c9f5a.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu"
+         
+         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu" 
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(20): warning C4005: 'celsius' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(21): warning C4005: 'stoprun' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(22): warning C4005: 'clamp_resist' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(23): warning C4005: 'secondorder' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(75): warning : variable "sum" was set but never used
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(100): warning : variable "_i" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(132): warning : variable "gk" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(184): warning : variable "CurLevel" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(290): warning : variable "StimID" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "SMemVHot" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "amps" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(500): warning : variable "FileName" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(834): warning : expression has no effect
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "i" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "j" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "t" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "uHPOut_d" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "bHPOut_d" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(20): warning C4005: 'celsius' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(21): warning C4005: 'stoprun' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(22): warning C4005: 'clamp_resist' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(23): warning C4005: 'secondorder' : macro redefinition
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(75): warning : variable "sum" was set but never used
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(100): warning : variable "_i" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(132): warning : variable "gk" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(184): warning : variable "CurLevel" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(333): warning : subscript out of range
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(290): warning : variable "StimID" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_1" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_2" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_3" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_4" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_5" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_6" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_7" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_8" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_9" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_10" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_11" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_12" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "SMemVHot" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "amps" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(500): warning : variable "FileName" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(834): warning : expression has no effect
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "i" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "j" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "t" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "uHPOut_d" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "bHPOut_d" was declared but never referenced
+         ptxas fatal   : Unresolved extern function '_Z15CuInitModel_hh2fRfS_S_ffff'
+         CudaStuff.cu
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\CUDA 7.5.targets(604,9): error MSB3721: The command ""C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G   --keep-dir Debug -maxrregcount=0  --machine 32 --compile -cudart static  -g   -DWIN32 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Ox /Zi  /MDd " -o Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu"" exited with code 255.
+     1>Done Building Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:07.98
