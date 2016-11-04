@@ -559,6 +559,8 @@ def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines
     for cur_mod_i in range(len(c_init_lines_cu)):
         print call_to_init_list
         f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
+        f.write(c_deriv_lines_cu[cur_mod_i][0][:-1] + ';\n')
+        f.write(c_break_lines_cu[cur_mod_i][0][:-1] + ';\n')
 
 
 

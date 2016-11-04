@@ -1,4 +1,4 @@
-// Automatically generated CU for /home/roybens/neuron/MainenPy./runModel.hoc
+// Automatically generated CU for /home/devloop0/neuroGPU/neuroGPU/UrapNeuron/MainenPy2./runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
