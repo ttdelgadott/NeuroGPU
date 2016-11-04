@@ -535,7 +535,7 @@ void ReadParamsMat(const char* FN,MYFTYPE** ParamsM,MYDTYPE NParams,MYDTYPE Nx) 
 cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMat, MYFTYPE* V,MYDTYPE CompDepth,MYDTYPE CompFDepth,MYDTYPE NSets) { 
 
 	cudaError_t cudaStatus;
-	cudaStatus = cudaSetDevice(0);
+	cudaStatus = cudaSetDevice(1);
 	cudaStatus = cudaDeviceReset();
 	MYFTYPE *VHotsGlobal,*VHotsHost;
 	MYDTYPE Nt=stim.Nt;
@@ -788,8 +788,9 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 	
 	MYDTYPE TotalSMem=FrameworkMemSize+(PerStimulus)*stim.NStimuli;
 	printf("Asking %d bytes, %d+%d*%d\n",TotalSMem,FrameworkMemSize,PerStimulus,stim.NStimuli);
-	clock_t begin,end;
-	begin=clock();
+		cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 		MYDTYPE currKernelRun = NKERNEL;
 	MYDTYPE prevRuns = 0;
 	int memSizeForVHotGlobal = Nt*stim.NStimuli*sim.NRecSites;
@@ -800,7 +801,7 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 	cudaStreamCreate (&stream1);
 	cudaStreamCreate (&stream2);
 	cudaStreamCreate (&stream3);
-	begin=clock();
+	cudaEventRecord(start, 0);
 	while (prevRuns<NSets){
 	if(currKernelRun>(NSets-prevRuns)){
 		currKernelRun = (NSets-prevRuns);
@@ -836,22 +837,27 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 		streamID +=1;
 	}
 	}
-	cudaDeviceSynchronize();
+	//cudaDeviceSynchronize();
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+	printf("time required : %f", elapsedTime);
+
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching stEfork2TimeLoopGPUKernel!\n", cudaStatus);
 		return cudaStatus;
 	}
 	//cudaStatus = cudaMemcpy(VHotsHost, VHotsGlobal,NSets * Nt * stim.NStimuli* sizeof(MYFTYPE), cudaMemcpyDeviceToHost); 
-
-	end=clock();
-	double totalT = diffclock(end,begin);
-	printf("stEfork2TimeLoopGPU took %g milliseconds\n",totalT);
+	printf("stEfork2TimeLoopGPU took %f milliseconds\n",elapsedTime);
 	FILE *file = fopen(TIMES_FN, "wb");
 	if ( file ) {
 		MYDTYPE mul32 = MUL32;
 		fwrite(&mul32,sizeof(MYDTYPE),1,file);
-		fwrite(&totalT,sizeof(double),1,file);
+		fwrite(&elapsedTime,sizeof(float),1,file);
 	} else {
 		printf("ERR SaveArrayToFile %s\n",TIMES_FN);
 	}
@@ -868,7 +874,7 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 
 cudaError_t stEfork2Main(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMat, MYFTYPE* V,MYDTYPE CompDepth,MYDTYPE CompFDepth,MYDTYPE NSets) {
 	cudaError_t cudaStatus;
-	cudaStatus = cudaSetDevice(0);
+	cudaStatus = cudaSetDevice(1);
 	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	  stEfork2TimeLoopGPU(stim, sim, ParamsM, InMat, V,CompDepth,CompFDepth,NSets); //RRR sim
 	  

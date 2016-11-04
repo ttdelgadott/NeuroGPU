@@ -18,9 +18,22 @@ float g,k12,k21;
 
 // Ion currents as Locals:
 float ik;
+#define _RHS1(arg) rhs[arg]
+#define _MATELM1(i, j) matq[i][j]
 
 // NGlobals:
-
+ void backwards_euler(double h, int N, int nkinStates, float* rhs, float* y, float matq[2][2]){
+	for (int i = 0; i < nkinStates; i++) {
+		double w0 = y[i];
+		for (int j = 0; j < N; j++) {
+			double top = w0 - y[i] - h * rhs[i];
+			double bottom = 1 - h * matq[i][i];
+			double dw = top / bottom;
+			w0 = w0 - dw;
+		}
+		y[i] = w0;
+	}
+}
 // Declarations:
 void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 float nernst(float ci,float co, float z) {
@@ -41,7 +54,7 @@ float nernst(float ci,float co, float z) {
 // Inits:
 void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
 double sum = 0;
-        rates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO)
+rates_CO(v, gbar_CO, a12_CO, a21_CO, z12_CO, z21_CO);
 //matq[0][1] =k12;
 //matq[1][0] =k21;
 for (int i = 0; i <2; i++) {
@@ -67,13 +80,16 @@ void DerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_
  {int _reset=0;
  {
    double b_flux, f_flux, _term; int _i;
+   float y[2];
+   float rhs[2];
+   float matq[2][2];
  {int _i; double _dt1 = 1.0/dt;
 for(_i=1;_i<2;_i++){
   	_RHS1(_i) = 0;
 	_MATELM1(_i, _i) = _dt1;
       
 ;} ;}
- rates_CO (  v ,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,k12,k21) ;
+ rates_CO (  v ,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO) ;
    /* ~ c1 <-> o ( k12 , k21 )*/
  f_flux =  k12 * c1 ;
  b_flux =  k21 * o ;
@@ -91,7 +107,7 @@ for(_i=1;_i<2;_i++){
  _MATELM1(0, 1) = 1;
  _RHS1(0) -= c1 ;
  backwards_euler(dt,3,2,rhs,y,matq);
-   ;} return _reset;
+   ;} 
  ;}
  
 ;}

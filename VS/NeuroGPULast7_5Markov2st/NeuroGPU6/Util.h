@@ -10,8 +10,8 @@
 #define DEBUG 1
 #define BKSUB1
 #define HH
-#define MUL32 12
-#define ILP12
+#define MUL32 2
+#define ILP2
 #ifdef HH
 #define NSTIM 1
 #define EPS_V 0.001

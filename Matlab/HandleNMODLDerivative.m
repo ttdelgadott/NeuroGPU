@@ -53,9 +53,12 @@ if(~isempty(DerivLineI))
         CTmpLines={'}'};
     end
     CTmpLines=regexprep(CTmpLines,'_threadargscomma_','');
+    tmpkin= strcat('float rhs[', num2str(length(AllState)),'];') ;
+    tmpkin2 = strcat('float y[', num2str(length(AllState)), '];');
+    tmpkin3 = strcat('float matq[', num2str(length(AllState)), '][', num2str(length(AllState)),'];');
 
     % CDerivLinesx=[FirstLine; SecondLinex; Straighten(TmpLines(1:end-1))'; AddDerivLines; TmpLines(end)];
-    CDerivLines=[FirstLine; CTmpLines];
+    CDerivLines=[FirstLine;tmpkin; tmpkin2; tmpkin3; CTmpLines];
 
     CDerivLines=AddParamsToFuncCall(CDerivLines,FuncNames,InputVarsC,AllParamLineCall);
 
@@ -109,13 +112,14 @@ if KineticFlg
         [TmpP TmpN]=fileparts(CurFN);
         cFileLines = getLines([TmpP filesep 'x86_64' filesep TmpN C_SUFFIX]);
     end
-    CStartLine=find(strhas(cFileLines,['static int ',kinName,'? ('])); 
+    CStartLine=find(strhas(cFileLines,[kinName,'? ('])); 
     CEndLine=find(strhas(cFileLines,'return _reset;'))+1;
     CEndLine=min(CEndLine(CEndLine>CStartLine))+1;
     CTmpLines=cFileLines(CStartLine+1:CEndLine)';
     if(isempty(CTmpLines))
         CTmpLines={'}'};
     end
+    CTmpLines=regexprep(CTmpLines,'return _reset;','');
     CTmpLines=regexprep(CTmpLines,'_threadargscomma_','');
     CTmpLines=regexprep(CTmpLines,'-_dt1.*','0;');
     CTmpLines=strrep(CTmpLines,'/*CONSERVATION*/',['backwards_euler(dt,3,',num2str(length(AllState)),',rhs,y,matq);']);

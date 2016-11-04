@@ -1,14 +1,14 @@
  NeuroGPUInitGitHub;
-FN=['../UrapNeuron\Mainen\Volts\orig_step_soma.dat'];
+FN=['../UrapNeuron\Markov2st\Volts\orig_step_soma.dat'];
 ntimestep=3168;
-stimSize =7;
-model = 'Mainen';
+stimSize =1;
+model = 'Markov2st';
 [NV,err] =nrn_mread(FN,inf);
 NeuronsVs = reshape(NV,ntimestep,stimSize);
 ntimestep=3168;
 figure (234)
 plot(NeuronsVs);
-stimSize =7;
+stimSize =1;
 psize = 1;
 fidVHotP = fopen('../Data/VHotP.dat');
 NVHotP = fread(fidVHotP, 1, 'int');

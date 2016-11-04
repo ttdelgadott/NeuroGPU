@@ -32,12 +32,12 @@ proc create_axon() {
 
   iseg {                // initial segment between hillock + myelin
      L = 15
-     nseg = 5
+     nseg = 3
      diam = equiv_diam/10        // see Sloper and Powell 1982, Fig.71
   }
 
   hill {                
-    L = 10
+    L = 5
     nseg = 5
     diam(0:1) = 4*iseg.diam:iseg.diam
   }
@@ -46,7 +46,7 @@ proc create_axon() {
 
   for i=0,n_axon_seg-1 {
     myelin[i] {         // myelin element
-      nseg = 5
+      nseg = 3
       L = 100
       diam = iseg.diam         
     }
@@ -130,7 +130,7 @@ forall most.append()
 }
 
 
-load_3dcell("./j4a.hoc") 
+load_3dcell("./sp.hoc") 
 forall {insert CO}
 
 proc tfunc(){}

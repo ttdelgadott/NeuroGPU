@@ -93,9 +93,6 @@
 copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile />
-    <CudaCompile>
-      <CodeGeneration>compute_35,sm_35</CodeGeneration>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -117,14 +114,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <CodeGeneration>compute_35,sm_35</CodeGeneration>
       <InterleaveSourceInPTX>false</InterleaveSourceInPTX>
-      <GenerateLineInfo>false</GenerateLineInfo>
+      <GenerateLineInfo>true</GenerateLineInfo>
       <PtxAsOptionV>false</PtxAsOptionV>
       <FastMath>true</FastMath>
       <GPUDebugInfo>true</GPUDebugInfo>
       <HostDebugInfo>true</HostDebugInfo>
       <Optimization>O2</Optimization>
-      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
-      <UseHostInclude>false</UseHostInclude>
+      <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
     </CudaCompile>
     <CudaLink>
       <AdditionalLibraryDirectories>$(CudaToolkitLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

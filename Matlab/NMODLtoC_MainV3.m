@@ -453,7 +453,7 @@ cmVec = createCmvec(Neuron.Cms,Neuron.NSegs);
 %% CUH file
 %VSDir = fullfile(BaseP, 'VS','NeuroGPUStimCUDAHu','NeuronC');
 %VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5Mainen','NeuroGPU6');
-VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5Mainen','NeuroGPU6');
+VSDir = fullfile(BaseP, 'VS',['NeuroGPULast7_5',Model],'NeuroGPU6');
 % fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.cuh'),'w');
 fid=fopen(fullfile(VSDir,'AllModels.cuh'),'w');
 fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);

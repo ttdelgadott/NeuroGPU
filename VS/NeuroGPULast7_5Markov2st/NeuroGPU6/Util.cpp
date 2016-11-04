@@ -163,9 +163,6 @@ void ReadParallelNeuronData(const char* FN, HMat &TheMat,MYDTYPE *CompDepth,MYDT
 	fread(&TheMat.NModels, sizeof(MYDTYPE), 1, fl);
 	TheMat.boolModel = (MYDTYPE*) malloc(TheMat.N*TheMat.NModels*sizeof(MYDTYPE));
 	fread(TheMat.boolModel, sizeof(MYDTYPE), TheMat.N*TheMat.NModels, fl);
-	for (int i = 0; i < TheMat.N*TheMat.NModels; i++){
-		TheMat.boolModel[i] = 0;
-	}
 	fread(TheMat.SonNoVec, sizeof(MYDTYPE), TheMat.N, fl);
 
 	fread(&TheMat.Depth, sizeof(MYDTYPE), 1, fl);
@@ -201,7 +198,6 @@ void ReadParallelNeuronData(const char* FN, HMat &TheMat,MYDTYPE *CompDepth,MYDT
 
 	TheMat.CompByLevel32 = (MYDTYPE*) malloc((*CompDepth)*WARPSIZE*sizeof(MYDTYPE));
 	fread(TheMat.CompByLevel32, (*CompDepth)*WARPSIZE*sizeof(MYDTYPE), 1, fl);
-
 	TheMat.CompByFLevel32 = (MYDTYPE*) malloc((*CompFDepth)*WARPSIZE*sizeof(MYDTYPE));
 	fread(TheMat.CompByFLevel32, (*CompFDepth)*WARPSIZE*sizeof(MYDTYPE), 1, fl);
 
@@ -274,6 +270,7 @@ void ReadStimData(const char* FN,Stim &stim,MYDTYPE Nx){
 
 
 void CreateStimData(Stim &stim){
+	printf("creating stim data, n-%d", NSTIM);
 	stim.NStimuli=NSTIM;
 	stim.dels = (MYFTYPE*) malloc(stim.NStimuli*sizeof(MYFTYPE));
 	stim.durs = (MYFTYPE*) malloc(stim.NStimuli*sizeof(MYFTYPE));
@@ -293,7 +290,7 @@ void CreateStimData(Stim &stim){
 void ReadStimFromFile(const char* FN,Stim &stim){
 	FILE *fl;
 	fl = fopen(FN, "rb");
-	printf("reading stimfromfile - %s", FN);
+	
 	if (!fl)
 	{
 		printf("Failed to read StimData\n");
@@ -301,6 +298,7 @@ void ReadStimFromFile(const char* FN,Stim &stim){
 	}
 	MYDTYPE Nt;
 	fread(&stim.NStimuli, sizeof(MYDTYPE),1, fl);
+	printf("reading stimfromfile - %s n is %d", FN, stim.NStimuli);
 	fread(&Nt, sizeof(MYDTYPE),1, fl);
 	stim.Nt = MYDTYPE(ceil(MYFTYPE(Nt)/WARPSIZE)*WARPSIZE);
 	fread(&stim.comp, sizeof(MYDTYPE),1, fl);
