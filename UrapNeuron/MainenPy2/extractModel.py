@@ -512,6 +512,7 @@ def parse_models(thread):
     #NIKHIL add createaux here
 
     output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
+
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
 
 def get_matrix(FN,parent,seg_start,last_seg):
@@ -557,13 +558,9 @@ def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines
     f.write('#define N_L_REL ' + str(len(aux.LRelStarts)) +'\n')
     f.write('#define N_F_L_REL ' +str(len(aux.FLRelStarts)) +'\n')
     for cur_mod_i in range(len(c_init_lines_cu)):
-        print call_to_init_list
         f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
         f.write(c_deriv_lines_cu[cur_mod_i][0][:-1] + ';\n')
         f.write(c_break_lines_cu[cur_mod_i][0][:-1] + ';\n')
-
-
-
 
 def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
@@ -599,7 +596,70 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
     f.write('\n#endif')
     f.close()
 
+def replace_for_cuh(call_to_init_str, call_to_deriv_str, call_to_break_str, call_to_break_dv_str):
+    call_to_init_str_cu = call_to_init_str.replace('InitModel', 'CuInitModel')
+    call_to_deriv_str_cu = call_to_deriv_str.replace('DerivModel', 'CuDerivModel')
+    call_to_break_str_cu = call_to_break_str.replace('BreakpointModel', 'CuBreakpointModel')
+    call_to_break_dv_str_cu = call_to_break_dv_str.replace('BreakpointModel', 'CuBreakpointModel')
 
+    call_to_init_str_cu = call_to_init_str_cu.replace('TheMMat', 'InMat')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('TheMMat', 'InMat')
+    call_to_break_str_cu = call_to_break_str_cu.replace('TheMMat', 'InMat')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('TheMMat', 'InMat')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_break_str_cu = call_to_break_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('InMat.boolModel', 'cBoolModel')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_break_str_cu = call_to_break_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('V[seg]', 'v_ ## VARILP')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('dt, V[seg]', 'dt, v_ ## VARILP')
+    call_to_break_str_cu = call_to_break_str_cu.replace('sumCurrents, sumConductivity, V[seg]',
+        'sumCurrents_ ## VARILP , sumConductivity_ ## VARILP,v_ ## VARILP ')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('sumCurrentsDv, sumConductivityDv, V[seg]+0.001',
+        'sumCurrentsDv_ ## VARILP , sumConductivityDv_ ## VARILP ,v_ ## VARILP +0.001')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_break_str_cu = call_to_break_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('ParamsM[ ', 'p')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('ParamsM[', 'p')
+    call_to_break_str_cu = call_to_break_str_cu.replace('ParamsM[', 'p')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('ParamsM[', 'p')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[comp] ', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[comp] ', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[comp] ', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[comp] ', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[seg] ', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[seg] ', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[seg] ', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[seg] ', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_break_str_cu = call_to_break_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('][comp]', '_ ## VARILP ')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[ comp ]', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[ comp ]', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[ comp ]', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[ comp ]', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[ seg ]', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[ seg ]', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[ seg ]', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[ seg ]', '')
+
+    return call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu
 
 
 def write_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
