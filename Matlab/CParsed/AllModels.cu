@@ -1,4 +1,4 @@
-// Automatically generated CU for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Markov2st\runModel.hoc
+// Automatically generated CU for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Stim\runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,10 +12,6 @@
 #define FARADAY (96485.309f)
 #define ktf (1000.*8.3134*(celsius + 273.15)/FARADAY)
 
-#define _RHS1(arg) rhs[arg]
-#define _MATELM1(i, j) matq[i][j]
-
-
 // GGlobals
 #define celsius (6.30000)
 #define stoprun (0.00000)
@@ -23,16 +19,19 @@
 #define secondorder (0.00000)
 
 // NGlobals:
-#define _RHS1(arg) rhs[arg]
-#define _MATELM1(i, j) matq[i][j]
-
-
+#define minf_hh2 (0.052932)
+#define hinf_hh2 (0.59612)
+#define ninf_hh2 (0.31768)
+#define mtau_hh2 (0.23677)
+#define htau_hh2 (8.516)
+#define ntau_hh2 (5.4586)
 
 // Reversals:
 #define ek (-77.00000f)
+#define ena (50.00000f)
 
 // Declarations:
-__device__ void Curates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO,float &k12,float &k21);
+__device__ void Curates_hh2(float v,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2);
 float Cunernst(float ci,float co, float z) {
 	if (z == 0) {
 		return 0.;
@@ -46,92 +45,68 @@ float Cunernst(float ci,float co, float z) {
 	}	
 }
 
-// Kinetic Code:
-__device__ void backwards_euler( double h, int N, int nkinStates,float* rhs,float* y,float matq[2][2]){
-  for (int i = 0; i < nkinStates; i++) {
-        double w0 = y[i];
-       for (int j = 0; j < N; j++) {
-            double top = w0 - y[i] - h * rhs[i];
-              double bottom = 1 - h * matq[i][i];
-         double dw = top / bottom;
-           w0 = w0 - dw;
-             }
-         y[i] = w0;
-        }
-     }
-
 // Functions:
+__device__ float Cuvtrap_hh2(float x,float y) {
+        if (fabs(x/y) < 1e-6) {;
+                return  y*(1 - x/y/2);
+        }else{;
+                return  x/(exp(x/y) - 1);
+        };
+};
 
 // Procedures:
-__device__ void Curates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO,float &k12,float &k21) {
-      k12 = a12_CO*exp(z12_CO*v);
-      k21 = a21_CO*exp(-z21_CO*v);
-     ;
+__device__ void Curates_hh2(float v,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float  alpha, beta, sum, q10;
+                      ;
+        q10 =pow((MYFTYPE) 3,(MYFTYPE)((celsius - 6.3)/10));
+                ;
+        alpha = .1 * Cuvtrap_hh2(-(v+40),10);
+        beta =  4 * exp(-(v+65)/18);
+        sum = alpha + beta;
+/* removed mtau_hh2 recalculation */
+       /* removed minf_hh2 recalculation */
+                ;
+        alpha = .07 * exp(-(v+65)/20);
+        beta = 1 / (exp(-(v+35)/10) + 1);
+        sum = alpha + beta;
+/* removed htau_hh2 recalculation */
+       /* removed hinf_hh2 recalculation */
+                ;
+        alpha = .01*Cuvtrap_hh2(-(v+55),10) ;
+        beta = .125*exp(-(v+65)/80);
+	sum = alpha + beta;
+       /* removed ntau_hh2 recalculation */
+       /* removed ninf_hh2 recalculation */
 ;};
 
 // Inits:
-__device__ void CuInitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
-float k12,k21;
-double sum = 0;
-        Curates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,k12,k21);
-//matq[0][1] =k12;
-//matq[1][0] =k21;
-for (int i = 0; i <2; i++) {
-sum = 0 ;
-for (int j = 0; j <2; j++) {
-if (i != j) {
-//sum +=matq[i][j];
-;}
-;}
-//matq[i][i] = -sum;
-;}
-;}
+__device__ void CuInitModel_hh2(float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float ;
+	Curates_hh2(v,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2);
+	m = minf_hh2;
+	h = hinf_hh2;
+	n = ninf_hh2;
+;};
 
 // Derivs:
-__device__ int CuDerivModel_CO(float dt, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
-float k12,k21;
-float rhs[2];
-float y[2];
-float matq[2][2];
-y[0] =c1;
-y[1] =o;
- {int _reset=0;
- {
-   double b_flux, f_flux, _term; int _i;
- {int _i; double _dt1 = 1.0/dt;
-for(_i=1;_i<2;_i++){
-  	_RHS1(_i) = 0;
-	_MATELM1(_i, _i) = _dt1;
-      
-;} ;}
- Curates_CO (  v ,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO,k12,k21);
-   /* ~ c1 <-> o ( k12 , k21 )*/
- f_flux =  k12 * c1 ;
- b_flux =  k21 * o ;
- _RHS1( 1) -= (f_flux - b_flux);
- 
- _term =  k12 ;
- _MATELM1( 1 ,1)  += _term;
- _term =  k21 ;
- _MATELM1( 1 ,0)  -= _term;
- /*REACTION*/
-   /* c1 + o = 1.0 */
- _RHS1(0) =  1.0;
- _MATELM1(0, 0) = 1;
- _RHS1(0) -= o ;
- _MATELM1(0, 1) = 1;
- _RHS1(0) -= c1 ;
- backwards_euler(dt,3,2,rhs,y,matq);
-   ;} 
- ;}
- 
-;}
+__device__ void CuDerivModel_hh2(float dt, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float ek,ik,il;
+float ;
+   Curates_hh2 (  v ,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2);
+    m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau_hh2)))*(- ( ( ( minf_hh2 ) ) / mtau_hh2 ) / ( ( ( ( - 1.0) ) ) / mtau_hh2 ) - m) ;
+    h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau_hh2)))*(- ( ( ( hinf_hh2 ) ) / htau_hh2 ) / ( ( ( ( - 1.0) ) ) / htau_hh2 ) - h) ;
+    n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ntau_hh2)))*(- ( ( ( ninf_hh2 ) ) / ntau_hh2 ) / ( ( ( ( - 1.0) ) ) / ntau_hh2 ) - n) ;
+   ;}
 
 // Breakpoints:
-__device__ void CuBreakpointModel_CO(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
-float g,gk;
-float ik;
-g=gbar_CO*o;
-ik=(1e-4)*g*(v-ek);
+__device__ void CuBreakpointModel_hh2(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float gk,gna;
+float ik,il,ina;
+gna=gnabar_hh2*m*m*m*h;
+ina=gna*(v-ena);
+gk=gkbar_hh2*n*n*n*n;
+ik=gk*(v-ek);
+il=gl_hh2*(v-el_hh2);
 sumCurrents+= ik;
+sumConductivity+= gk;
 ;};

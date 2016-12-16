@@ -50,7 +50,7 @@ NeuroGPUInitGitHub;
 FN_TopoList=fullfile(BaseP, 'Neuron','printCell','Amit','output','64TL.csv');
 % FN_Topo=fullfile(BaseP, 'Neuron','printCell','Amit','output','64T.csv');
 % FN_TopoF=fullfile(BaseP, 'Neuron','printCell','Amit','output','64F.csv');
-% FN_TopoPP=fullfile(BaseP, 'Neuron','printCell','Amit','output','64PP.csv');
+ FN_TopoPP=fullfile(BaseP, 'Neuron','printCell','Amit','output','64PP.csv');
 % FN_TopoMDL=fullfile(BaseP, 'Neuron','printCell','Amit','output','64MDL.csv');
 % %HocBaseFN=[BaseP 'Neuron\Mainen\test3\runModel.hoc'];
 % % HocBaseFN=[BaseP 'Neuron\printCell\ForC\knacaonly\knacatrials.hoc'];
@@ -59,7 +59,9 @@ FN_TopoList=fullfile(BaseP, 'Neuron','printCell','Amit','output','64TL.csv');
 availableMechanisms=getMechanismsFromMDLFile(FN_TopoMDL);
 % availableMechanisms=setdiff(availableMechanisms,{'stim','pas'});
 availableMechanisms=setdiff(availableMechanisms,{'stim'});
+
 ModMap=ConnectMechanismsToModFiles(HocBaseFN);
+[allPPs availablePPs] = parsePPOutput(FN_TopoPP);
 
 GGlobals={'celsius' 'stoprun' 'clamp_resist' 'secondorder'};
 %%
@@ -456,28 +458,28 @@ cmVec = createCmvec(Neuron.Cms,Neuron.NSegs);
 VSDir = fullfile(BaseP, 'VS',['NeuroGPULast7_5',Model],'NeuroGPU6');
 % fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.cuh'),'w');
 fid=fopen(fullfile(VSDir,'AllModels.cuh'),'w');
-fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
-fprintf(fid,['\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n']);
-fprintf(fid,'#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n');
+%fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
+%fprintf(fid,['\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n']);
+%fprintf(fid,'#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n');
 % #define BasicConst_FN "..\\..\\..\\Data\\BasicConst"
 % #define BasicConstP_FN "..\\..\\..\\Data\\BasicConst"
 % #define ParamsMat_FN "..\\..\\..\\Data\\ParamsM"
 % #define Stim_FN "..\\..\\..\\Data\\Stim"
 % #define Sim_FN "..\\..\\..\\Data\\Sim"
-fprintf(fid,['#define NSEG ' num2str(sum(Neuron.NSegsMat)) '\n']);
-fprintf(fid,['#define LOG_N_DEPTH ' num2str(Aux.LognDepth) '\n']);
-fprintf(fid,['#define N_MODELS ' num2str(size(Neuron.HasHH,1)) '\n']);
-fprintf(fid,['#define N_FATHERS ' num2str(numel(Aux.Fathers)) '\n']);
-fprintf(fid,['#define N_CALL_FOR_FATHER ' num2str(Aux.nCallForFather) '\n']);
-fprintf(fid,['#define COMP_DEPTH ' num2str(nParams) '\n']);
-fprintf(fid,['#define N_L_REL ' num2str(numel(Aux.LRelStarts)) '\n']);
-fprintf(fid,['#define N_F_L_REL ' num2str(numel(Aux.FLRelStarts)) '\n']);
-for CurModI=1:numel(availableMechanisms)
-    fprintf(fid,'%s\n',[CInitLinesCuC{CurModI}{1}(1:end-1) ';']);
-    fprintf(fid,'%s\n',[CDerivLinesCuC{CurModI}{1}(1:end-1) ';']);
-    fprintf(fid,'%s\n',[CBreakLinesCuC{CurModI}{1}(1:end-1) ';']);
-   % fprintf(fid,'%s\n',[CKineticLinesCuC{CurModI}{1}(1:end-1) ';']);
-end
+%fprintf(fid,['#define NSEG ' num2str(sum(Neuron.NSegsMat)) '\n']);
+%fprintf(fid,['#define LOG_N_DEPTH ' num2str(Aux.LognDepth) '\n']);
+%fprintf(fid,['#define N_MODELS ' num2str(size(Neuron.HasHH,1)) '\n']);
+%fprintf(fid,['#define N_FATHERS ' num2str(numel(Aux.Fathers)) '\n']);
+%fprintf(fid,['#define N_CALL_FOR_FATHER ' num2str(Aux.nCallForFather) '\n']);
+%fprintf(fid,['#define COMP_DEPTH ' num2str(nParams) '\n']);
+%fprintf(fid,['#define N_L_REL ' num2str(numel(Aux.LRelStarts)) '\n']);
+%fprintf(fid,['#define N_F_L_REL ' num2str(numel(Aux.FLRelStarts)) '\n']);
+%for CurModI=1:numel(availableMechanisms)
+%    fprintf(fid,'%s\n',[CInitLinesCuC{CurModI}{1}(1:end-1) ';']);
+%    fprintf(fid,'%s\n',[CDerivLinesCuC{CurModI}{1}(1:end-1) ';']);
+%    fprintf(fid,'%s\n',[CBreakLinesCuC{CurModI}{1}(1:end-1) ';']);
+%   % fprintf(fid,'%s\n',[CKineticLinesCuC{CurModI}{1}(1:end-1) ';']);
+%end
 %RBS Start
 
 ReplaceForCUHv2;

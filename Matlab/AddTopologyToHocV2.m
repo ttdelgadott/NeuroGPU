@@ -63,24 +63,41 @@ AddedLines{end+1}='}';
 AddedLines{end+1}='fn.close()';
 AddedLines{end+1}='// End mechanisms output';
 AddedLines{end+1}='// Start point processess mechanisms output';
+
+
+
+
 AddedLines{end+1}='fn = new File()';
 AddedLines{end+1}=['fn.wopen("' FN_TopoPP '")'];
 AddedLines{end+1}='forall{';
 AddedLines{end+1}='	fn.printf("#%s\n",secname())';
 AddedLines{end+1}='	mt = new MechanismType(1)';
-AddedLines{end+1}='	mt.select("IClamp")';
-AddedLines{end+1}='	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {';
-AddedLines{end+1}='		x = pp.get_loc()';
-AddedLines{end+1}='		del1 = pp.del';
-AddedLines{end+1}='		dur1 = pp.dur';
-AddedLines{end+1}='		amp1 = pp.amp';
-AddedLines{end+1}='		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)';
-AddedLines{end+1}='		pop_section()';
+AddedLines{end+1}='	for i=0, mt.count()-1 {'; % move through all mechanisms
+AddedLines{end+1}='		mt.select(i)';
+AddedLines{end+1}='		mt.selected(mname)';
+AddedLines{end+1}='		if (ismembrane(mname)){';
+AddedLines{end+1}='         fn.printf("%s\n",mname)';
+AddedLines{end+1}='			for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {';
+AddedLines{end+1}='             ms = new MechanismStandard(mname)';
+AddedLines{end+1}='             for j=0, ms.count()-1 {';
+AddedLines{end+1}='				k = ms.name(s, j)';
+AddedLines{end+1}='				sprint(ss,"temp=pp.%s",s)';
+AddedLines{end+1}='				execute(ss)';
+AddedLines{end+1}='				fn.printf("%s = %f\n",s,temp)';
+AddedLines{end+1}='			}';
+AddedLines{end+1}='			ms = new MechanismStandard(mname,3)';
+AddedLines{end+1}='			for j=0, ms.count()-1 {'; % all global parameters of the mechanism
+AddedLines{end+1}='				k = ms.name(s, j)';
+AddedLines{end+1}='				sprint(ss,"temp=%s",s)';
+AddedLines{end+1}='				execute(ss)';
+AddedLines{end+1}='				fn.printf("%s = %f\n",s,temp)';
+AddedLines{end+1}='			}';
+AddedLines{end+1}='		}';
 AddedLines{end+1}='	}';
-AddedLines{end+1}='	fn.printf("\n")';
+AddedLines{end+1}='}';
 AddedLines{end+1}='}';
 AddedLines{end+1}='fn.close()';
-AddedLines{end+1}='// End point processess mechanisms output';
+AddedLines{end+1}='//End point processess mechanisms output'
 AddedLines{end+1}=['hoc_stdout("' ,FN_TopoF '")'];
 AddedLines{end+1}='MyPrintMatrix()';
 AddedLines{end+1}='hoc_stdout()';

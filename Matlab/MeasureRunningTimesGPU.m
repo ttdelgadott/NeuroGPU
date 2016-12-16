@@ -20,7 +20,7 @@ end
 testFunc2V2;
 pause(2);
 NMODLtoC_MainV3;
-model = 'Markov2st';
+model = 'Stim';
 slnFN = fullfile(BaseP,'VS',['NeuroGPULast7_5',Model],'NeuroGPU7_5.sln');
 %slnFN = fullfile(BaseP,'VS','NeuroGPULast7_5Mainen','NeuroGPU7_5.sln');
 %slnFN = fullfile(BaseP,'VS','NeuroGPULastLast','NeuroGPU6.sln');

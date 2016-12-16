@@ -56,7 +56,8 @@ WriteStimAndSim(Sim,Stim,FTYPESTR);
 %%
 cd(fullfile(BaseP,'Matlab','Amit','Parsing Utils','Parsed Funcs'));
 % parseHocFile (HocFN);      %QWERTY
-ParseHocFile2(HocBaseFN, FN_Topo, FN_TopoMDL, FN_TopoPP)
+ParseHocFile2(HocBaseFN, FN_Topo, FN_TopoMDL, FN_TopoPP);
+
 cd([BaseP 'Matlab']);
 fclose all
 disp('Finished parsing.');

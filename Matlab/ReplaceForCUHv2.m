@@ -1,4 +1,6 @@
+callToInitStr
 callToInitStrCU=strrep(callToInitStr,'InitModel','CuInitModel');
+callToInitStrCU
 callToDerivStrCU=strrep(callToDerivStr,'DerivModel','CuDerivModel');
 callToBreakStrCU=strrep(callToBreakStr,'BreakpointModel','CuBreakpointModel');
 callToBreakDVStrCU=strrep(callToBreakDVStr,'BreakpointModel','CuBreakpointModel');

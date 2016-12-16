@@ -51,6 +51,9 @@ float  alpha, beta, sum, q10;
 };
 
 void DerivModel_hh2(float dt, float v,float &m,float &h,float &n,float gnabar_hh2,float gkbar_hh2,float gl_hh2,float el_hh2) {
+float rhs[3];
+float y[3];
+float matq[3][3];
    rates_hh2 (  v ,gnabar_hh2,gkbar_hh2,gl_hh2,el_hh2) ;
     m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau_hh2)))*(- ( ( ( minf_hh2 ) ) / mtau_hh2 ) / ( ( ( ( - 1.0) ) ) / mtau_hh2 ) - m) ;
     h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau_hh2)))*(- ( ( ( hinf_hh2 ) ) / htau_hh2 ) / ( ( ( ( - 1.0) ) ) / htau_hh2 ) - h) ;
@@ -66,4 +69,5 @@ il=gl_hh2*(v-el_hh2);
 sumCurrents+= ik;
 sumConductivity+= gk;
 };
+
 
