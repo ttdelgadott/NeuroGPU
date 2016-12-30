@@ -7,6 +7,8 @@ import re
 import os
 import copy
 import numpy as np
+import re
+import numpy.matlib
 
 from cStringIO import StringIO
 from nrn_structs import *
@@ -660,6 +662,68 @@ def replace_for_cuh(call_to_init_str, call_to_deriv_str, call_to_break_str, call
     call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[ seg ]', '')
 
     return call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu
+
+def set_states_for_cuh(f, n_basic_states, n_extra_states):
+    state_set_str = ''
+    for curr_state in range(1, n_basic_states + n_extra_states + 1):
+        curr_state_str = 'ModelStates_ ## VARILP [' + str(curr_state - 1) + ']=0; '
+        state_set_str += curr_state_str
+    f.write('\n\n#define    SET_STATES(VARILP) ' + state_set_str + '; \n')
+
+def get_lines(file_name):
+    lines = []
+    with open(file_name, 'r') as f:
+        for line in f:
+            lines.append(line)
+    return lines
+
+def str_has(_in, _str):
+    if isinstance(_in, list):
+        out = list(range(len(_in)))
+        for i in range(1, len(_in) + 1):
+            out[i - 1] = str_has(_in[i - 1], _str)
+        return out
+    return bool(re.compile(_str).match(_in))
+
+def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir):
+    declare_str, parameter_set_str = '', ''
+    for curr_param in range(1, n_params + 1):
+        curr_parameter_str = '#define   SET_PARAMS{:03d}VARILP MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
+        f.write(curr_parameter_str)
+
+    call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_init_str_cu)
+    call_to_deriv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_deriv_str_cu)
+    call_to_break_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_str_cu)
+    call_to_break_dv_str_cu = re.sub('p[0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
+    
+    f.write('\n\n#define CALL_TO_INIT_STATES_CU(VARILP) {}\n\n'.format(call_to_init_str_cu))
+    f.write('#define CALL_TO_DERIV_STR_CU(VARILP)   {}\n\n'.format(call_to_deriv_str_cu))
+    f.write('#define CALL_TO_BREAK_STR_CU(VARILP)   {}\n\n'.format(call_to_break_str_cu))
+    f.write('#define CALL_TO_BREAK_DV_STR_CU(VARILP)    {}\n\n'.format(call_to_break_dv_str_cu))
+
+    f.write('\n#endif')
+    f.close()
+
+    print 'Finished writing AllModels.h,cpp,cu,cuh'
+
+    params_m_per_seg = []
+    params_m = np.array(params_m)
+    n_segs_mat = np.array(n_segs_mat)
+    for i in range(1, params_m.shape[0] + 1):
+        temp = np.matlib.repmat(param_m[i - 1,:], n_segs_mat[i - 1], 1);
+        params_m_per_seg.append(temp)
+    params_m_per_seg = np.array(params_m_per_seg)
+    cm_vec = np.array(cm_vec)
+    cm_zeros = np.where(cm_vec == 0)
+    params_m_per_seg[cm_zeros,:] = 0
+    all_segs = np.sum(n_segs_mat)
+    if np.floor(all_segs / 32) != all_segs / 32:
+        print 'we have a non 32 multiple number of segs'
+
+    NILP = all_segs / 32
+    tmp = get_lines(vs_dir + '/CudaStuffBase.cu')
+    set_params_line_i = strhas(tmp, 'SET_PARAMS')
+    # TODO
 
 
 def write_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
