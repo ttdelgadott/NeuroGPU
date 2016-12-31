@@ -677,15 +677,24 @@ def get_lines(file_name):
             lines.append(line)
     return lines
 
-def str_has(_in, _str):
-    if isinstance(_in, list):
-        out = list(range(len(_in)))
-        for i in range(1, len(_in) + 1):
-            out[i - 1] = str_has(_in[i - 1], _str)
-        return out
-    return bool(re.compile(_str).match(_in))
+def put_lines(file_name, lines):
+    with open(file_name, 'w') as f:
+        for line in lines:
+            f.write("{}\n", line)
 
-def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir):
+def expand_ilp_macros(file_name, other_file_names, nilp, out_file_name):
+    lines = get_lines(file_name)
+    for fn in other_file_names:
+        lines.extend(get_lines(fn))
+
+    calls = []
+    for line in lines:
+        if 'SUPERILPMACRO(' in line:
+            calls.append(line)
+
+    # TODO
+
+def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
     declare_str, parameter_set_str = '', ''
     for curr_param in range(1, n_params + 1):
         curr_parameter_str = '#define   SET_PARAMS{:03d}VARILP MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
@@ -720,11 +729,31 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
     if np.floor(all_segs / 32) != all_segs / 32:
         print 'we have a non 32 multiple number of segs'
 
-    NILP = all_segs / 32
-    tmp = get_lines(vs_dir + '/CudaStuffBase.cu')
-    set_params_line_i = strhas(tmp, 'SET_PARAMS')
-    # TODO
+    nilp = all_segs / 32
+    tmp = np.array(get_lines(vs_dir + '/CudaStuffBase.cu'))
+    set_params_line_i = np.where(np.array(['SET_PARAMS' in i for i in tmp]))
+    if tmp.size != 0:
+        tmp2 = ['SUPERILPMACRO(SET_PARAMS{:03d})'.format(i) for i in range(1, n_params + 1)]
+        tmp3 = tmp[:set_params_line_i[-1]] + tmp2 + tmp[set_params_line_i[-1] + 1:]
+    else:
+        tmp3 = tmp
 
+    put_lines(vs_dir + '/CudaStuffBasex.cu')
+    params_m_mat = sio.loadmat('../Data/ParamsMForC.mat')
+    params_m_mat['param_m'] = params_m.astype(float)
+    sio.savemat('../Data/ParamsMForC.mat', params_m_mat)
+
+    if has_f:
+        fn = '../Data/rhsFromNeuron.dat'
+        f = open(fn, 'w')
+        f.write(nrhs.astype(float))
+        f.close()
+        fn = '../Data/DFromNeuron.dat'
+        f = open(fn, 'w')
+        f.write(nd.astype(float))
+        f.close()
+
+    print 'Finished NMODLtoC_Main.'
 
 def write_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
     reversals_vals= reversals_vals[0]
