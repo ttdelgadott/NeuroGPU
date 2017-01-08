@@ -9,6 +9,7 @@ import copy
 import numpy as np
 import re
 import numpy.matlib
+from file_io import get_lines, put_lines
 
 from cStringIO import StringIO
 from nrn_structs import *
@@ -669,18 +670,6 @@ def set_states_for_cuh(f, n_basic_states, n_extra_states):
         curr_state_str = 'ModelStates_ ## VARILP [' + str(curr_state - 1) + ']=0; '
         state_set_str += curr_state_str
     f.write('\n\n#define    SET_STATES(VARILP) ' + state_set_str + '; \n')
-
-def get_lines(file_name):
-    lines = []
-    with open(file_name, 'r') as f:
-        for line in f:
-            lines.append(line)
-    return lines
-
-def put_lines(file_name, lines):
-    with open(file_name, 'w') as f:
-        for line in lines:
-            f.write("{}\n", line)
 
 def expand_ilp_macros(file_name, other_file_names, nilp, out_file_name):
     lines = get_lines(file_name)
