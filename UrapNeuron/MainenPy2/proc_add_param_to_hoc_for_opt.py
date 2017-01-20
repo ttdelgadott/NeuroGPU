@@ -1,4 +1,13 @@
 from file_io import get_lines, put_lines
+import os
+import neuron as nrn
+
+def get_comp_index(types, compt_name):
+    ind = []
+    for i in range(1, len(types) + 1):
+        if(compt_name in types[i] and types[i][len(compt_name)] == '('):
+            ind.append(i)
+    return ind
 
 def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base_p, available_mechanisms, neuron_sc, reversals, comp_names, comp_mechanisms, g_globals, n_globals, neuron, ftypestr, p_size_set, param_set):
     param_start_i = np.array([0].extend(list(np.cumsum(cell_numel(all_parameters_non_global_c[:])))))
@@ -119,4 +128,38 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
     out_lines.extend([lines[i] for i in range(add_line_i)])
     out_lines.extend(added_lines)
     out_lines.extend([lines[i] for i in range(add_line_i + 1, len(lines))])
-    # TODO
+    put_lines(out_lines, fn_with_param)
+    hoc_p = os.path.dirname(fn_with_param)
+    hoc_n, hoc_ext = os.path.dirname(fn_with_param)
+    nrn.h.load_file(1, fn_with_param)
+    f = open(fn_param_m, 'rb')
+    reversals_v, g_globals_v, n_globals_v = [0 for i in range(reversals)], [0 for i in range(g_globals)], [0 for i in range(n_globals)]
+    for i in range(reversals):
+        reversals_v[i] = np.fromfile(f, dtype=np.float64, count=1)
+    for i in range(g_globals):
+        g_globals_v[i] = np.fromfile(f, dtype=np.float64, count=1)
+    for i in range(n_globals):
+        n_globals_v[i] = np.fromfile(f, dtype=np.float64, count=1)
+    for kk in range(1, n_sets[0] + 1):
+        for c in range(1, comp_names.size + 1):
+            comp_name = comp_names[c - 1]
+            comp_ind = get_comp_index(neuron.types, comp_mechanisms[c - 1])
+            comp_topology_map[c - 1] = comp_ind
+            F = []
+            for i in available_mechanisms:
+                F.append(i in comp_mechanisms[c - 1])
+            F = np.where(np.array(cur_mech_f))
+            for m in range(1, F.size + 1):
+                cur_mech_params = all_parameters_non_global_c[F[m - 1]]
+                for p in range(1, len(cur_mech_params) + 1):
+                    Tmp = np.fromfile(f, dtype=np.float64, count=1)
+                    param_m[comp_ind, param_start_i[F[m - 1]] + p - 1] = Tmp
+        tmp = param_m.reshape((all_params.shape[0] * all_params.shape[1],))
+        all_params[:, n_sets[0]] = tmp
+        param_m = []
+    f.close()
+    all_params = all_params.reshape((all_params.shape[0] * all_params.shape[1],))
+    f = open('../Data/AllParams.dat', 'w')
+    f.write(n_sets.astype(np.uint16))
+    f.write(all_params.astype(np.float32))
+    f.close()
