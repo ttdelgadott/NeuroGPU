@@ -671,8 +671,9 @@ def set_states_for_cuh(f, n_basic_states, n_extra_states):
         state_set_str += curr_state_str
     f.write('\n\n#define    SET_STATES(VARILP) ' + state_set_str + '; \n')
 
-def expand_ilp_macros(file_name, other_file_names, nilp, out_file_name):
+def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
     lines = get_lines(file_name)
+    all_lines = lines
     for fn in other_file_names:
         lines.extend(get_lines(fn))
 
@@ -680,8 +681,23 @@ def expand_ilp_macros(file_name, other_file_names, nilp, out_file_name):
     for line in lines:
         if 'SUPERILPMACRO(' in line:
             calls.append(line)
-
-    # TODO
+    all_in_macros = None # TODO
+    for i in range(1, len(all_in_macros) + 1):
+        curr_line_i = None # TODO
+        cur_line = all_lines[curr_line_i]
+        base_command = curr_line[curr_line.find('VARILP)') + 8:]
+        expanded = ''
+        for j in range(1, ilpn + 1):
+            Tmp = base_command.replace(' ## VARILP', str(j))
+            Tmp = Tmp.replace(' ## VARILP', str(j))
+            expanded += Tmp
+        curr_call_i = []
+        for k in range(len(lines)):
+            if 'SUPERILPMACRO\(' + all_in_macros[i - 1] + '\)' in lines[k]:
+                curr_call_i.append(k)
+        for j in range(1, len(curr_call_i) + 1):
+            lines[curr_call_i[j - 1]] = lines[curr_call_i[j - 1]][:lines[curr_call_i[j - 1]].find('SUPERILPMACRO') - 1] + expanded
+    put_lines(out_file_name, lines)
 
 def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
     declare_str, parameter_set_str = '', ''
