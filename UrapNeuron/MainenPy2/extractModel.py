@@ -20,6 +20,8 @@ ParsedModel = collections.namedtuple('ParsedModel', 'Writes,Reads')
 ModNeuron = collections.namedtuple('ModNeuron', 'Suffix,UseIon,NonspecificCurrent,Reads,Writes,Range,Global')
 FTYPESTR = 'float'
 end_str = '|X|X|'
+vs_dir = '../../VS\NeuroGPULast7_5Mainen/NeuroGPU6'
+has_f = 0
 global sec_list
 # Globals
 global ParamStartVal
@@ -474,6 +476,16 @@ def parse_models(thread):
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
     output = write_all_models_h(c_parsed_folder, n_total_states, n_params, g_globals, actual_gglobals, break_point_declare_list, deriv_declare_list, init_declare_list, call_to_init_list, call_to_deriv_list, call_to_break_list, call_to_break_dv_list)
+    #return [call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str]
+    call_to_init_str = output[0]
+    call_to_deriv_str = output[1]
+    call_to_break_str = output[2]
+    call_to_break_dv_str = output[3]
+    output = replace_for_cuh(call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str)
+    call_to_init_str_cu = output[0]
+    call_to_deriv_str_cu = output[1]
+    call_to_break_str_cu = output[2]
+    call_to_break_dv_str_cu = output[3]
     output = get_topo()
     n_segs = output[0]
     n_segs_mat = [x + 1 for x in n_segs]
@@ -511,13 +523,15 @@ def parse_models(thread):
     parent_seg[0] = 0
     output = create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
     aux = output[3]
+    cm_vec = output[4]
     #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
 
     output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
 
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
-
+    #def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
+    return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs]
 def get_matrix(FN,parent,seg_start,last_seg):
     data = open(FN).read()
     lines = data.split('\n')
@@ -565,6 +579,7 @@ def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines
         f.write(c_deriv_lines_cu[cur_mod_i][0][:-1] + ';\n')
         f.write(c_break_lines_cu[cur_mod_i][0][:-1] + ';\n')
 
+
 def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
     f = open(FN, 'w')
@@ -598,6 +613,7 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
     #KINETIC
     f.write('\n#endif')
     f.close()
+    return [call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str]
 
 def replace_for_cuh(call_to_init_str, call_to_deriv_str, call_to_break_str, call_to_break_dv_str):
     call_to_init_str_cu = call_to_init_str.replace('InitModel', 'CuInitModel')
@@ -684,7 +700,8 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
     all_in_macros = None # TODO
     for i in range(1, len(all_in_macros) + 1):
         curr_line_i = None # TODO
-        cur_line = all_lines[curr_line_i]
+        #I changed her cur_line to curr_line Maybe it was wrong
+        curr_line = all_lines[curr_line_i]
         base_command = curr_line[curr_line.find('VARILP)') + 8:]
         expanded = ''
         for j in range(1, ilpn + 1):
@@ -1900,6 +1917,8 @@ def main():
     #recsites = get_recsites()  # list of section names
     # mod_file_map = get_mod_file_map(topo_mdl.available_mechs) # dictionary whose keys are mechanisms suffixs and values are their .mod file name=
     mechanisms = parse_models(thread)
+
+    #def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
 
 
 if __name__ == '__main__':
