@@ -30,6 +30,11 @@ global StateStartVal
 StateStartVal = 0
 C_SUFFIX='.c'
 modelFile = "./runModel.hoc"
+base_p = "./"
+ftypestr = 'float'
+p_size_set = 1
+param_set = 'orig.dat'
+
 ### Helper functions for loading NEURON C library ###
 
 def nrn_dll(printpath=False):
@@ -471,7 +476,7 @@ def parse_models(thread):
     actual_gglobals = output[0]
     actual_reversals = output[1]
     neuron_globals_vals = output[2]
-
+    proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, neuron_sc,reversals, comp_map, comp_mechs, g_globals, nglobals_flat, neuron, ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
