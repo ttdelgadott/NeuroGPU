@@ -10,6 +10,7 @@ import numpy as np
 import re
 import numpy.matlib
 from file_io import get_lines, put_lines
+from proc_add_param_to_hoc_for_opt import proc_add_param_to_hoc_for_opt
 
 from cStringIO import StringIO
 from nrn_structs import *
