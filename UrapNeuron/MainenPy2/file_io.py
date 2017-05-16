@@ -123,4 +123,4 @@ def get_lines(file_name):
 def put_lines(file_name, lines):
     with open(file_name, 'w') as f:
         for line in lines:
-            f.write("{}\n", line)
+            f.write(str(line) + '\n')
