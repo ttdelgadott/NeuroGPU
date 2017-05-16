@@ -12,6 +12,15 @@ def get_comp_index(types, compt_name):
     return ind
 
 def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base_p, available_mechanisms, neuron_sc, reversals, comp_names, comp_mechanisms, g_globals, n_globals, neuron, ftypestr, p_size_set, param_set):
+    print 'AllParametersNonGlobalC', all_parameters_non_global_c
+    print 'AvailableMechanisms', available_mechanisms
+    print 'NGlobals', n_globals
+    print 'GGlobals', g_globals
+    print 'ParamSet', param_set
+    print 'Reversals', reversals
+    print 'NeuronSC', neuron_sc
+    print 'CompNames', comp_names
+    exit()
     param_start_i = np.array([0] + list(np.cumsum(cell_numel(np.array(all_parameters_non_global_c[:])))))
     fn = hoc_base_fn
     fn_with_topo = fn[:-4] + '_topo.hoc'
