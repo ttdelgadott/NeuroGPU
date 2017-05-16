@@ -21,7 +21,5 @@ void InitModel_na(float v,float &m,float &h,float gbar_na,float tha_na,float qa_
 
 #define CALL_TO_BREAK_DV BreakpointModel_na(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[6][seg] ,StatesM[7][seg] ,ParamsM[16][comp],ParamsM[17][comp],ParamsM[18][comp],ParamsM[19][comp],ParamsM[20][comp],ParamsM[21][comp],ParamsM[22][comp],ParamsM[23][comp],ParamsM[24][comp],ParamsM[25][comp],ParamsM[26][comp],ParamsM[27][comp]);
 
-#define CALL_TO_Kinetic 
-
 
 #endif

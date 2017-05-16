@@ -21,7 +21,5 @@ void InitModel_cad(float v,float &ca, float ica, float &cai) ;
 
 #define CALL_TO_BREAK_DV BreakpointModel_cad(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[2][seg] ,StatesM[9][ seg ],StatesM[8][ seg ]);
 
-#define CALL_TO_Kinetic 
-
 
 #endif

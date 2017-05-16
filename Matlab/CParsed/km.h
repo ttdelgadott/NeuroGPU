@@ -21,7 +21,5 @@ void InitModel_km(float v,float &n,float gbar_km,float tha_km,float qa_km,float 
 
 #define CALL_TO_BREAK_DV BreakpointModel_km(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[4][seg] ,ParamsM[ 6][comp],ParamsM[ 7][comp],ParamsM[ 8][comp],ParamsM[ 9][comp],ParamsM[10][comp]);
 
-#define CALL_TO_Kinetic 
-
 
 #endif

@@ -12,6 +12,9 @@ void InitModel_cad(float v,float &ca, float ica, float &cai) {
 };
 
 void DerivModel_cad(float dt, float v,float &ca, float ica, float &cai) {
+float rhs[1];
+float y[1];
+float matq[1][1];
    drive_channel = - ( 10000.0 ) * ica / ( 2.0 * FARADAY * depth_cad ) ;
    if ( drive_channel <= 0. ) {
      drive_channel = 0. ;
@@ -22,6 +25,5 @@ void DerivModel_cad(float dt, float v,float &ca, float ica, float &cai) {
 
 void BreakpointModel_cad(MYSECONDFTYPE &sumCurrents, MYFTYPE &sumConductivity, float v,float &ca, float ica, float &cai) {
 };
-
 
 
