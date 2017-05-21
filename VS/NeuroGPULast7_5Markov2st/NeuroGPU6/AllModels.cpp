@@ -106,7 +106,7 @@ for(_i=1;_i<2;_i++){
  _RHS1(0) -= o ;
  _MATELM1(0, 1) = 1;
  _RHS1(0) -= c1 ;
- backwards_euler(dt,3,2,rhs,y,matq);
+ backwards_euler(dt,10,2,rhs,y,matq);
    ;} 
  ;}
  

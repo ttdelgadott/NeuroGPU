@@ -48,6 +48,9 @@ float  a, b;
 };
 
 void DerivModel_ca(float dt, float v,float &m,float &h,float gbar_ca,float cao_ca, float cai, float &ica) {
+float rhs[2];
+float y[2];
+float matq[2][2];
    trates_ca (  v + vshift_ca ,gbar_ca,cao_ca) ;
     m = m + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / mtau)))*(- ( ( ( minf ) ) / mtau ) / ( ( ( ( - 1.0) ) ) / mtau ) - m) ;
     h = h + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / htau)))*(- ( ( ( hinf ) ) / htau ) / ( ( ( ( - 1.0) ) ) / htau ) - h) ;
@@ -61,6 +64,5 @@ ica=(1e-4)*gca*(v-eca);
 sumCurrents+= ica;
 sumConductivity+= gca;
 };
-
 
 

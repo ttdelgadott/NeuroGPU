@@ -26,6 +26,9 @@ void rates_kca(float cai,float gbar_kca,float caix_kca,float Ra_kca,float Rb_kca
 };
 
 void DerivModel_kca(float dt, float v,float &n,float gbar_kca,float caix_kca,float Ra_kca,float Rb_kca, float cai) {
+float rhs[1];
+float y[1];
+float matq[1][1];
    rates_kca (  cai ,gbar_kca,caix_kca,Ra_kca,Rb_kca) ;
     n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ntau)))*(- ( ( ( ninf ) ) / ntau ) / ( ( ( ( - 1.0) ) ) / ntau ) - n) ;
    }
@@ -36,6 +39,5 @@ ik=(1e-4)*gk*(v-ek);
 sumCurrents+= ik;
 sumConductivity+= gk;
 };
-
 
 

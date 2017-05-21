@@ -453,39 +453,42 @@ cmVec = createCmvec(Neuron.Cms,Neuron.NSegs);
 
 [FN FNP FNM Aux]=CreatAuxiliaryData3(rot90(OurMat,2),Nx,fliplr(Neuron.NSegsMat'), numel(Neuron.NSegs)+1-fliplr(Neuron.Parent),Neuron,cmVec,FN_TopoList);
 %% CUH file
+[FN FNP FNM Aux]=CreatAuxiliaryData3(rot90(OurMat,2),Nx,fliplr(Neuron.NSegsMat'), numel(Neuron.NSegs)+1-fliplr(Neuron.Parent),Neuron,cmVec,FN_TopoList);
+%% CUH file
 %VSDir = fullfile(BaseP, 'VS','NeuroGPUStimCUDAHu','NeuronC');
 %VSDir = fullfile(BaseP, 'VS','NeuroGPULast7_5Mainen','NeuroGPU6');
-VSDir = fullfile(BaseP, 'VS',['NeuroGPULast7_5',Model],'NeuroGPU6');
+VSDir = fullfile(BaseP, 'VS',['NeuroGPULast7_5' Model],'NeuroGPU6');
+%VSDir = fullfile(BaseP, 'VS','NeuroGPULastLast','NeuroGPU6');
 % fid=fopen(fullfile(BaseP, 'Matlab','CParsed','AllModels.cuh'),'w');
 fid=fopen(fullfile(VSDir,'AllModels.cuh'),'w');
-%fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
-%fprintf(fid,['\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n']);
-%fprintf(fid,'#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n');
+fprintf(fid,['// Automatically generated CUH for ' strrep(HocBaseFN,'\','\\') '\n']);
+fprintf(fid,['\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n']);
+fprintf(fid,'#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n');
 % #define BasicConst_FN "..\\..\\..\\Data\\BasicConst"
 % #define BasicConstP_FN "..\\..\\..\\Data\\BasicConst"
 % #define ParamsMat_FN "..\\..\\..\\Data\\ParamsM"
 % #define Stim_FN "..\\..\\..\\Data\\Stim"
 % #define Sim_FN "..\\..\\..\\Data\\Sim"
-%fprintf(fid,['#define NSEG ' num2str(sum(Neuron.NSegsMat)) '\n']);
-%fprintf(fid,['#define LOG_N_DEPTH ' num2str(Aux.LognDepth) '\n']);
-%fprintf(fid,['#define N_MODELS ' num2str(size(Neuron.HasHH,1)) '\n']);
-%fprintf(fid,['#define N_FATHERS ' num2str(numel(Aux.Fathers)) '\n']);
-%fprintf(fid,['#define N_CALL_FOR_FATHER ' num2str(Aux.nCallForFather) '\n']);
-%fprintf(fid,['#define COMP_DEPTH ' num2str(nParams) '\n']);
-%fprintf(fid,['#define N_L_REL ' num2str(numel(Aux.LRelStarts)) '\n']);
-%fprintf(fid,['#define N_F_L_REL ' num2str(numel(Aux.FLRelStarts)) '\n']);
-%for CurModI=1:numel(availableMechanisms)
-%    fprintf(fid,'%s\n',[CInitLinesCuC{CurModI}{1}(1:end-1) ';']);
-%    fprintf(fid,'%s\n',[CDerivLinesCuC{CurModI}{1}(1:end-1) ';']);
-%    fprintf(fid,'%s\n',[CBreakLinesCuC{CurModI}{1}(1:end-1) ';']);
-%   % fprintf(fid,'%s\n',[CKineticLinesCuC{CurModI}{1}(1:end-1) ';']);
-%end
+fprintf(fid,['#define NSEG ' num2str(sum(Neuron.NSegsMat)) '\n']);
+fprintf(fid,['#define LOG_N_DEPTH ' num2str(Aux.LognDepth) '\n']);
+fprintf(fid,['#define N_MODELS ' num2str(size(Neuron.HasHH,1)) '\n']);
+fprintf(fid,['#define N_FATHERS ' num2str(numel(Aux.Fathers)) '\n']);
+fprintf(fid,['#define N_CALL_FOR_FATHER ' num2str(Aux.nCallForFather) '\n']);
+fprintf(fid,['#define COMP_DEPTH ' num2str(Aux.CompDepth) '\n']);
+fprintf(fid,['#define N_L_REL ' num2str(numel(Aux.LRelStarts)) '\n']);
+fprintf(fid,['#define N_F_L_REL ' num2str(numel(Aux.FLRelStarts)) '\n']);
+for CurModI=1:numel(availableMechanisms)
+    fprintf(fid,'%s\n',[CInitLinesCuC{CurModI}{1}(1:end-1) ';']);
+    fprintf(fid,'%s\n',[CDerivLinesCuC{CurModI}{1}(1:end-1) ';']);
+    fprintf(fid,'%s\n',[CBreakLinesCuC{CurModI}{1}(1:end-1) ';']);
+    %fprintf(fid,'%s\n',[CKineticLinesCuC{CurModI}{1}(1:end-1) ';']);
+end
 %RBS Start
 
 ReplaceForCUHv2;
 % SetParamsForCUH;
 SetStatesForCUH;
-
+%fid = fopen('temp.txt');
 fprintf(fid,'\n\n#define  SET_STATES(VARILP) %s;\n',StateSetStr);
 
 declareStr = '';
@@ -578,7 +581,7 @@ end
 % copyfile(fullfile(BaseP, 'Matlab','CParsed','AllModels.cpp'),fullfile(VSDir,'NeuronC'));
 % copyfile(fullfile(BaseP, 'Matlab','CParsed','AllModels.h'),fullfile(VSDir,'NeuronC'));
 NILP = allSegs/32;
-Tmp=getLines(fullfile(VSDir,'CudaStuffBase.cu'));
+Tmp = getLines('..\VS\NeuroGPULast7_5Mainen\NeuroGPU6\CudaStuffBase.cu')
 SetParamsLineI=find(strhas(Tmp,'SET_PARAMS'));
 if(~isempty(SetParamsLineI))
     Tmp2=strcat(strcat('	SUPERILPMACRO(SET_PARAMS',mat2cell(num2str((1:nParams)','%03d'),ones(1,nParams))),')');

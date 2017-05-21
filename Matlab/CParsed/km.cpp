@@ -43,6 +43,9 @@ void rates_km(float v ,float gbar_km,float tha_km,float qa_km,float Ra_km,float 
 };
 
 void DerivModel_km(float dt, float v,float &n,float gbar_km,float tha_km,float qa_km,float Ra_km,float Rb_km) {
+float rhs[1];
+float y[1];
+float matq[1][1];
    trates_km (  v ,gbar_km,tha_km,qa_km,Ra_km,Rb_km) ;
     n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ntau)))*(- ( ( ( ninf ) ) / ntau ) / ( ( ( ( - 1.0) ) ) / ntau ) - n) ;
    }
@@ -53,6 +56,5 @@ ik=(1e-4)*gk*(v-ek);
 sumCurrents+= ik;
 sumConductivity+= gk;
 };
-
 
 

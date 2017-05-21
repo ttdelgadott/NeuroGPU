@@ -48,5 +48,3 @@ sumCurrents+= ik;
 sumConductivity+= gk;
 };
 
-
-

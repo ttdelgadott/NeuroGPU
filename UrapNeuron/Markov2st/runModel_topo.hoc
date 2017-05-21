@@ -289,19 +289,32 @@ fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/A
 forall{
 	fn.printf("#%s\n",secname())
 	mt = new MechanismType(1)
-	mt.select("IClamp")
-	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
-		x = pp.get_loc()
-		del1 = pp.del
-		dur1 = pp.dur
-		amp1 = pp.amp
-		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)
-		pop_section()
+	for i=0, mt.count()-1 {
+		mt.select(i)
+		mt.selected(mname)
+		if (ismembrane(mname)){
+         fn.printf("%s\n",mname)
+			for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
+             ms = new MechanismStandard(mname)
+             for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=pp.%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+			ms = new MechanismStandard(mname,3)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+		}
 	}
-	fn.printf("\n")
+}
 }
 fn.close()
-// End point processess mechanisms output
+//End point processess mechanisms output
 hoc_stdout("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/Fmatrix.csv")
 MyPrintMatrix()
 hoc_stdout()

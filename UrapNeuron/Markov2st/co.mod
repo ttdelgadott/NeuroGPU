@@ -37,7 +37,8 @@ BREAKPOINT {
       ik = (1e-4) * g*(v - ek)
 }
 
-INITIAL { SOLVE states STEADYSTATE sparse}
+INITIAL {c1=0 
+o=0}
 
 KINETIC states {
         rates(v)

@@ -132,6 +132,5 @@ forall most.append()
 
 load_3dcell("./sp.hoc") 
 access soma
-insert hh2
 
 proc tfunc(){}

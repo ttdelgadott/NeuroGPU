@@ -6,20 +6,7 @@ float k12,k21;
 void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) ;
 
 void InitModel_CO(float v,float &c1,float &o,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
-double sum = 0;
-        rates_CO(v,gbar_CO,a12_CO,a21_CO,z12_CO,z21_CO)
-//matq[0][1] =k12;
-//matq[1][0] =k21;
-for (int i = 0; i <2; i++) {
-sum = 0 ;
-for (int j = 0; j <2; j++) {
-if (i != j) {
-//sum +=matq[i][j];
-}
-}
-//matq[i][i] = -sum;
-}
-}
+o=0};
 
 void rates_CO(float v,float gbar_CO,float a12_CO,float a21_CO,float z12_CO,float z21_CO) {
       k12 = a12_CO*exp(z12_CO*v);

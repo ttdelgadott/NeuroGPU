@@ -9,7 +9,6 @@ sectionInd = 1;
 numOfSections = length(nSegsMat(:,1));
 ppLocInSections = cell(numOfSections, 1);
 while ischar(tline)
-    tline=fgetl(fidPP);
     S=regexp(tline,',','split');
     %there are 5 variables for each point process
     numOfPpInSection = (length(S)-1)/5;

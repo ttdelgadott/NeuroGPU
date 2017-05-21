@@ -21,7 +21,5 @@ void InitModel_kca(float v,float &n,float gbar_kca,float caix_kca,float Ra_kca,f
 
 #define CALL_TO_BREAK_DV BreakpointModel_kca(sumCurrentsDv, sumConductivityDv, V[seg]+0.001,StatesM[3][seg] ,ParamsM[2][comp],ParamsM[3][comp],ParamsM[4][comp],ParamsM[5][comp],StatesM[8][ seg ]);
 
-#define CALL_TO_Kinetic 
-
 
 #endif

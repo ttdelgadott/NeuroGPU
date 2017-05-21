@@ -43,6 +43,9 @@ void rates_kv(float v ,float gbar_kv,float tha_kv,float qa_kv,float Ra_kv,float 
 };
 
 void DerivModel_kv(float dt, float v,float &n,float gbar_kv,float tha_kv,float qa_kv,float Ra_kv,float Rb_kv) {
+float rhs[1];
+float y[1];
+float matq[1][1];
    trates_kv (  v ,gbar_kv,tha_kv,qa_kv,Ra_kv,Rb_kv) ;
     n = n + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / ntau)))*(- ( ( ( ninf ) ) / ntau ) / ( ( ( ( - 1.0) ) ) / ntau ) - n) ;
    }
@@ -53,6 +56,5 @@ ik=(1e-4)*gk*(v-ek);
 sumCurrents+= ik;
 sumConductivity+= gk;
 };
-
 
 

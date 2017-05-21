@@ -62,6 +62,7 @@ end
 AddedLines=cell(0);
 AddedLines{1}='// Start params output';
 AddedLines{end+1}='proc writeReversals(){';
+ReversalsC
 for i=1:numel(Reversals)
     AddedLines{end+1}=['access ' CompNames{RepComp(i)}(2:end)];
     AddedLines{end+1}=['a=' Reversals{i}];

@@ -55,5 +55,3 @@ sumCurrents+= ica;
 sumConductivity+= gca;
 };
 
-
-

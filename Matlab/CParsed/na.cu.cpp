@@ -55,5 +55,3 @@ sumCurrents+= ina;
 sumConductivity+= gna;
 };
 
-
-

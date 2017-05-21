@@ -181,7 +181,6 @@ __device__ void BeforeLU(HMat InMat, MYSECONDFTYPE* uHP, MYSECONDFTYPE* bHP, MYD
 	MYDTYPE PIdx=threadIdx.x;
 	MYDTYPE i,j,CurJ,CurB,t, CurLevel,LRelIndex;
 	MYDTYPE JumctionI;
-	CurJ = cCompByLevel32[2]-1;
 	LRelIndex=cLRelStarts[CurLevel];
 	LRelIndex=LRelIndex+cLRelEnds[CurLevel];
 	for(CurLevel=0;CurLevel<=Depth;CurLevel++) {
@@ -192,7 +191,7 @@ __device__ void BeforeLU(HMat InMat, MYSECONDFTYPE* uHP, MYSECONDFTYPE* bHP, MYD
 			for(i=cSegStartI[JumctionI]-1;i<cSegEndI[JumctionI];i++) {
 				MYSECONDFTYPE uHPm1=uHP[i-1];
 			
-				uHP[i]=uHP[i]-cE[i-1]*(cF[i-1]/uHPm1); // So far same as paper parallel
+				uHP[i]=uHP[i]-cF[i-1]*(cE[i-1]/uHPm1); // So far same as paper parallel
 				uHPm1=uHP[i-1];
 				MYSECONDFTYPE bHPm1=bHP[i-1];
 				bHP[i]=bHP[i]-bHPm1*cE[i-1]/uHPm1; // bH is y
@@ -207,7 +206,7 @@ __device__ void BeforeLU(HMat InMat, MYSECONDFTYPE* uHP, MYSECONDFTYPE* bHP, MYD
 				for(j=St;j<=En;j++) {
 					t=cRelVec[j-1]-1;
 					MYSECONDFTYPE uHPm1=uHP[t-1];
-					uHP[CurJ]-=cE[t-1]*(cF[t-1]/uHPm1); 
+					uHP[CurJ]-=cF[t-1]*(cE[t-1]/uHPm1); 
 					uHPm1=uHP[t-1];
 					MYSECONDFTYPE bHPm1=bHP[t-1];
 					bHP[CurJ]-=bHPm1*cE[t-1]/uHPm1; 
@@ -478,7 +477,7 @@ __global__ void NeuroGPUKernel(Stim stim, MYFTYPE* ParamsM, Sim sim, HMat InMat,
 {
 
 	MYFTYPE *amps,*SMemVHot;
-	MYDTYPE offset;
+	MYDTYPE offset=0;
 	
 	
 	
@@ -536,7 +535,7 @@ void ReadParamsMat(const char* FN,MYFTYPE** ParamsM,MYDTYPE NParams,MYDTYPE Nx) 
 cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMat, MYFTYPE* V,MYDTYPE CompDepth,MYDTYPE CompFDepth,MYDTYPE NSets) { 
 
 	cudaError_t cudaStatus;
-	cudaStatus = cudaSetDevice(0);
+	cudaStatus = cudaSetDevice(1);
 	cudaStatus = cudaDeviceReset();
 	MYFTYPE *VHotsGlobal,*VHotsHost;
 	MYDTYPE Nt=stim.Nt;
@@ -637,17 +636,17 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 	cudaStatus = cudaMemcpy(sim_d.RecSites, sim.RecSites, sim_d.NRecSites * sizeof(MYDTYPE), cudaMemcpyHostToDevice);
 	//cudaStatus = cudaMalloc((void**)&Mat_d.Fathers, InMat.nFathers * sizeof(MYDTYPE));
 	//cudaStatus = cudaMemcpy(Mat_d.e, InMat.e, InMat.N * sizeof(MYSECONDFTYPE), cudaMemcpyHostToDevice);
-	cudaStatus = cudaMemcpyToSymbol(cE, InMat.e, 416 * sizeof(MYSECONDFTYPE));
+	cudaStatus = cudaMemcpyToSymbol(cE, InMat.e, InMat.N * sizeof(MYSECONDFTYPE));
 	//cudaStatus = cudaMemcpy(Mat_d.f, InMat.f, InMat.N * sizeof(MYSECONDFTYPE), cudaMemcpyHostToDevice);
-	cudaStatus = cudaMemcpyToSymbol(cF, InMat.f, 416 * sizeof(MYSECONDFTYPE));
-	cudaStatus = cudaMemcpyToSymbol(cKs, InMat.Ks, 416 * sizeof(MYDTYPE));
+	cudaStatus = cudaMemcpyToSymbol(cF, InMat.f, InMat.N * sizeof(MYSECONDFTYPE));
+	cudaStatus = cudaMemcpyToSymbol(cKs, InMat.Ks, InMat.N * sizeof(MYDTYPE));
 	//cudaStatus = cudaMemcpy(Mat_d.Ks, InMat.Ks, InMat.N * sizeof(MYDTYPE), cudaMemcpyHostToDevice);
 	//cudaStatus = cudaMemcpy(Mat_d.SegToComp, InMat.SegToComp, InMat.N * sizeof(MYDTYPE), cudaMemcpyHostToDevice);
 	cudaStatus = cudaMemcpyToSymbol(cSegToComp, InMat.SegToComp, InMat.N * sizeof(MYDTYPE));
 	//cudaStatus = cudaMemcpy(Mat_d.boolModel, InMat.boolModel, InMat.N * InMat.NModels * sizeof(MYDTYPE), cudaMemcpyHostToDevice);
 	cudaStatus = cudaMemcpyToSymbol(cBoolModel, InMat.boolModel, InMat.N * InMat.NModels * sizeof(MYDTYPE));
 
-	cudaStatus = cudaMemcpyToSymbol(cCm, InMat.Cms, 416 * sizeof(MYFTYPE));
+	cudaStatus = cudaMemcpyToSymbol(cCm, InMat.Cms, InMat.N * sizeof(MYFTYPE));
 	//cudaStatus = cudaMemcpy(Mat_d.SonNoVec, InMat.SonNoVec, InMat.N * sizeof(MYDTYPE), cudaMemcpyHostToDevice);
 	cudaStatus = cudaMemcpyToSymbol(cSonNoVec, InMat.SonNoVec, InMat.N * sizeof(MYDTYPE));
 	
@@ -789,8 +788,9 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 	
 	MYDTYPE TotalSMem=FrameworkMemSize+(PerStimulus)*stim.NStimuli;
 	printf("Asking %d bytes, %d+%d*%d\n",TotalSMem,FrameworkMemSize,PerStimulus,stim.NStimuli);
-	clock_t begin,end;
-	begin=clock();
+		cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 		MYDTYPE currKernelRun = NKERNEL;
 	MYDTYPE prevRuns = 0;
 	int memSizeForVHotGlobal = Nt*stim.NStimuli*sim.NRecSites;
@@ -801,7 +801,7 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 	cudaStreamCreate (&stream1);
 	cudaStreamCreate (&stream2);
 	cudaStreamCreate (&stream3);
-	begin=clock();
+	cudaEventRecord(start, 0);
 	while (prevRuns<NSets){
 	if(currKernelRun>(NSets-prevRuns)){
 		currKernelRun = (NSets-prevRuns);
@@ -837,22 +837,27 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 		streamID +=1;
 	}
 	}
-	cudaDeviceSynchronize();
+	//cudaDeviceSynchronize();
+	cudaEventRecord(stop, 0);
+	cudaEventSynchronize(stop);
+	float elapsedTime;
+	cudaEventElapsedTime(&elapsedTime, start, stop);
+	printf("time required : %f", elapsedTime);
+
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching stEfork2TimeLoopGPUKernel!\n", cudaStatus);
 		return cudaStatus;
 	}
 	//cudaStatus = cudaMemcpy(VHotsHost, VHotsGlobal,NSets * Nt * stim.NStimuli* sizeof(MYFTYPE), cudaMemcpyDeviceToHost); 
-
-	end=clock();
-	double totalT = diffclock(end,begin);
-	printf("stEfork2TimeLoopGPU took %g milliseconds\n",totalT);
+	printf("stEfork2TimeLoopGPU took %f milliseconds\n",elapsedTime);
 	FILE *file = fopen(TIMES_FN, "wb");
 	if ( file ) {
 		MYDTYPE mul32 = MUL32;
 		fwrite(&mul32,sizeof(MYDTYPE),1,file);
-		fwrite(&totalT,sizeof(double),1,file);
+		fwrite(&elapsedTime,sizeof(float),1,file);
 	} else {
 		printf("ERR SaveArrayToFile %s\n",TIMES_FN);
 	}
@@ -869,7 +874,7 @@ cudaError_t stEfork2TimeLoopGPU(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMa
 
 cudaError_t stEfork2Main(Stim stim, Sim sim, MYFTYPE* ParamsM, HMat& InMat, MYFTYPE* V,MYDTYPE CompDepth,MYDTYPE CompFDepth,MYDTYPE NSets) {
 	cudaError_t cudaStatus;
-	cudaStatus = cudaSetDevice(0);
+	cudaStatus = cudaSetDevice(1);
 	cudaDeviceSetSharedMemConfig(cudaSharedMemBankSizeEightByte);
 	  stEfork2TimeLoopGPU(stim, sim, ParamsM, InMat, V,CompDepth,CompFDepth,NSets); //RRR sim
 	  

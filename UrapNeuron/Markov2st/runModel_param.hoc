@@ -4,7 +4,7 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMarkov.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./opt_params.dat"
+paramsFile = "./params/orig.dat"
 stimFile = "./Stims/stepone.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3168
@@ -289,26 +289,37 @@ fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/A
 forall{
 	fn.printf("#%s\n",secname())
 	mt = new MechanismType(1)
-	mt.select("IClamp")
-	for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
-		x = pp.get_loc()
-		del1 = pp.del
-		dur1 = pp.dur
-		amp1 = pp.amp
-		fn.printf("IClamp,%g, %g, %g, %g, ", x, del1, dur1, amp1)
-		pop_section()
+	for i=0, mt.count()-1 {
+		mt.select(i)
+		mt.selected(mname)
+		if (ismembrane(mname)){
+         fn.printf("%s\n",mname)
+			for (pp = mt.pp_begin(); object_id(pp) != 0; pp = mt.pp_next()) {
+             ms = new MechanismStandard(mname)
+             for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=pp.%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+			ms = new MechanismStandard(mname,3)
+			for j=0, ms.count()-1 {
+				k = ms.name(s, j)
+				sprint(ss,"temp=%s",s)
+				execute(ss)
+				fn.printf("%s = %f\n",s,temp)
+			}
+		}
 	}
-	fn.printf("\n")
+}
 }
 fn.close()
-// End point processess mechanisms output
+//End point processess mechanisms output
 // Start params output
-proc writeReversals(){
+fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
 access soma
 a=ek
 fn.vwrite(&a)
-}
-proc writeGGlobals(){
 a=celsius
 fn.vwrite(&a)
 a=stoprun
@@ -317,10 +328,6 @@ a=clamp_resist
 fn.vwrite(&a)
 a=secondorder
 fn.vwrite(&a)
-}
-proc writeNGlobals(){
-}
-proc proc0(){
 access soma
 a=gbar_CO
 fn.vwrite(&a)
@@ -376,8 +383,6 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
-}
-proc proc1(){
 access iseg
 a=gbar_CO
 fn.vwrite(&a)
@@ -433,8 +438,6 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
-}
-proc proc2(){
 access myelin[3]
 a=gbar_CO
 fn.vwrite(&a)
@@ -490,8 +493,6 @@ a=z12_CO
 fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
-}
-proc proc3(){
 access node[3]
 a=gbar_CO
 fn.vwrite(&a)
@@ -515,24 +516,7 @@ fn.vwrite(&a)
 a=z21_CO
 fn.vwrite(&a)
 access Exts[0]
-}
-proc printParams(){
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
-writeReversals()
-writeGGlobals()
-writeNGlobals()
-for (ii=0;ii<pmat.nrow();ii+=1){
-transvec = pmat.getrow(ii)
-tfunc()
-finitialize()
-proc0()
-proc1()
-proc2()
-proc3()
-}
 fn.close()
-}
-printParams()
 // End params output
 // Start Mat Output
 fcurrent()

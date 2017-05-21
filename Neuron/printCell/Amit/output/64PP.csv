@@ -1,36 +1,22 @@
 #soma
-IClamp,0.5, 0, 1e+009, 0, 
+IClamp
+del = 0.000000
+dur = 1000000000.000000
+amp = 0.000000
 #dend[0]
-
 #dend[1]
-
 #apic[0]
-
 #apic[1]
-
 #iseg
-
 #hill
-
 #myelin[0]
-
 #myelin[1]
-
 #myelin[2]
-
 #myelin[3]
-
 #myelin[4]
-
 #node[0]
-
 #node[1]
-
 #node[2]
-
 #node[3]
-
 #node[4]
-
 #Exts[0]
-
