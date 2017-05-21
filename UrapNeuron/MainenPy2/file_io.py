@@ -112,3 +112,15 @@ def create_neuron(cleaned):
 	ret.SegToComp = cleaned['Neuron']['SegToComp']
 	ret.HasHH = cleaned['Neuron']['HasHH']
 	return ret
+
+def get_lines(file_name):
+    lines = []
+    with open(file_name, 'r') as f:
+        for line in f:
+            lines.append(line)
+    return lines
+
+def put_lines(file_name, lines):
+    with open(file_name, 'w') as f:
+        for line in lines:
+            f.write(str(line) + '\n')
