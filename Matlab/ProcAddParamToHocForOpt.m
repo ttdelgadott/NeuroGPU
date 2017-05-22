@@ -36,6 +36,7 @@ clear RepComp
 for CurModI=1:numel(availableMechanisms)
     ReversalsC{CurModI}=NeuronSC{CurModI}.Reversals;
 end
+
 for i=1:numel(Reversals)
     FoundRepComp=false;
     while(~FoundRepComp)

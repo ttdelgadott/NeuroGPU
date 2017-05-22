@@ -1,8 +1,6 @@
 % function FNWithParam=AddTopologyToHoc(FN)
 % FN='C:\SVN\Neuron\printCell\Amit\printCellBinaryK64Base.hoc';
 function ProcAddParamToHocForOpt(AllParametersNonGlobalC,HocBaseFN,BaseP,availableMechanisms,NeuronSC,Reversals,CompNames,CompMechnisms,GGlobals,NGlobals,Neuron,FTYPESTR,pSizeSet,paramSet)
-AllParametersNonGlobalC
-AllParametersNonGlobalC(1:end)
 ParamStartI=[0 cumsum(cellNumel(AllParametersNonGlobalC(1:end)))];
 
 FN=HocBaseFN;
@@ -38,10 +36,16 @@ clear RepComp
 for CurModI=1:numel(availableMechanisms)
     ReversalsC{CurModI}=NeuronSC{CurModI}.Reversals;
 end
+
+for i=1:numel(CompMechnisms)
+  fprintf(
+end
+
 for i=1:numel(Reversals)
     FoundRepComp=false;
     while(~FoundRepComp)
         for c=1:numel(CompNames)
+            ismember(availableMechanisms,CompMechnisms{c})
             CurMechF=find(ismember(availableMechanisms,CompMechnisms{c}));
             Tmp=ReversalsC(CurMechF);
             CurReversals={};
