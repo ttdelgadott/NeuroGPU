@@ -3,7 +3,6 @@ import os
 import neuron as nrn
 import numpy as np
 from cell import cell_numel
-from temp import cmp
 
 def get_comp_index(types, compt_name):
     ind = []
