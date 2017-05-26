@@ -117,7 +117,7 @@ def get_lines(file_name):
     lines = []
     with open(file_name, 'r') as f:
         for line in f:
-            lines.append(line)
+		lines.append(line[:-1])
     return lines
 
 def put_lines(file_name, lines):

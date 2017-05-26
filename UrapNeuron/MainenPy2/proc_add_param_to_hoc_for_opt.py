@@ -3,11 +3,12 @@ import os
 import neuron as nrn
 import numpy as np
 from cell import cell_numel
+import subprocess
 
 def get_comp_index(types, compt_name):
     ind = []
     for i in range(1, len(types) + 1):
-        if(compt_name in types[i - 1] and types[i - 1][len(compt_name) - 1] == '('):
+        if(compt_name in types[i - 1] and types[i - 1][len(compt_name)] == '('):
             ind.append(i)
     return ind
 
@@ -153,8 +154,7 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
     out_lines.extend(added_lines)
     out_lines.extend([lines[i] for i in range(int(add_line_i[0]) + 1, len(lines))])
     put_lines(fn_with_param, out_lines)
-    nrn.h.load_file(1, fn_with_param)
-    exit()
+    subprocess.call(["nrniv", "runModel_param.hoc"])
     f = open(fn_param_m, 'rb')
     reversals_v, g_globals_v, n_globals_v = [0 for i in range(len(reversals))], [0 for i in range(len(g_globals))], [0 for i in range(len(n_globals))]
     for i in range(len(reversals)):
@@ -164,23 +164,23 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
     for i in range(len(n_globals)):
         n_globals_v[i] = np.fromfile(f, dtype=np.float64, count=1)[0]
     comp_topology_map = [None for i in range(len(comp_names))]
-    all_params = np.zeros((n_sets[0], len(comp_names) * len(all_parameters_non_global_c)))
+    all_params = np.zeros((n_sets[0], len(comp_names) * int(param_start_i[-1])))
     for kk in range(1, n_sets[0] + 1):
-        param_m = np.zeros((len(comp_names), len(all_parameters_non_global_c)))
+        param_m = np.zeros((len(comp_names), int(param_start_i[-1])))
         for c in range(1, len(comp_names) + 1):
             comp_name = comp_names[c - 1]
-            comp_ind = get_comp_index(comp_names, comp_name)
+            comp_ind = get_comp_index(neuron_types, comp_name[1:])
             comp_topology_map[c - 1] = comp_ind
             F = []
             for i in available_mechanisms:
                 F.append(i in comp_mechanisms[c - 1])
-            F = np.where(np.array(cur_mech_f))
+            F = np.where(np.array(F))
             for m in range(1, F[0].size + 1):
                 cur_mech_params = all_parameters_non_global_c[F[0][m - 1]]
                 for p in range(1, len(cur_mech_params) + 1):
                     Tmp = np.fromfile(f, dtype=np.float64, count=1)
-                    param_m[comp_ind, int(param_start_i[F[0][m - 1]] + p - 1)] = Tmp
-        tmp = param_m.reshape((all_params.shape[0] * all_params.shape[1],))
+                    param_m[[i - 1 for i in comp_ind], int(param_start_i[F[0][m - 1]] + p - 1)] = Tmp
+        tmp = param_m.flatten(order='F')
         all_params[kk - 1,:] = tmp
         param_m = []
     f.close()
