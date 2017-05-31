@@ -1,4 +1,4 @@
-// Automatically generated H for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
+// Automatically generated H for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
 
 #ifndef __ALLMODELS__
 #define __ALLMODELS__

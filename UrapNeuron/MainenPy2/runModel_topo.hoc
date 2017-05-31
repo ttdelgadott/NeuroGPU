@@ -150,7 +150,7 @@ clist = new List()
 					if (x > 0) {
 						avec =new Vector()
 						bvec =new Vector()
-						printf("x is %f i is %d\n",x,i)
+						//printf("x is %f i is %d\n",x,i)
 						clist.o(i).sec{
 							avec =new Vector()
 							bvec =new Vector()
@@ -181,7 +181,7 @@ clist = new List()
 			}
 			Exts[counter]{
 				for(x){ 
-			printf("x is %f and sec is %s\n",x,secname())
+			//printf("x is %f and sec is %s\n",x,secname())
 					SetA(x,0)
 					SetB(x,0)
 					}
@@ -215,11 +215,11 @@ readMatrix(stimFile,stims)
 forsec "dend" nseg=1
 forsec "apic" nseg=1
 	
-topology()
+//topology()
 countExts()
 fcurrent()
-fmatrix()
-printf("Creating Exts %d\n",ext_num)
+//fmatrix()
+//printf("Creating Exts %d\n",ext_num)
 if(ext_num>0){
 	create Exts[ext_num]
 	}	else{

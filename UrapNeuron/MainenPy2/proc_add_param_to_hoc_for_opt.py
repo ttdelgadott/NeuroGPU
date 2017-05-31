@@ -14,6 +14,7 @@ def get_comp_index(types, compt_name):
 
 def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base_p, available_mechanisms, neuron_sc, reversals, comp_names, comp_mechanisms, g_globals, n_globals, neuron_types, ftypestr, p_size_set, param_set):
     available_mechanisms = list(available_mechanisms)
+    
     all_parameters_non_global_c_d = {}
     for m in available_mechanisms:
         all_parameters_non_global_c_d[m] = []
@@ -183,6 +184,7 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
         n_globals_v[i] = np.fromfile(f, dtype=np.float64, count=1)[0]
     comp_topology_map = [None for i in range(len(comp_names))]
     all_params = np.zeros((n_sets[0], len(comp_names) * int(param_start_i[-1])))
+    
     for kk in range(1, n_sets[0] + 1):
         param_m = np.zeros((len(comp_names), int(param_start_i[-1])))
         for c in range(1, len(comp_names) + 1):

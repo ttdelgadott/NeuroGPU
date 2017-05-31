@@ -217,10 +217,10 @@ readMatrix(stimFile,stims)
 forsec "dend" nseg=1
 forsec "apic" nseg=1
 	
-topology()
+//topology()
 countExts()
 fcurrent()
-fmatrix()
+//fmatrix()
 printf("Creating Exts %d\n",ext_num)
 printf("Creating Exts %d\n",ext_num)
 if(ext_num>0){

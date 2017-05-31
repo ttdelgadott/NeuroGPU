@@ -161,6 +161,7 @@ def get_topo_mdl():
     for s in nrn.h.allsec():
         mech_params = {}
         name = nrn.h.secname()
+        
         comp_map.append(index_containing_substring(sec_list,name))
         if nrn.h.ismembrane("pas"):
             mech_params['g_pas'] = s.g_pas
@@ -448,6 +449,7 @@ def parse_models(thread):
     comp_mechs = output[2]
     available_mechs = output[3]
     comp_map = output[4] #maps from forall call at neuron to sec_list(topology ordered)
+    #comp_names = output[5]
     params_from_mods = set()
     all_params_non_global_flat=[]
     all_params_global_flat = []
@@ -477,7 +479,11 @@ def parse_models(thread):
     actual_gglobals = output[0]
     actual_reversals = output[1]
     neuron_globals_vals = output[2]
-    proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, sec_list, comp_mechs, g_globals, nglobals_flat, [], ftypestr,p_size_set, param_set)
+    cs_names = []
+    for s in nrn.h.allsec():
+        cs_names.append(nrn.h.secname())
+    print cs_names
+    proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, [], ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
@@ -529,7 +535,8 @@ def parse_models(thread):
     parent_seg[0] = 0
     output = create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
     aux = output[3]
-    cm_vec = output[4]
+    # cm_vec = output[4]
+    cm_vec = aux.Cms
     #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
 
@@ -539,14 +546,15 @@ def parse_models(thread):
     #def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
     return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs]
 def get_matrix(FN,parent,seg_start,last_seg):
+    FN = '../../Neuron/printCell/Amit/output/Mat.dat'
     data = open(FN).read()
     lines = data.split('\n')
+    lines = lines[1:-1]
     NX = len(lines)
     table = []
     for line in lines:
-        tmp = line.split(' ')
+        tmp = line.strip().split(' ')
         table.append([x.replace('1.#INF00000000000',str(1e23)) for x in tmp[1:]])
-
     #table = table[1:]
     mat = [[0 for x in range(NX-1)] for y in range(NX-1)]
     tmp = lines[0].split(' ')
@@ -557,7 +565,7 @@ def get_matrix(FN,parent,seg_start,last_seg):
         mat[i-1][i] = float(tmp[2])
         mat[i][i-1] = float(tmp[1])
     for i in range(len(parent)-1):
-        if not parent[i] == i-1:
+        if parent[i] != i-1:
             mat_ind = seg_start[i]
             parent_ind = last_seg[parent[i]]
             mat[mat_ind-1][mat_ind]=0

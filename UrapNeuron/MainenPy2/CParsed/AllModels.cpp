@@ -1,4 +1,4 @@
-// Automatically generated C for /home/devloop0/neuroGPU/neuroGPU/UrapNeuron/MainenPy2./runModel.hoc
+// Automatically generated C for /mnt/c/Users/bensr/Documents/GitHub/NeuroGPU/UrapNeuron/MainenPy2./runModel.hoc
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

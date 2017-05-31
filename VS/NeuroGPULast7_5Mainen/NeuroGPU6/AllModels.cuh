@@ -1,4 +1,4 @@
-// Automatically generated CUH for C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
+// Automatically generated CUH for C:\Users\bensr\Documents\GitHub\NeuroGPU\URapNeuron\Mainen\runModel.hoc
 
 #ifndef __ALLMODELSCU__
 #define __ALLMODELSCU__
