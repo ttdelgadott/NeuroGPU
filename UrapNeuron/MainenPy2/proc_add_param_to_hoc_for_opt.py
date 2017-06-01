@@ -203,10 +203,10 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
                     param_m[[i - 1 for i in comp_ind], int(param_start_i[F[0][m - 1]] + p - 1)] = Tmp
         tmp = param_m.flatten(order='F')
         all_params[kk - 1,:] = tmp
-        param_m = []
     f.close()
     all_params = all_params.reshape((all_params.shape[0] * all_params.shape[1],))
     f = open('../../Data/AllParams.dat', 'w')
     f.write(np.array(n_sets).astype(np.uint16))
     f.write(all_params.astype(np.float32))
     f.close()
+    return param_m

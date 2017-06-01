@@ -11,6 +11,7 @@ import re
 import numpy.matlib
 from file_io import get_lines, put_lines
 from proc_add_param_to_hoc_for_opt import proc_add_param_to_hoc_for_opt
+import scipy.io as sio
 
 from cStringIO import StringIO
 from nrn_structs import *
@@ -21,8 +22,9 @@ ParsedModel = collections.namedtuple('ParsedModel', 'Writes,Reads')
 ModNeuron = collections.namedtuple('ModNeuron', 'Suffix,UseIon,NonspecificCurrent,Reads,Writes,Range,Global')
 FTYPESTR = 'float'
 end_str = '|X|X|'
-vs_dir = '../../VS\NeuroGPULast7_5Mainen/NeuroGPU6'
+vs_dir = '../../VS/NeuroGPULast7_5Mainen/NeuroGPU6'
 has_f = 0
+ND, NRHS = None, None
 global sec_list
 # Globals
 global ParamStartVal
@@ -483,7 +485,7 @@ def parse_models(thread):
     for s in nrn.h.allsec():
         cs_names.append(nrn.h.secname())
     print cs_names
-    proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
+    params_m = proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
@@ -543,8 +545,8 @@ def parse_models(thread):
     output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
 
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
-    #def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
-    return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs]
+    tail_end(open('CParsed/AllModels.h', 'w'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
+    return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS]
 def get_matrix(FN,parent,seg_start,last_seg):
     FN = '../../Neuron/printCell/Amit/output/Mat.dat'
     data = open(FN).read()
@@ -739,7 +741,7 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
     call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_init_str_cu)
     call_to_deriv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_deriv_str_cu)
     call_to_break_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_str_cu)
-    call_to_break_dv_str_cu = re.sub('p[0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
+    call_to_break_dv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
     
     f.write('\n\n#define CALL_TO_INIT_STATES_CU(VARILP) {}\n\n'.format(call_to_init_str_cu))
     f.write('#define CALL_TO_DERIV_STR_CU(VARILP)   {}\n\n'.format(call_to_deriv_str_cu))
@@ -755,12 +757,12 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
     params_m = np.array(params_m)
     n_segs_mat = np.array(n_segs_mat)
     for i in range(1, params_m.shape[0] + 1):
-        temp = np.matlib.repmat(param_m[i - 1,:], n_segs_mat[i - 1], 1);
-        params_m_per_seg.append(temp)
+        temp = np.matlib.repmat(params_m[i - 1,:], n_segs_mat[i - 1], 1);
+        params_m_per_seg.extend(list(temp))
     params_m_per_seg = np.array(params_m_per_seg)
     cm_vec = np.array(cm_vec)
     cm_zeros = np.where(cm_vec == 0)
-    params_m_per_seg[cm_zeros,:] = 0
+    params_m_per_seg[cm_zeros,:] = np.zeros(params_m_per_seg[cm_zeros,:].shape)
     all_segs = np.sum(n_segs_mat)
     if np.floor(all_segs / 32) != all_segs / 32:
         print 'we have a non 32 multiple number of segs'
@@ -768,23 +770,23 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
     nilp = all_segs / 32
     tmp = np.array(get_lines(vs_dir + '/CudaStuffBase.cu'))
     set_params_line_i = np.where(np.array(['SET_PARAMS' in i for i in tmp]))
-    if tmp.size != 0:
+    if set_params_line_i[0].size != 0:
         tmp2 = ['SUPERILPMACRO(SET_PARAMS{:03d})'.format(i) for i in range(1, n_params + 1)]
         tmp3 = tmp[:set_params_line_i[-1]] + tmp2 + tmp[set_params_line_i[-1] + 1:]
     else:
         tmp3 = tmp
 
-    put_lines(vs_dir + '/CudaStuffBasex.cu')
-    params_m_mat = sio.loadmat('../Data/ParamsMForC.mat')
+    put_lines(vs_dir + '/CudaStuffBasex.cu', tmp3)
+    params_m_mat = sio.loadmat('../../Data/ParamsMForC.mat')
     params_m_mat['param_m'] = params_m.astype(float)
-    sio.savemat('../Data/ParamsMForC.mat', params_m_mat)
+    sio.savemat('../../Data/ParamsMForC.mat', params_m_mat)
 
     if has_f:
-        fn = '../Data/rhsFromNeuron.dat'
+        fn = '../../Data/rhsFromNeuron.dat'
         f = open(fn, 'w')
         f.write(nrhs.astype(float))
         f.close()
-        fn = '../Data/DFromNeuron.dat'
+        fn = '../../Data/DFromNeuron.dat'
         f = open(fn, 'w')
         f.write(nd.astype(float))
         f.close()
