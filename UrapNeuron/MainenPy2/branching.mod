@@ -108,7 +108,7 @@ PROCEDURE MyPrintMatrix() {
 VERBATIM {
 	Section* sec;
 	FILE* fm;
-	fm= fopen("C:\fmatrix.dat", "wb");
+	fm= fopen("fmatrix.dat", "wb");
 	Node* nd;
 	int ii;
 #if defined(t)
