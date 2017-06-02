@@ -28,7 +28,7 @@ Section* sec;
 	Node* nd;
 	sec = chk_access();
 	if (_lx < 0. || _lx > 1.) {
-	
+	printf("_lx is %f and _lx*(double)(sec->nnode-1) is %f\n",_lx,_lx*(double)(sec->nnode-1));
 		hoc_execerror("out of range, must be 0 < x <= 1", (char*)0);
 	}
 	if (_lx == 1.) {
@@ -50,6 +50,7 @@ Section* sec;
 	sec = chk_access();
 	if (_lx < 0. || _lx > 1.) {
 		
+		printf("_lx is %f and _lx*(double)(sec->nnode-1) is %f\n",_lx,_lx*(double)(sec->nnode-1));
 		hoc_execerror("out of range, must be 0 < x <= 1", (char*)0);
 	}
 	if (_lx == 1.) {
@@ -77,7 +78,7 @@ Section* sec;
 	}else{
 		nd = sec->pnode[(int) (_lx*(double)(sec->nnode-1))];
 	}
-	
+	printf("index is %d,NODEA(nd) is %f _la is %f\n",nd->v_node_index,NODEA(nd),_la);
 	NODEA(nd) = _la;
 }
 ENDVERBATIM
@@ -98,7 +99,7 @@ Section* sec;
 	}else{
 		nd = sec->pnode[(int) (_lx*(double)(sec->nnode-1))];
 	}
-	
+	printf("index is %d,NODEB(nd) is %f _lb is %f\n",nd->v_node_index,NODEB(nd),_lb);
 	NODEB(nd) = _lb;
 }
 ENDVERBATIM
@@ -116,7 +117,7 @@ VERBATIM {
 #endif
 for(ii=0;ii<_nt->end;ii++){
 nd=_nt->_v_node[ii];
-
+printf("%d %1.15f %1.15f %1.15f %1.15f\n", ii, NODEB(nd), NODEA(nd), NODED(nd), NODERHS(nd));
 }
 }
 ENDVERBATIM
@@ -129,6 +130,7 @@ VERBATIM {
 #endif
 for(ii=0;ii<_nt->end;ii++){
 
+printf("%d,%1.15f %1.15f %1.15f %1.15f\n",ii, _nt->_actual_a[ii],_nt->_actual_d[ii],_nt->_actual_b[ii],_nt->_actual_rhs[ii]);
 
 }
 }
@@ -145,6 +147,7 @@ Node* nd;
 for(ii=0;ii<_nt->end;ii++){
 nd=_nt->_v_node[ii];
 
+printf("%d,%1.15f %1.15f \n",ii,  NODED(nd), NODERHS(nd));
 }
 }
 ENDVERBATIM
@@ -161,6 +164,7 @@ VERBATIM {
 #endif
 for(ii=0;ii<_nt->end;ii++){
 
+printf("%d %d\n", ii, _nt->_v_parent_index[ii]);
 
 }
 }
