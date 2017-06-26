@@ -31,7 +31,7 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
             if j not in reversals:
                 reversals.append(j)
     comp_names = ['#' + i for i in comp_names]
-    neuron_types = ['(0-1)' + i for i in neuron_types]
+    neuron_types = [i + '(0-1)' for i in neuron_types]
     comp_mechanisms = [list(i) for i in comp_mechanisms]
     # all_parameters_non_global_c = [['gbar_ca', 'cao_ca'], [], ['gbar_kca', 'caix_kca', 'Ra_kca', 'Rb_kca'], ['gbar_km', 'tha_km', 'qa_km', 'Ra_km', 'Rb_km'], ['gbar_kv', 'tha_kv', 'qa_kv', 'Ra_kv', 'Rb_kv'], ['gbar_na', 'tha_na', 'qa_na', 'Ra_na', 'Rb_na', 'thi1_na', 'thi2_na', 'qi_na', 'thinf_na', 'qinf_na', 'Rg_na', 'Rd_na']]
     # available_mechanisms = ['ca', 'cad', 'kca', 'km', 'kv', 'na']
@@ -203,6 +203,7 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
                     param_m[[i - 1 for i in comp_ind], int(param_start_i[F[0][m - 1]] + p - 1)] = Tmp
         tmp = param_m.flatten(order='F')
         all_params[kk - 1,:] = tmp
+    print param_m
     f.close()
     all_params = all_params.reshape((all_params.shape[0] * all_params.shape[1],))
     f = open('../../Data/AllParams.dat', 'w')
