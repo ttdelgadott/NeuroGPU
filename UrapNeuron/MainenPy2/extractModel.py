@@ -545,7 +545,7 @@ def parse_models(thread):
     output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
 
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
-    tail_end(open('CParsed/AllModels.h', 'w'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
+    tail_end(open('CParsed/AllModels.h', 'a'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
     return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS]
 def get_matrix(FN,parent,seg_start,last_seg):
     FN = '../../Neuron/printCell/Amit/output/Mat.dat'
