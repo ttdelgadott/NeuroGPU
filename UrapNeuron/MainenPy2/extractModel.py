@@ -114,7 +114,7 @@ def get_topo():
     sections = {}
     nsegs = []
     cms = []
-    for s  in nrn.h.sec_list:
+    for s  in nrn.h.allsec():
         name = nrn.h.secname()
         topology = [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal,
                     s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
@@ -485,7 +485,7 @@ def parse_models(thread):
     for s in nrn.h.allsec():
         cs_names.append(nrn.h.secname())
     print cs_names
-    params_m = proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
+    params_m, runModel_hoc_object = proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
@@ -542,7 +542,7 @@ def parse_models(thread):
     #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
 
-    output = write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
+    output = write_all_models_cuh(c_parsed_folder, n_total_states, NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
 
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
     tail_end(open('CParsed/AllModels.h', 'a'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
@@ -576,7 +576,7 @@ def get_matrix(FN,parent,seg_start,last_seg):
             mat[mat_ind][parent_ind] = table[mat_ind][2]
     return mat
 
-def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
+def write_all_models_cuh(c_parsed_folder,n_total_states,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
     f = open(FN, 'w')
     f.write('// Automatically generated CUH for ' + os.getcwd() + modelFile + '\n')
@@ -590,6 +590,8 @@ def write_all_models_cuh(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines
     f.write('#define COMP_DEPTH ' + str(n_params) +'\n')
     f.write('#define N_L_REL ' + str(len(aux.LRelStarts)) +'\n')
     f.write('#define N_F_L_REL ' +str(len(aux.FLRelStarts)) +'\n')
+    f.write('#define NSTATES ' + str(n_total_states) + '\n')
+    f.write('#define NPARAMS ' + str(n_params) + '\n\n')
     for cur_mod_i in range(len(c_init_lines_cu)):
         f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
         f.write(c_deriv_lines_cu[cur_mod_i][0][:-1] + ';\n')

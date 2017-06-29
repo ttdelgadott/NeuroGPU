@@ -173,8 +173,12 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
     out_lines.extend([lines[i] for i in range(int(add_line_i[0]) + 1)])
     out_lines.extend(added_lines)
     out_lines.extend([lines[i] for i in range(int(add_line_i[0]) + 1, len(lines))])
-    put_lines(fn_with_param, out_lines)
-    subprocess.call(["nrniv", "runModel_param.hoc"])
+    # put_lines(fn_with_param, out_lines)
+
+    runModel_hoc_object = nrn.hoc.HocObject()
+    runModel_hoc_object.execute('~' + '\n'.join(out_lines))
+    # runModel_hoc_object.load_file(1, fn_with_param)
+    # subprocess.call(["nrniv", "runModel_param.hoc"])
     f = open(fn_param_m, 'rb')
     reversals_v, g_globals_v, n_globals_v = [0 for i in range(len(reversals))], [0 for i in range(len(g_globals))], [0 for i in range(len(n_globals))]
     for i in range(len(reversals)):
@@ -210,4 +214,4 @@ def proc_add_param_to_hoc_for_opt(all_parameters_non_global_c, hoc_base_fn, base
     f.write(np.array(n_sets).astype(np.uint16))
     f.write(all_params.astype(np.float32))
     f.close()
-    return param_m
+    return param_m, runModel_hoc_object
