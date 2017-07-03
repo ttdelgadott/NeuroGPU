@@ -594,8 +594,9 @@ def write_all_models_cuh(c_parsed_folder,n_total_states,NX,aux,bool_model,n_para
     f.write('#define NPARAMS ' + str(n_params) + '\n\n')
     for cur_mod_i in range(len(c_init_lines_cu)):
         f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
-        f.write(c_deriv_lines_cu[cur_mod_i][0][:-1] + ';\n')
-        f.write(c_break_lines_cu[cur_mod_i][0][:-1] + ';\n')
+        f.write(c_deriv_lines_cu[cur_mod_i].splitlines()[0][:-1] + ';\n')
+        f.write(c_break_lines_cu[cur_mod_i][0].splitlines()[0][:-1] + ';\n')
+        f.write('\n')
 
 
 def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
@@ -737,7 +738,7 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
 def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
     declare_str, parameter_set_str = '', ''
     for curr_param in range(1, n_params + 1):
-        curr_parameter_str = '#define   SET_PARAMS{:03d}VARILP MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
+        curr_parameter_str = '#define   SET_PARAMS{:03d}(VARILP) MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
         f.write(curr_parameter_str)
 
     call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_init_str_cu)
