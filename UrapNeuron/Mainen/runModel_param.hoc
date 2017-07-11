@@ -9,7 +9,7 @@ strdef fitFile,timesFile,paramsFile,stimFile,outFile,modelFile,outFPre
 modelFile = "./myMainen.hoc"
 timesFile = "./times.dat"
 
-paramsFile = "./params/opt_params.dat"
+paramsFile = "./opt_params.dat"
 stimFile = "./Stims/stepsmall.dat"
 outFile = "./volts/orig_step.dat"
 ntimestep =3168
@@ -328,7 +328,7 @@ forall{
 fn.close()
 //End point processess mechanisms output
 // Start params output
-fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+proc writeReversals(){
 access soma
 a=eca
 fn.vwrite(&a)
@@ -338,6 +338,8 @@ fn.vwrite(&a)
 access soma
 a=ena
 fn.vwrite(&a)
+}
+proc writeGGlobals(){
 a=celsius
 fn.vwrite(&a)
 a=stoprun
@@ -346,6 +348,8 @@ a=clamp_resist
 fn.vwrite(&a)
 a=secondorder
 fn.vwrite(&a)
+}
+proc writeNGlobals(){
 a=q10_ca
 fn.vwrite(&a)
 a=temp_ca
@@ -406,6 +410,8 @@ a=vmax_na
 fn.vwrite(&a)
 a=vshift_na
 fn.vwrite(&a)
+}
+proc proc0(){
 access soma
 a=gbar_ca
 fn.vwrite(&a)
@@ -463,6 +469,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc1(){
 access dend1[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -557,6 +565,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc2(){
 access dend1[2]
 a=gbar_ca
 fn.vwrite(&a)
@@ -651,6 +661,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc3(){
 access dend1[4]
 a=gbar_ca
 fn.vwrite(&a)
@@ -745,6 +757,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc4(){
 access dend1[6]
 a=gbar_ca
 fn.vwrite(&a)
@@ -839,6 +853,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc5(){
 access dend1[8]
 a=gbar_ca
 fn.vwrite(&a)
@@ -933,6 +949,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc6(){
 access dend2[1]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1027,6 +1045,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc7(){
 access dend2[3]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1121,6 +1141,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc8(){
 access dend2[5]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1215,6 +1237,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc9(){
 access dend2[7]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1309,6 +1333,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc10(){
 access dend2[9]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1403,6 +1429,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc11(){
 access dend2[11]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1497,6 +1525,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc12(){
 access dend3[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1591,6 +1621,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc13(){
 access dend3[2]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1685,6 +1717,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc14(){
 access dend3[4]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1779,6 +1813,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc15(){
 access dend4[1]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1873,6 +1909,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc16(){
 access dend4[3]
 a=gbar_ca
 fn.vwrite(&a)
@@ -1967,6 +2005,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc17(){
 access dend4[5]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2061,6 +2101,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc18(){
 access dend5[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2155,6 +2197,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc19(){
 access dend6[1]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2249,6 +2293,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc20(){
 access dend6[3]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2343,6 +2389,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc21(){
 access dend6[5]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2437,6 +2485,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc22(){
 access dend6[7]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2531,6 +2581,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc23(){
 access dend6[9]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2625,6 +2677,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc24(){
 access dend7[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2719,6 +2773,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc25(){
 access dend7[2]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2813,6 +2869,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc26(){
 access dend7[4]
 a=gbar_ca
 fn.vwrite(&a)
@@ -2907,6 +2965,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc27(){
 access dend7[6]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3001,6 +3061,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc28(){
 access dend7[8]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3095,6 +3157,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc29(){
 access dend7[10]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3189,6 +3253,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc30(){
 access dend7[12]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3283,6 +3349,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc31(){
 access dend8[1]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3377,6 +3445,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc32(){
 access dend8[3]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3471,6 +3541,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc33(){
 access dend9[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3565,6 +3637,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc34(){
 access dend9[2]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3659,6 +3733,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc35(){
 access dend9[4]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3753,6 +3829,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc36(){
 access dend10[1]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3847,6 +3925,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc37(){
 access dend10[3]
 a=gbar_ca
 fn.vwrite(&a)
@@ -3941,6 +4021,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc38(){
 access dend10[5]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4035,6 +4117,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc39(){
 access dend10[7]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4129,6 +4213,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc40(){
 access dend10[9]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4223,6 +4309,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc41(){
 access dend11[0]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4317,6 +4405,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc42(){
 access dend11[2]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4411,6 +4501,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc43(){
 access dend11[4]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4505,6 +4597,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc44(){
 access dend11[6]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4599,6 +4693,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc45(){
 access dend11[8]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4693,6 +4789,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc46(){
 access dend11[10]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4787,6 +4885,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc47(){
 access dend11[12]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4881,6 +4981,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc48(){
 access dend11[14]
 a=gbar_ca
 fn.vwrite(&a)
@@ -4975,6 +5077,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc49(){
 access dend11[16]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5069,6 +5173,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc50(){
 access dend11[18]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5163,6 +5269,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc51(){
 access dend11[20]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5257,6 +5365,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc52(){
 access dend11[22]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5351,6 +5461,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc53(){
 access dend11[24]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5445,6 +5557,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc54(){
 access dend11[26]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5539,6 +5653,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc55(){
 access dend11[28]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5633,6 +5749,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc56(){
 access dend11[30]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5727,6 +5845,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc57(){
 access dend11[32]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5821,6 +5941,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc58(){
 access dend11[34]
 a=gbar_ca
 fn.vwrite(&a)
@@ -5915,6 +6037,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc59(){
 access dend11[36]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6009,6 +6133,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc60(){
 access dend11[38]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6103,6 +6229,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc61(){
 access dend11[40]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6197,6 +6325,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc62(){
 access dend11[42]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6291,6 +6421,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc63(){
 access dend11[44]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6385,6 +6517,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc64(){
 access dend11[46]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6479,6 +6613,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc65(){
 access dend11[48]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6573,6 +6709,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc66(){
 access dend11[50]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6667,6 +6805,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc67(){
 access dend11[52]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6761,6 +6901,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc68(){
 access dend11[54]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6855,6 +6997,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc69(){
 access dend11[56]
 a=gbar_ca
 fn.vwrite(&a)
@@ -6949,6 +7093,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc70(){
 access dend11[58]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7043,6 +7189,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc71(){
 access dend11[60]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7137,6 +7285,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc72(){
 access dend11[62]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7231,6 +7381,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc73(){
 access dend11[64]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7325,6 +7477,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc74(){
 access dend11[66]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7419,6 +7573,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc75(){
 access dend11[68]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7513,6 +7669,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc76(){
 access dend11[70]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7607,6 +7765,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc77(){
 access dend11[72]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7701,6 +7861,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc78(){
 access dend11[74]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7795,6 +7957,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc79(){
 access dend11[76]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7889,6 +8053,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc80(){
 access dend11[78]
 a=gbar_ca
 fn.vwrite(&a)
@@ -7983,6 +8149,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc81(){
 access dend11[80]
 a=gbar_ca
 fn.vwrite(&a)
@@ -8077,6 +8245,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc82(){
 access dend11[82]
 a=gbar_ca
 fn.vwrite(&a)
@@ -8159,6 +8329,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc83(){
 access hill
 a=gbar_kv
 fn.vwrite(&a)
@@ -8219,6 +8391,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc84(){
 access myelin[1]
 a=gbar_na
 fn.vwrite(&a)
@@ -8294,6 +8468,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc85(){
 access myelin[4]
 a=gbar_na
 fn.vwrite(&a)
@@ -8369,6 +8545,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc86(){
 access node[2]
 a=gbar_na
 fn.vwrite(&a)
@@ -8444,6 +8622,8 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc proc87(){
 access Exts[0]
 a=gbar_na
 fn.vwrite(&a)
@@ -8469,7 +8649,108 @@ a=Rg_na
 fn.vwrite(&a)
 a=Rd_na
 fn.vwrite(&a)
+}
+proc printParams(){
+fn.wopen("C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/Neuron/printCell/Amit/output/ParamM.dat")
+writeReversals()
+writeGGlobals()
+writeNGlobals()
+for (ii=0;ii<pmat.nrow();ii+=1){
+transvec = pmat.getrow(ii)
+tfunc()
+finitialize()
+proc0()
+proc1()
+proc2()
+proc3()
+proc4()
+proc5()
+proc6()
+proc7()
+proc8()
+proc9()
+proc10()
+proc11()
+proc12()
+proc13()
+proc14()
+proc15()
+proc16()
+proc17()
+proc18()
+proc19()
+proc20()
+proc21()
+proc22()
+proc23()
+proc24()
+proc25()
+proc26()
+proc27()
+proc28()
+proc29()
+proc30()
+proc31()
+proc32()
+proc33()
+proc34()
+proc35()
+proc36()
+proc37()
+proc38()
+proc39()
+proc40()
+proc41()
+proc42()
+proc43()
+proc44()
+proc45()
+proc46()
+proc47()
+proc48()
+proc49()
+proc50()
+proc51()
+proc52()
+proc53()
+proc54()
+proc55()
+proc56()
+proc57()
+proc58()
+proc59()
+proc60()
+proc61()
+proc62()
+proc63()
+proc64()
+proc65()
+proc66()
+proc67()
+proc68()
+proc69()
+proc70()
+proc71()
+proc72()
+proc73()
+proc74()
+proc75()
+proc76()
+proc77()
+proc78()
+proc79()
+proc80()
+proc81()
+proc82()
+proc83()
+proc84()
+proc85()
+proc86()
+proc87()
+}
 fn.close()
+}
+printParams()
 // End params output
 // Start Mat Output
 fcurrent()

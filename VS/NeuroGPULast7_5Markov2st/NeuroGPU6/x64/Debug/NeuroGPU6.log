@@ -1,24 +1,10 @@
-﻿Build started 4/7/2017 11:50:25 AM.
-     1>Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" on node 2 (Rebuild target(s)).
-     1>CudaClean:
-         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp5b48de7f775647e8ba6e5335a81c44f7.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu" -clean
-         
-         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu" -clean 
-         CudaStuff.cu
-       CudaClean:
-         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp733afb64c08846cfa0849a0225c746ae.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\kernel.cu" -clean
-         
-         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile   -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\kernel.cu" -clean 
-         kernel.cu
-       AddCudaCompileDeps:
+﻿Build started 7/7/2017 7:59:18 PM.
+     1>Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" on node 2 (Build target(s)).
+     1>AddCudaCompileDeps:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /DWIN32 /DWIN64 /D_DEBUG /D_CONSOLE /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I. /FIcuda_runtime.h /c C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu 
-       AddCudaCompileDeps:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /DWIN32 /DWIN64 /D_DEBUG /D_CONSOLE /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /I. /FIcuda_runtime.h /c C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\kernel.cu 
        CudaBuild:
          Compiling CUDA source file CudaStuff.cu...
-         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp858d19f2e14e415ab8c35f1398233137.cmd"
+         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp2da78cfd4b414d9b8b954b16ed5c356f.cmd"
          "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64" -rdc=true -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu"
          
          C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64" -rdc=true -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu" 
@@ -26,16 +12,17 @@
      1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(21): warning C4005: 'stoprun' : macro redefinition
      1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(22): warning C4005: 'clamp_resist' : macro redefinition
      1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(23): warning C4005: 'secondorder' : macro redefinition
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(115): warning : variable "temp" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(116): warning : variable "i_index" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(117): warning : variable "j_index" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(200): warning : variable "debug" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(201): warning : variable "debug2" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(294): warning : missing return statement at end of non-void function "CuDerivModel_CO(float, float, float, float &, float &, float, float, float, float, float)"
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(297): warning : variable "k12" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(297): warning : variable "k21" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(298): warning : variable "sum" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(320): warning : variable "gk" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(80): error : expression must have a constant value
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(80): error : expression must have a constant value
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(81): error : expression must have a constant value
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(81): error : expression must have a constant value
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(231): warning : variable "debug" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(232): warning : variable "debug2" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(325): warning : missing return statement at end of non-void function "CuDerivModel_CO(float, float, float, float &, float &, float, float, float, float, float)"
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(328): warning : variable "k12" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(328): warning : variable "k21" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(329): warning : variable "sum" was declared but never referenced
+     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(351): warning : variable "gk" was declared but never referenced
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(184): warning : variable "CurLevel" is used before its value is set
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(290): warning : variable "StimID" was declared but never referenced
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_1" was declared but never referenced
@@ -44,151 +31,19 @@
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_2" was declared but never referenced
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_1" was declared but never referenced
      1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_2" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(485): warning : variable "SMemVHot" is used before its value is set
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(485): warning : variable "amps" is used before its value is set
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(501): warning : variable "FileName" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(836): warning : expression has no effect
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "i" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "j" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "t" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning : variable "uHPOut_d" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning : variable "bHPOut_d" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(20): warning C4005: 'celsius' : macro redefinition
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(21): warning C4005: 'stoprun' : macro redefinition
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(22): warning C4005: 'clamp_resist' : macro redefinition
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(23): warning C4005: 'secondorder' : macro redefinition
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(115): warning : variable "temp" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(116): warning : variable "i_index" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(117): warning : variable "j_index" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(200): warning : variable "debug" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(201): warning : variable "debug2" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(294): warning : missing return statement at end of non-void function "CuDerivModel_CO(float, float, float, float &, float &, float, float, float, float, float)"
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(297): warning : variable "k12" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(297): warning : variable "k21" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(298): warning : variable "sum" was declared but never referenced
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(320): warning : variable "gk" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(184): warning : variable "CurLevel" is used before its value is set
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(290): warning : variable "StimID" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_1" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_1" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "isModel_2" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(328): warning : variable "dVec_2" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_1" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(335): warning : variable "SonNo_2" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(485): warning : variable "SMemVHot" is used before its value is set
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(485): warning : variable "amps" is used before its value is set
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(501): warning : variable "FileName" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(836): warning : expression has no effect
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "i" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "j" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning : variable "t" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning : variable "uHPOut_d" was declared but never referenced
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning : variable "bHPOut_d" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "SMemVHot" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(484): warning : variable "amps" is used before its value is set
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(500): warning : variable "FileName" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(835): warning : expression has no effect
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "i" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "j" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(544): warning : variable "t" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "uHPOut_d" was declared but never referenced
+     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(547): warning : variable "bHPOut_d" was declared but never referenced
          CudaStuff.cu
-     1>c:\users\rben.keck-center\documents\github\neurogpu\vs\neurogpulast7_5markov2st\neurogpu6\AllModels.cu(45): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(501): warning C4101: 'FileName' : unreferenced local variable
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(542): warning C4244: 'initializing' : conversion from 'float' to 'unsigned short', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(580): warning C4244: 'argument' : conversion from 'float' to 'size_t', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(635): warning C4244: 'argument' : conversion from 'float' to 'size_t', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(781): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(781): warning C4244: '=' : conversion from 'float' to 'unsigned short', possible loss of data
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(836): warning C4553: '==' : operator has no effect; did you intend '='?
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning C4101: 'bHPOut_d' : unreferenced local variable
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(548): warning C4101: 'uHPOut_d' : unreferenced local variable
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning C4101: 'i' : unreferenced local variable
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning C4101: 't' : unreferenced local variable
-     1>C:/Users/rben.KECK-CENTER/Documents/GitHub/NeuroGPU/VS/NeuroGPULast7_5Markov2st/NeuroGPU6/CudaStuff.cu(545): warning C4101: 'j' : unreferenced local variable
-       CudaBuild:
-         Compiling CUDA source file kernel.cu...
-         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp18a23d47efa043b3b82cbd3cac3968a6.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64" -rdc=true -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\kernel.cu"
-         
-         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64" -rdc=true -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\kernel.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\kernel.cu" 
-         kernel.cu
-       ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" /Zi /nologo /W3 /WX- /Ox /D WIN32 /D WIN64 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt AllModels.cpp MainC.cpp Util.cpp
-         Util.cpp
-     1>Util.cpp(75): warning C4101: 'fdebug2' : unreferenced local variable
-     1>Util.cpp(128): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
-     1>Util.cpp(132): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(243): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
-     1>Util.cpp(247): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(279): warning C4305: '=' : truncation from 'double' to 'float'
-     1>Util.cpp(292): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(324): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(356) : see declaration of 'sprintf'
-     1>Util.cpp(327): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(337): warning C4244: 'initializing' : conversion from 'float' to 'unsigned short', possible loss of data
-     1>Util.cpp(361): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(382): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(388): warning C4313: 'printf'  : '%d' in format string conflicts with argument 2 of type 'const char *'
-     1>Util.cpp(395): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(394): warning C4101: 'NP' : unreferenced local variable
-     1>Util.cpp(416): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(433): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-     1>Util.cpp(450): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211) : see declaration of 'fopen'
-         MainC.cpp
-         AllModels.cpp
-     1>AllModels.cpp(34): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(48): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(89): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(96): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(99): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(101): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
-     1>AllModels.cpp(82): warning C4101: '_i' : unreferenced local variable
-     1>AllModels.cpp(118): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-         Generating Code...
-       CudaLink:
-         cmd.exe /C "C:\Users\rben.KECK-CENTER\AppData\Local\Temp\tmp7cb322bb07be4e86acb83de61d1053d2.cmd"
-         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -dlink -o x64\Debug\NeuroGPU6.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64\cusparse.lib" cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  -gencode=arch=compute_35,code=sm_35 -G --machine 64 x64\Debug\CudaStuff.cu.obj x64\Debug\kernel.cu.obj
-         
-         C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -dlink -o x64\Debug\NeuroGPU6.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64" "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64\cusparse.lib" cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  -gencode=arch=compute_35,code=sm_35 -G --machine 64 x64\Debug\CudaStuff.cu.obj x64\Debug\kernel.cu.obj 
-         cusparse.lib
-         cudart.lib
-         kernel32.lib
-         user32.lib
-         gdi32.lib
-         winspool.lib
-         comdlg32.lib
-         advapi32.lib
-         shell32.lib
-         ole32.lib
-         oleaut32.lib
-         uuid.lib
-         odbc32.lib
-         odbccp32.lib
-         CudaStuff.cu.obj
-         kernel.cu.obj
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\NeuroGPU6.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\lib\x64" cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\NeuroGPU6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\NeuroGPU6.lib" /MACHINE:X64 x64\Debug\CudaStuff.cu.obj
-         x64\Debug\kernel.cu.obj
-         x64\Debug\AllModels.obj
-         x64\Debug\MainC.obj
-         x64\Debug\Util.obj
-         "x64\Debug\NeuroGPU6.device-link.obj"
-         NeuroGPU6.vcxproj -> C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\NeuroGPU6.exe
-       PostBuildEvent:
-         echo copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\"
-         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\"
-         :VCEnd
-         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart*.dll" "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\x64\Debug\"
-         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart32_75.dll
-         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\cudart64_75.dll
-                 2 file(s) copied.
-     1>Done Building Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" (Rebuild target(s)).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\BuildCustomizations\CUDA 7.5.targets(604,9): error MSB3721: The command ""C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\bin\nvcc.exe" -gencode=arch=compute_35,code=\"sm_35,compute_35\" --use-local-env --cl-version 2013 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64" -rdc=true -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include"  -G -lineinfo  --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g  -use_fast_math -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /O2 /Zi  /MDd " -o x64\Debug\CudaStuff.cu.obj "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\CudaStuff.cu"" exited with code 2.
+     1>Done Building Project "C:\Users\rben.KECK-CENTER\Documents\GitHub\NeuroGPU\VS\NeuroGPULast7_5Markov2st\NeuroGPU6\NeuroGPU6.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:40.94
+Time Elapsed 00:00:07.47

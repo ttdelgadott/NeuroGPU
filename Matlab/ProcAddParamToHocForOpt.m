@@ -137,12 +137,12 @@ AddedLines{end+1} = 'printParams()';
 AddedLines{end+1}='// End params output';
 AddedLines{end+1}='// Start Mat Output';
 AddedLines{end+1}='fcurrent()';
+
 AddedLines{end+1}=['hoc_stdout("',FN_Mat ,'")'];
 AddedLines{end+1}='MyPrintMatrix()';
 AddedLines{end+1}='hoc_stdout()';
 AddedLines{end+1}='// endMat Output';
 OutLines=[Lines(1:AddLineI); AddedLines'; Lines((AddLineI+1):end)];
-
 Lines2File(OutLines,FNWithParam);
 %%
 [HocP, HocN, Ext]=fileparts(FNWithParam);
@@ -161,7 +161,6 @@ end
 for i=1:numel(NGlobals)
     NGlobalsV(i) = fread(fid, 1, 'float64');
 end
-
 % for c=1:numel(CompNames)
 %     F=find(ismember(availableMechanisms, CompMechnisms{c}));
 %     for m=1:numel(F)
@@ -187,6 +186,7 @@ for kk=1:NSets
             CurMechParams=AllParametersNonGlobalC{F(m)};
             for p=1:numel(CurMechParams)
                 Tmp=fread(fid, 1, 'float64');
+                fprintf('%d, %d, %f\n', compInd, ParamStartI(F(m)) + p, Tmp);
                 ParamM(compInd, ParamStartI(F(m))+p) = Tmp;
             end
         end

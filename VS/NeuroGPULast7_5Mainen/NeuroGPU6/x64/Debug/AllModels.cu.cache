@@ -1,4 +1,4 @@
-Identity=kernel.cu
+Identity=AllModels.cu
 AdditionalCompilerOptions=
 AdditionalCompilerOptions=
 AdditionalDependencies=
@@ -8,7 +8,7 @@ AdditionalOptions=
 AdditionalOptions=
 CodeGeneration=compute_35,sm_35
 CodeGeneration=compute_35,sm_35
-CompileOut=x64\Debug\kernel.cu.obj
+CompileOut=x64\Debug\AllModels.cu.obj
 CudaRuntime=Static
 CudaToolkitCustomDir=
 Defines=;WIN32;WIN64;_DEBUG;_CONSOLE;_MBCS;
