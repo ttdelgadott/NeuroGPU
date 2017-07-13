@@ -269,7 +269,6 @@ def get_bool_model(available_mechs,NX,comp_mechs,comp_map,seg_start,seg_end):
 
 ### Functions for Parsing Mod/C files ###
 
-
 def parse_models(thread):
     global StateStartVal
     c_parsed_folder = './CParsed/'
@@ -966,8 +965,6 @@ def write_all_models_cpp(c_parsed_folder,reversals_names,reversals_vals,all_writ
     f.write(c_break_lines_flat)
     f.close()
 
-
-
 def get_actual_params(all_reversals,g_globals,nglobals_flat,comp_mechs,all_params_non_global_flat):
     #print all_params_global_flat
     #param = nrn.h.ref(0)  # string reference to store parameter name
@@ -1218,11 +1215,96 @@ def create_states_param_str(all_state_line,all_state_line_seg,all_params_line,al
     states_params_str_seg = add_model_name_to_function(states_params_str_seg,list(all_reads_no_reversals),extra_states_trg)
     return [states_params_str,states_params_str_seg,additional_writes_out]
 
+"""
+PARAMETERS:
+	lines: all the lines in the mod file  
+	model_name: name of the model
+	states: a string, of all the states used in the kinetic model. Gotten from handle_state_block
+	rates_lines: The lines of code in the rates block. This is used during the calculation of the Q matrix. NOTE: this must be of a particular form, with no comments 
 
+RETURNS:
+	c_kinetic_helper_lines: basically a giant string of helper functions
+	c_kinetic_deriv_lines: c function lines that should be used in CuDerivModel in the kinetic case
+	c_kinetic_init_lines: c function lines that should be used in CuInitModel in the kinetic case
+    call_to_kinetic_deriv: how to call the CuDerivModel function for this particular instance (should be the same as all other deriv calls, besides the model name)
+    declare: the function declaration for this (should be the same as all other deriv declares)
 
+Only supports kinetic equations with one state on each side of the equation, so far. 
+Also assumes that the conserve statement at the bottom of the kinetic block is essentially sum(all states) = 1
+"""
+#Also TODO: some testing on this
+#TODO: add call_to_kinetic_deriv and kinetic_deriv_declare; should be pretty simple
+def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_params_str, states_params_str_seg):
+    start = index_containing_substring(lines, 'KINETIC')
+    if start < -1:
+        return [[], [], [], '','']
+    else: 
+        states = states_line.split()
+        states_dict = {}
+        for i in range(0, len(states)):
+            states_dict[states[i]] = i
+        num_states = len(states)
+        f = open('kinetic_template.txt', 'r')
+        template_lines = [line.strip('\n') for line in f.readlines()]
+        for line in template_lines:
+            re.sub(r'<NUM_STATES>', str(num_states), line)
+            re.sub(r'<NUM_STATES-1>', str(num_states-1), line)
 
+        #creating c_kinetic_helper_lines
+        c_kinetic_helper_lines = template_lines[index_containing_substring('// BOILERPLATE CODE:')+1:index_containing_substring('//END BOILERPLATE')]
 
+        #creating c_kinetic_deriv_lines
+        c_kinetic_deriv_lines = template_lines[index_containing_substring('//DERIV BLOCK')+1:index_containing_substring('//END DERIV')] 
+        #now, need to process rates to get each of the LHS variables in rates
+        rates_lhs = []
+        for line in rates_lines:
+            temp_line = line.split()
+            var = temp_line[0]
+            if var not in rates_lhs:
+                rates_lhs.append(var) 
+          
+        q_matrix_lines = []
+        #now process the kinetic equations, to find out how to construct the q matrix
+        index = start
+        while '}' not in lines[index]:
+            q_line = ''
+            state1, state2, param1, param2 = scan_kinetic_equation(lines[index]) 
+            q_line += 'q[' + states_dict[state1] + '][' + states_dict[state2] + '] = ' + param1  + ';'
+            q_line += 'q[' + states_dict[state2] + '][' + states_dict[state1] + '] = ' + param2  + ';'
+            q_matrix_lines.append(q_line)
+            index += 1
 
+        for line in reversed(rates_lines):
+            c_kinetic_deriv_lines.insert(line, 2)
+        for line in q_matrix_lines:
+            c_kinetic_deriv_lines.insert(line, 3 + len(rates_lines)) 
+
+        #now add the states to y line before the backwards euler call, and the y to states line after the backwards euler call
+        beuler_call_index = index_containing_substring(c_kinetic_deriv_lines, 'Cubackwards_euler')
+        c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1]
+        for state in states:
+            c_kinetic_deriv_lines.insert('y['+states_dict[state] + '] = ' + state';', beuler_call_index-1)
+            c_kinetic_deriv_lines.insert(state + ' = y[' + states_dict[state] + '];', beuler_call_index+1)
+            c_kinetic_init_lines.insert(state + ' = y[' + states_dict[state] + '];', beuler_call_index+1)
+        return [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, '', '']
+        
+'''
+There's definitely a better way to do this with regex, or a state machine, but I'm too tired right now to figure that out
+'''
+def scan_kinetic_equation(equation):
+    i = 0
+    lhs_end = equation.find('<')
+    rhs_end = equation.find('(')
+    param1_end = equation.find(',')
+    param2_end = equation.find(')')
+    state1 = equation[1:lhs_end].strip()
+    state2 = equation[lhs_end+3:rhs_end].strip()
+    param1 = equation[rhs_end+1:param1_end].strip()
+    param2 = equation[param_end+1:param2_end].strip()
+    return state1, state2, param1, param2
+     
+     
+        
 def handle_initial_block(lines,model_name,states_params_str,states_params_str_seg,proc_names,input_vars_c,all_param_line_call,before_first_line_all,all_param_line_call_all):
     start = index_containing_substring(lines, 'INITIAL')
     if start < -1:
