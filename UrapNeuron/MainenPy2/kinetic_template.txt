@@ -113,8 +113,6 @@ __device__ void Cubackwards_euler(double dt, int N, int nkinStates,float y[<NUM_
 //DERIV BLOCK 
 	float y[<NUM_STATES>], q[<NUM_STATES>][<NUM_STATES>];
 
-    //INSERT RATES LINES HERE (line index 2)
-	//INSERT Q LINES HERE (BASED ON kinetic equations) (line index 3)
 
 	for (int i = 0; i < <NUM_STATES>; i++) {
 		float sum = 0;
@@ -126,9 +124,7 @@ __device__ void Cubackwards_euler(double dt, int N, int nkinStates,float y[<NUM_
 		q[i][i] = -sum;
 	}
 
-    //INSERT Y TO STATES LINES HERE
 	Cubackwards_euler(dt, 1, <NUM_STATES>, y, q);
-    //INSERT STATES TO Y LINES HERE
 //END DERIV
 
 //INITIAL

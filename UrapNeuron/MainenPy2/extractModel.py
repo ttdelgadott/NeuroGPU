@@ -1217,15 +1217,15 @@ def create_states_param_str(all_state_line,all_state_line_seg,all_params_line,al
 
 """
 PARAMETERS:
-	lines: all the lines in the mod file  
-	model_name: name of the model
-	states: a string, of all the states used in the kinetic model. Gotten from handle_state_block
-	rates_lines: The lines of code in the rates block. This is used during the calculation of the Q matrix. NOTE: this must be of a particular form, with no comments 
+    lines: all the lines in the mod file  
+    model_name: name of the model
+    states: a string, of all the states used in the kinetic model. Gotten from handle_state_block
+    rates_lines: The lines of code in the rates block. This is used during the calculation of the Q matrix. NOTE: this must be of a particular form, with no comments 
 
 RETURNS:
-	c_kinetic_helper_lines: basically a giant string of helper functions
-	c_kinetic_deriv_lines: c function lines that should be used in CuDerivModel in the kinetic case
-	c_kinetic_init_lines: c function lines that should be used in CuInitModel in the kinetic case
+    c_kinetic_helper_lines: basically a giant string of helper functions
+    c_kinetic_deriv_lines: c function lines that should be used in CuDerivModel in the kinetic case
+    c_kinetic_init_lines: c function lines that should be used in CuInitModel in the kinetic case
     call_to_kinetic_deriv: how to call the CuDerivModel function for this particular instance (should be the same as all other deriv calls, besides the model name)
     declare: the function declaration for this (should be the same as all other deriv declares)
 
@@ -1246,15 +1246,14 @@ def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_par
         num_states = len(states)
         f = open('kinetic_template.txt', 'r')
         template_lines = [line.strip('\n') for line in f.readlines()]
-        for line in template_lines:
-            re.sub(r'<NUM_STATES>', str(num_states), line)
-            re.sub(r'<NUM_STATES-1>', str(num_states-1), line)
-
+        for i in range(len(template_lines)):
+            template_lines[i] = re.sub(r'<NUM_STATES>', str(num_states), template_lines[i])
+            template_lines[i] = re.sub(r'<NUM_STATES-1>', str(num_states-1), template_lines[i])
         #creating c_kinetic_helper_lines
-        c_kinetic_helper_lines = template_lines[index_containing_substring('// BOILERPLATE CODE:')+1:index_containing_substring('//END BOILERPLATE')]
+        c_kinetic_helper_lines = template_lines[index_containing_substring(template_lines, '// BOILERPLATE CODE:')+1:index_containing_substring(template_lines, '//END BOILERPLATE')]
 
         #creating c_kinetic_deriv_lines
-        c_kinetic_deriv_lines = template_lines[index_containing_substring('//DERIV BLOCK')+1:index_containing_substring('//END DERIV')] 
+        c_kinetic_deriv_lines = template_lines[index_containing_substring(template_lines, '//DERIV BLOCK')+1:index_containing_substring(template_lines, '//END DERIV')] 
         #now, need to process rates to get each of the LHS variables in rates
         rates_lhs = []
         for line in rates_lines:
@@ -1265,34 +1264,33 @@ def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_par
           
         q_matrix_lines = []
         #now process the kinetic equations, to find out how to construct the q matrix
-        index = start
-        while '}' not in lines[index]:
+        index = start + 2 #assumes call to rates
+        while '}' not in lines[index] and 'CONSERVE' not in lines[index] and lines[index] != '\n':
             q_line = ''
             state1, state2, param1, param2 = scan_kinetic_equation(lines[index]) 
-            q_line += 'q[' + states_dict[state1] + '][' + states_dict[state2] + '] = ' + param1  + ';'
-            q_line += 'q[' + states_dict[state2] + '][' + states_dict[state1] + '] = ' + param2  + ';'
+            q_line += 'q[' + str(states_dict[state1]) + '][' + str(states_dict[state2]) + '] = ' + param1  + ';'
+            q_line += 'q[' + str(states_dict[state2]) + '][' + str(states_dict[state1]) + '] = ' + param2  + ';'
             q_matrix_lines.append(q_line)
             index += 1
 
         for line in reversed(rates_lines):
-            c_kinetic_deriv_lines.insert(line, 2)
+            c_kinetic_deriv_lines.insert(2, line)
         for line in q_matrix_lines:
-            c_kinetic_deriv_lines.insert(line, 3 + len(rates_lines)) 
+            c_kinetic_deriv_lines.insert(3 + len(rates_lines), line) 
 
         #now add the states to y line before the backwards euler call, and the y to states line after the backwards euler call
         beuler_call_index = index_containing_substring(c_kinetic_deriv_lines, 'Cubackwards_euler')
-        c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1]
+        c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1:]
         for state in states:
-            c_kinetic_deriv_lines.insert('y['+states_dict[state] + '] = ' + state';', beuler_call_index-1)
-            c_kinetic_deriv_lines.insert(state + ' = y[' + states_dict[state] + '];', beuler_call_index+1)
-            c_kinetic_init_lines.insert(state + ' = y[' + states_dict[state] + '];', beuler_call_index+1)
+            c_kinetic_deriv_lines.insert(beuler_call_index-1, 'y['+str(states_dict[state]) + '] = ' + state + ';')
+            c_kinetic_deriv_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_init_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
         return [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, '', '']
-        
-'''
-There's definitely a better way to do this with regex, or a state machine, but I'm too tired right now to figure that out
-'''
+
+
 def scan_kinetic_equation(equation):
     i = 0
+    equation = equation.strip()
     lhs_end = equation.find('<')
     rhs_end = equation.find('(')
     param1_end = equation.find(',')
@@ -1300,7 +1298,7 @@ def scan_kinetic_equation(equation):
     state1 = equation[1:lhs_end].strip()
     state2 = equation[lhs_end+3:rhs_end].strip()
     param1 = equation[rhs_end+1:param1_end].strip()
-    param2 = equation[param_end+1:param2_end].strip()
+    param2 = equation[param1_end+1:param2_end].strip()
     return state1, state2, param1, param2
      
      
