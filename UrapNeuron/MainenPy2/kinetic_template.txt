@@ -129,14 +129,8 @@ __device__ void Cubackwards_euler(double dt, int N, int nkinStates,float y[<NUM_
 
 //INITIAL
 	float temp[<NUM_STATES>];
-	float tempq[<NUM_STATES>][<NUM_STATES>];
-	float a[<NUM_STATES>][<NUM_STATES>], z[<NUM_STATES>][<NUM_STATES>];
+	float tempq[<NUM_STATES>][<NUM_STATES>]
 	
-	a[0][1] = a12_CO;
-	a[1][0] = a21_CO;
-	z[0][1] = z12_CO;
-	z[1][0] = z21_CO;
-	make_q(v, a, z, tempq);
 
 	init_state_probs(tempq, temp);
 	c1 = temp[0];
