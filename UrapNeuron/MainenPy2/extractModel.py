@@ -1281,10 +1281,11 @@ def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_par
         #now add the states to y line before the backwards euler call, and the y to states line after the backwards euler call
         beuler_call_index = index_containing_substring(c_kinetic_deriv_lines, 'Cubackwards_euler')
         c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1:]
+        c_kinetic_init_lines.insert(beuler_call_index, "init_state_probs(q, y)")
         for state in states:
             c_kinetic_deriv_lines.insert(beuler_call_index-1, 'y['+str(states_dict[state]) + '] = ' + state + ';')
-            c_kinetic_deriv_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
-            c_kinetic_init_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_deriv_lines.insert(beuler_call_index+2, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_init_lines.insert(beuler_call_index+2, state + ' = y[' + str(states_dict[state]) + '];')
         return [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, '', '']
 
 
