@@ -6,16 +6,26 @@ import glob
 import re
 import os
 import copy
+import numpy as np
+import re
+import numpy.matlib
+from file_io import get_lines, put_lines
+from proc_add_param_to_hoc_for_opt import proc_add_param_to_hoc_for_opt
+import scipy.io as sio
 
 from cStringIO import StringIO
 from nrn_structs import *
-
+from create_auxilliary_data_3 import create_auxilliary_data_3
 # Definitions
 ModData = collections.namedtuple('ModData', 'mod_per_seg,available_mechs')
 ParsedModel = collections.namedtuple('ParsedModel', 'Writes,Reads')
 ModNeuron = collections.namedtuple('ModNeuron', 'Suffix,UseIon,NonspecificCurrent,Reads,Writes,Range,Global')
 FTYPESTR = 'float'
 end_str = '|X|X|'
+vs_dir = '../../VS/NeuroGPULast7_5Mainen/NeuroGPU6'
+has_f = 0
+ND, NRHS = None, None
+global sec_list
 # Globals
 global ParamStartVal
 ParamStartVal = 0
@@ -23,6 +33,11 @@ global StateStartVal
 StateStartVal = 0
 C_SUFFIX='.c'
 modelFile = "./runModel.hoc"
+base_p = "./"
+ftypestr = 'float'
+p_size_set = 1
+param_set = 'orig.dat'
+
 ### Helper functions for loading NEURON C library ###
 
 def nrn_dll(printpath=False):
@@ -71,10 +86,13 @@ def nrn_dll_sym(name, type=None):
 
 ### Model extraction functions ###
 
-def get_topo_list(thread):
+def get_parent_seg(thread):
+    parent = []
     for i in range(thread.contents.end):
-        print i, thread.contents._v_parent_index[i]
-
+        x = thread.contents._v_parent_index[i]
+       # print i, x
+        parent.append(x)
+    return parent
 
 def get_topo_f_matrix(thread):
     lst = []
@@ -94,30 +112,59 @@ def get_topo_f_matrix(thread):
 
 def get_topo():
     sections = {}
-    for s in nrn.h.allsec():
+    nsegs = []
+    cms = []
+    for s  in nrn.h.allsec():
         name = nrn.h.secname()
         topology = [s.nseg, s.L, s.diam, s.Ra, s.cm, nrn.h.dt, nrn.h.st.delay, nrn.h.st.dur, nrn.h.st.amp, nrn.h.tfinal,
                     s.v, nrn.h.area(.5), nrn.h.parent_connection(), nrn.h.n3d()]
+        nsegs.append(int(s.nseg))
+        cms.append(float(s.cm))
+
         sections[name] = topology
-    return sections
+    return [nsegs,cms]
 
-def print_fmatrix(FN):
-    nrn.h.hoc_stdout(FN)
-    nrn.h.fmatrix()
-    nrn.h.hoc_stdout()
+def create_sec_list():
+    sec_list = []
+    nrn.h('objref sec_list')
+    nrn.h('sec_list = new SectionList()')
+    nrn.h('access soma')
+    nrn.h('sec_list.wholetree()')
+    parent_comp = []
+    for curr_sec in nrn.h.sec_list:
+        curr_name = nrn.h.secname(sec=curr_sec)
+        sec_list.append(curr_name)
+    return sec_list
 
+
+def create_parent_comp():
+    parent_comp = []
+    nrn.h('objref sect')
+    nrn.h('strdef str1')
+    nrn.h('sect = new SectionRef()')
+    for sect_name in sec_list[1:]:
+        nrn.h( 'access ' + sect_name)
+        nrn.h('sect = new SectionRef()')
+        nrn.h( 'sect.parent {str1 = secname()}')
+        p_name = nrn.h.str1
+        parent_comp.append(index_containing_substring(sec_list, p_name))
+    return [-1] + parent_comp
 
 
 def get_topo_mdl():
+
     # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     available_mechs = set([])
     sections = {}
     all_params = set([])
     comp_mechs = []
+    comp_map = []
     exclude_str = "_ion"
     for s in nrn.h.allsec():
         mech_params = {}
         name = nrn.h.secname()
+        
+        comp_map.append(index_containing_substring(sec_list,name))
         if nrn.h.ismembrane("pas"):
             mech_params['g_pas'] = s.g_pas
             mech_params['e_pas'] = s.e_pas
@@ -145,7 +192,7 @@ def get_topo_mdl():
                 available_mechs.add(mech_name)
                 curr_comp_mechs.append(mech_name)
             for j in range(int(ms.count())):
-                param = nrn.h.ref('')  # string reference to store parameter name
+                param = nrn.h.ref ('')  # string reference to store parameter name
                 ms.name(param, j)
                 if(tmpind==-1):
                     all_params.add(param[0])
@@ -154,7 +201,11 @@ def get_topo_mdl():
         sections[name] = mech_params
         comp_mechs.append(set(curr_comp_mechs))
         output = ModData(mod_per_seg=sections, available_mechs=available_mechs)
-    return [output,all_params,comp_mechs,available_mechs]
+    # TODO: fix this hack, 'CO' isn't detected by get_topo_mdl()
+    # available_mechs.add('CO')
+    return [output,all_params,comp_mechs,available_mechs,comp_map]
+
+
 def get_topo_mdl2():
     # TODO: Currently prints out DEFAULT values. Check if this is expected behavior.
     available_mechs = set([])
@@ -190,6 +241,7 @@ def get_topo_mdl2():
         mech_params_list.append(curr_params)
         #sections[name] = mech_params
     return [sections,comp_mechs,mech_params_list]
+
 def get_fmatrix():
     for s in nrn.h.allsec():
         print s.fmatrix(0,1)
@@ -202,10 +254,24 @@ def get_recsites():
     return sites
 
 
+def get_bool_model(available_mechs,NX,comp_mechs,comp_map,seg_start,seg_end):
+    bool_model =[]
+    for mech_name in available_mechs:
+        curr_bool_list = [0]*NX
+        for ind in range(len(seg_start)):
+            comp = comp_map[ind]
+            curr_bool = 1*(index_containing_substring(comp_mechs[ind],mech_name) > -1)
+
+            for i in range(seg_start[comp],seg_end[comp]):
+                curr_bool_list[i] = curr_bool
+        curr_bool_list[0] = 0
+        bool_model.append(curr_bool_list)
+    return bool_model
+
+
 ### Functions for Parsing Mod/C files ###
 
-
-def parse_models():
+def parse_models(thread):
     global StateStartVal
     c_parsed_folder = './CParsed/'
     model_name=[]
@@ -385,6 +451,8 @@ def parse_models():
     params_from_neuron = output[1]
     comp_mechs = output[2]
     available_mechs = output[3]
+    comp_map = output[4] #maps from forall call at neuron to sec_list(topology ordered)
+    #comp_names = output[5]
     params_from_mods = set()
     all_params_non_global_flat=[]
     all_params_global_flat = []
@@ -414,28 +482,123 @@ def parse_models():
     actual_gglobals = output[0]
     actual_reversals = output[1]
     neuron_globals_vals = output[2]
-
+    cs_names = []
+    for s in nrn.h.allsec():
+        cs_names.append(nrn.h.secname())
+    print cs_names
+    print available_mechs
+    params_m, runModel_hoc_object = proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
     output = write_all_models_cu(c_parsed_folder, list(all_reversals), actual_reversals, g_globals, actual_gglobals,nglobals_flat,neuron_globals_vals,c_param_lines_list, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,proc_declare_cu_list, c_func_lines_cu_list)
     output = write_all_models_h(c_parsed_folder, n_total_states, n_params, g_globals, actual_gglobals, break_point_declare_list, deriv_declare_list, init_declare_list, call_to_init_list, call_to_deriv_list, call_to_break_list, call_to_break_dv_list)
+    #return [call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str]
+    call_to_init_str = output[0]
+    call_to_deriv_str = output[1]
+    call_to_break_str = output[2]
+    call_to_break_dv_str = output[3]
+    output = replace_for_cuh(call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str)
+    call_to_init_str_cu = output[0]
+    call_to_deriv_str_cu = output[1]
+    call_to_break_str_cu = output[2]
+    call_to_break_dv_str_cu = output[3]
+    output = get_topo()
+    n_segs = output[0]
+    n_segs_mat = [x + 1 for x in n_segs]
+    n_segs_mat[0] = n_segs_mat[0] + 1
+    cm_tmp = output[1]
+    cm = []
+
+    for i in range(len(n_segs)):
+        cm = cm + [0] + [cm_tmp[i]]*n_segs[i]
+    cm.append(0)
+    cn = list(np.cumsum(n_segs_mat))
+    seg_start = [0] + cn[:-1]
+    seg_end = cn
+    seg_end = [x - 1 for x in cn]
+    nx = np.cumsum(n_segs_mat)
     fmatrix_fn = c_parsed_folder+'fmatrix.txt'
-    print_fmatrix(fmatrix_fn)
-    table = get_fmatrix(fmatrix_fn)
+    parent = create_parent_comp()
+    mat = get_matrix(fmatrix_fn,parent,seg_start,seg_end)
+    NX = len(mat)
+    seg_to_comp = [0]*NX
+    for i in range(len(seg_start)):
+        seg_to_comp[seg_start[i]:seg_end[i]+1]= [i]*(1+seg_end[i]-seg_start[i])
+
+    mat = np.matrix(mat)
+
+    rev_parent = [len(n_segs) - p for p in np.flipud(np.array(parent))]
+
+    available_mechs = list(available_mechs)
+    available_mechs.sort()
+    bool_model = get_bool_model(available_mechs,NX,comp_mechs,comp_map,seg_start,seg_end)
+    rot_mat = np.rot90(mat,2)
+    n_segs_mat_flipped  = np.flipud(np.array(n_segs_mat))
+    parent_seg =  get_parent_seg(thread)
+    parent_seg = [x+1 for x in parent_seg]
+    parent_seg[0] = 0
+    output = create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
+    aux = output[3]
+    # cm_vec = output[4]
+    cm_vec = aux.Cms
+    #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
     #NIKHIL add createaux here
-    output = write_all_models_cuh(c_parsed_folder)
 
-def get_fmatrix(FN):
+    output = write_all_models_cuh(c_parsed_folder, n_total_states, NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
+
+    #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
+    tail_end(open('CParsed/AllModels.h', 'a'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
+    return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS]
+def get_matrix(FN,parent,seg_start,last_seg):
+    FN = '../../Neuron/printCell/Amit/output/Mat.dat'
     data = open(FN).read()
-    print data
-    return []
+    lines = data.split('\n')
+    lines = lines[1:-1]
+    NX = len(lines)
+    table = []
+    for line in lines:
+        tmp = line.strip().split(' ')
+        table.append([x.replace('1.#INF00000000000',str(1e23)) for x in tmp[1:]])
+    #table = table[1:]
+    mat = [[0 for x in range(NX-1)] for y in range(NX-1)]
+    tmp = lines[0].split(' ')
+    mat[0][0] = float(tmp[3])
+    for i in range(1,len(table)-1):
+        tmp = lines[i].split(' ')
+        mat[i][i] = float(tmp[3])
+        mat[i-1][i] = float(tmp[2])
+        mat[i][i-1] = float(tmp[1])
+    for i in range(len(parent)-1):
+        if parent[i] != i-1:
+            mat_ind = seg_start[i]
+            parent_ind = last_seg[parent[i]]
+            mat[mat_ind-1][mat_ind]=0
+            mat[mat_ind][mat_ind-1] = 0
+            mat[parent_ind][mat_ind] = table[mat_ind][1]
+            mat[mat_ind][parent_ind] = table[mat_ind][2]
+    return mat
 
-def write_all_models_cuh(c_parsed_folder):
+def write_all_models_cuh(c_parsed_folder,n_total_states,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
     FN = c_parsed_folder + 'AllModels.h'
     f = open(FN, 'w')
     f.write('// Automatically generated CUH for ' + os.getcwd() + modelFile + '\n')
     f.write('\n#ifndef __' 'ALLMODELSCU' '__\n#define __' 'ALLMODELSCU' '__\n#include "Util.h"\n\n')
     f.write('#include "cuda_runtime.h"\n#include "device_launch_parameters.h"\n\n')
+    f.write('#define NSEG '+str(NX) +'\n')
+    f.write('#define LOG_N_DEPTH ' + str(aux.LognDepth) +'\n')
+    f.write('#define N_MODELS ' + str(len(bool_model))+ '\n')
+    f.write('#define N_FATHERS ' + str(len(aux.Fathers)) +'\n')
+    f.write('#define N_CALL_FOR_FATHER ' +str(aux.nCallForFather) + '\n')
+    f.write('#define COMP_DEPTH ' + str(n_params) +'\n')
+    f.write('#define N_L_REL ' + str(len(aux.LRelStarts)) +'\n')
+    f.write('#define N_F_L_REL ' +str(len(aux.FLRelStarts)) +'\n')
+    f.write('#define NSTATES ' + str(n_total_states) + '\n')
+    f.write('#define NPARAMS ' + str(n_params) + '\n\n')
+    for cur_mod_i in range(len(c_init_lines_cu)):
+        f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
+        f.write(c_deriv_lines_cu[cur_mod_i].splitlines()[0][:-1] + ';\n')
+        f.write(c_break_lines_cu[cur_mod_i][0].splitlines()[0][:-1] + ';\n')
+        f.write('\n')
 
 
 def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,gglobals_vals,break_point_declare,deriv_declare,init_declare,call_to_init,call_to_deriv,call_to_break,call_to_break_dv):
@@ -450,7 +613,6 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
         f.write('#define ' + n + ' (' + str(v) + ')\n')
     f.write('\n')
     for i in range(len(break_point_declare)):
-        print i
         f.write(break_point_declare[i] + '\n')
         f.write(deriv_declare[i]+ '\n')
         f.write(init_declare[i]+ '\n\n')
@@ -470,12 +632,171 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
     f.write('#define CALL_TO_BREAK  '+call_to_break_str.replace('ParamsM[', 'ParamsMSerial[')+'\n\n')
     f.write('#define CALL_TO_BREAK_DV  '+call_to_break_dv_str.replace('ParamsM[', 'ParamsMSerial[')+'\n\n')
     #KINETIC
-    print call_to_init_str
+    f.write('\n#endif')
+    f.close()
+    return [call_to_init_str,call_to_deriv_str,call_to_break_str,call_to_break_dv_str]
+
+def replace_for_cuh(call_to_init_str, call_to_deriv_str, call_to_break_str, call_to_break_dv_str):
+    call_to_init_str_cu = call_to_init_str.replace('InitModel', 'CuInitModel')
+    call_to_deriv_str_cu = call_to_deriv_str.replace('DerivModel', 'CuDerivModel')
+    call_to_break_str_cu = call_to_break_str.replace('BreakpointModel', 'CuBreakpointModel')
+    call_to_break_dv_str_cu = call_to_break_dv_str.replace('BreakpointModel', 'CuBreakpointModel')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('TheMMat', 'InMat')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('TheMMat', 'InMat')
+    call_to_break_str_cu = call_to_break_str_cu.replace('TheMMat', 'InMat')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('TheMMat', 'InMat')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_break_str_cu = call_to_break_str_cu.replace('InMat.boolModel', 'cBoolModel')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('InMat.boolModel', 'cBoolModel')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_break_str_cu = call_to_break_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('seg+', 'PIdx_ ## VARILP +')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('V[seg]', 'v_ ## VARILP')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('dt, V[seg]', 'dt, v_ ## VARILP')
+    call_to_break_str_cu = call_to_break_str_cu.replace('sumCurrents, sumConductivity, V[seg]',
+        'sumCurrents_ ## VARILP , sumConductivity_ ## VARILP,v_ ## VARILP ')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('sumCurrentsDv, sumConductivityDv, V[seg]+0.001',
+        'sumCurrentsDv_ ## VARILP , sumConductivityDv_ ## VARILP ,v_ ## VARILP +0.001')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_break_str_cu = call_to_break_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('ParamsM[ ', 'p')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('ParamsM[', 'p')
+    call_to_break_str_cu = call_to_break_str_cu.replace('ParamsM[', 'p')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('ParamsM[', 'p')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[comp] ', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[comp] ', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[comp] ', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[comp] ', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[seg] ', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[seg] ', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[seg] ', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[seg] ', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_break_str_cu = call_to_break_str_cu.replace('][comp]', '_ ## VARILP ')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('][comp]', '_ ## VARILP ')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[ comp ]', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[ comp ]', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[ comp ]', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[ comp ]', '')
+
+    call_to_init_str_cu = call_to_init_str_cu.replace('[ seg ]', '')
+    call_to_deriv_str_cu = call_to_deriv_str_cu.replace('[ seg ]', '')
+    call_to_break_str_cu = call_to_break_str_cu.replace('[ seg ]', '')
+    call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('[ seg ]', '')
+
+    return call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu
+
+def set_states_for_cuh(f, n_basic_states, n_extra_states):
+    state_set_str = ''
+    for curr_state in range(1, n_basic_states + n_extra_states + 1):
+        curr_state_str = 'ModelStates_ ## VARILP [' + str(curr_state - 1) + ']=0; '
+        state_set_str += curr_state_str
+    f.write('\n\n#define    SET_STATES(VARILP) ' + state_set_str + '; \n')
+
+def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
+    lines = get_lines(file_name)
+    all_lines = lines
+    for fn in other_file_names:
+        lines.extend(get_lines(fn))
+
+    calls = []
+    for line in lines:
+        if 'SUPERILPMACRO(' in line:
+            calls.append(line)
+    all_in_macros = None # TODO
+    for i in range(1, len(all_in_macros) + 1):
+        curr_line_i = None # TODO
+        #I changed her cur_line to curr_line Maybe it was wrong
+        curr_line = all_lines[curr_line_i]
+        base_command = curr_line[curr_line.find('VARILP)') + 8:]
+        expanded = ''
+        for j in range(1, ilpn + 1):
+            Tmp = base_command.replace(' ## VARILP', str(j))
+            Tmp = Tmp.replace(' ## VARILP', str(j))
+            expanded += Tmp
+        curr_call_i = []
+        for k in range(len(lines)):
+            if 'SUPERILPMACRO\(' + all_in_macros[i - 1] + '\)' in lines[k]:
+                curr_call_i.append(k)
+        for j in range(1, len(curr_call_i) + 1):
+            lines[curr_call_i[j - 1]] = lines[curr_call_i[j - 1]][:lines[curr_call_i[j - 1]].find('SUPERILPMACRO') - 1] + expanded
+    put_lines(out_file_name, lines)
+
+def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
+    declare_str, parameter_set_str = '', ''
+    for curr_param in range(1, n_params + 1):
+        curr_parameter_str = '#define   SET_PARAMS{:03d}(VARILP) MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
+        f.write(curr_parameter_str)
+
+    call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_init_str_cu)
+    call_to_deriv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_deriv_str_cu)
+    call_to_break_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_str_cu)
+    call_to_break_dv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
+    
+    f.write('\n\n#define CALL_TO_INIT_STATES_CU(VARILP) {}\n\n'.format(call_to_init_str_cu))
+    f.write('#define CALL_TO_DERIV_STR_CU(VARILP)   {}\n\n'.format(call_to_deriv_str_cu))
+    f.write('#define CALL_TO_BREAK_STR_CU(VARILP)   {}\n\n'.format(call_to_break_str_cu))
+    f.write('#define CALL_TO_BREAK_DV_STR_CU(VARILP)    {}\n\n'.format(call_to_break_dv_str_cu))
+
     f.write('\n#endif')
     f.close()
 
+    print 'Finished writing AllModels.h,cpp,cu,cuh'
 
+    params_m_per_seg = []
+    params_m = np.array(params_m)
+    n_segs_mat = np.array(n_segs_mat)
+    for i in range(1, params_m.shape[0] + 1):
+        temp = np.matlib.repmat(params_m[i - 1,:], n_segs_mat[i - 1], 1);
+        params_m_per_seg.extend(list(temp))
+    params_m_per_seg = np.array(params_m_per_seg)
+    cm_vec = np.array(cm_vec)
+    cm_zeros = np.where(cm_vec == 0)
+    params_m_per_seg[cm_zeros,:] = np.zeros(params_m_per_seg[cm_zeros,:].shape)
+    all_segs = np.sum(n_segs_mat)
+    if np.floor(all_segs / 32) != all_segs / 32:
+        print 'we have a non 32 multiple number of segs'
 
+    nilp = all_segs / 32
+    tmp = np.array(get_lines(vs_dir + '/CudaStuffBase.cu'))
+    set_params_line_i = np.where(np.array(['SET_PARAMS' in i for i in tmp]))
+    if set_params_line_i[0].size != 0:
+        tmp2 = ['SUPERILPMACRO(SET_PARAMS{:03d})'.format(i) for i in range(1, n_params + 1)]
+        tmp3 = tmp[:set_params_line_i[-1]] + tmp2 + tmp[set_params_line_i[-1] + 1:]
+    else:
+        tmp3 = tmp
+
+    put_lines(vs_dir + '/CudaStuffBasex.cu', tmp3)
+    params_m_mat = sio.loadmat('../../Data/ParamsMForC.mat')
+    params_m_mat['param_m'] = params_m.astype(float)
+    sio.savemat('../../Data/ParamsMForC.mat', params_m_mat)
+
+    if has_f:
+        fn = '../../Data/rhsFromNeuron.dat'
+        f = open(fn, 'w')
+        f.write(nrhs.astype(float))
+        f.close()
+        fn = '../../Data/DFromNeuron.dat'
+        f = open(fn, 'w')
+        f.write(nd.astype(float))
+        f.close()
+
+    print 'Finished NMODLtoC_Main.'
 
 def write_all_models_cu(c_parsed_folder,reversals_names,reversals_vals,gglobals_flat,gglobals_vals,nglobals_flat,neuron_globals_vals,c_param_lines_list,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu,proc_declare_cu,c_func_lines_cu):
     reversals_vals= reversals_vals[0]
@@ -647,8 +968,6 @@ def write_all_models_cpp(c_parsed_folder,reversals_names,reversals_vals,all_writ
     f.write(c_break_lines_flat)
     f.close()
 
-
-
 def get_actual_params(all_reversals,g_globals,nglobals_flat,comp_mechs,all_params_non_global_flat):
     #print all_params_global_flat
     #param = nrn.h.ref(0)  # string reference to store parameter name
@@ -693,10 +1012,6 @@ def get_actual_params(all_reversals,g_globals,nglobals_flat,comp_mechs,all_param
         actual_non_globals_vals.append(curr_not_globals_vals)
         actual_non_globals_names.append(curr_not_globals_names)
         counter = counter+1
-
-    #print actual_gglobals
-    #print actual_non_globals_names
-    #print actual_non_globals_vals
     return [actual_gglobals,actual_reversals,actual_globals,actual_non_globals_names,actual_non_globals_vals]
 
 def write_cpp_file(cpp_file,model_name,c_param_lines,before_first_line,proc_declare,c_func_line,c_init_lines,c_proc_lines,c_deriv_lines,c_break_lines):
@@ -779,6 +1094,7 @@ def parse_model(lines):
     nglobal_c = []
     only_reads = []
     output = handle_neuron_block(lines)
+    # TODO
     #return [suffix, currglobal, Useion, NSC, reads, writes, Range]
     model_name = output[0]
     globals = output[1]
@@ -796,6 +1112,22 @@ def parse_model(lines):
     all_state_line = output[0]
     all_state_line_seg = output[1]
     curr_all_state = output[2]
+    states_line = output[3]
+    # TODO
+    rates_lines = []
+    for i in range(len(lines)):
+        l = lines[i]
+        if l.startswith('PROCEDURE rates'):
+            rates_lines.append(l)
+            for j in range(i + 1, len(lines)):
+                l2 = lines[j].strip()
+                if len(l2) != 0:
+                    rates_lines.append(l2)
+                if l2 == '}':
+                    break
+            break
+    output2 = handle_kinetic_block(lines, model_name, states_line, rates_lines)
+    [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, emp1, emp2] = output2
     return [model_name,globals,ions,reads,writes,only_reads,nglobal_c,curr_all_state,all_state_line,all_state_line_seg,all_assigned,ranges,non_spec_current]
 
 
@@ -903,11 +1235,90 @@ def create_states_param_str(all_state_line,all_state_line_seg,all_params_line,al
     states_params_str_seg = add_model_name_to_function(states_params_str_seg,list(all_reads_no_reversals),extra_states_trg)
     return [states_params_str,states_params_str_seg,additional_writes_out]
 
+"""
+PARAMETERS:
+    lines: all the lines in the mod file  
+    model_name: name of the model
+    states: a string, of all the states used in the kinetic model. Gotten from handle_state_block
+    rates_lines: The lines of code in the rates block. This is used during the calculation of the Q matrix. NOTE: this must be of a particular form, with no comments 
+
+RETURNS:
+    c_kinetic_helper_lines: basically a giant string of helper functions
+    c_kinetic_deriv_lines: c function lines that should be used in CuDerivModel in the kinetic case
+    c_kinetic_init_lines: c function lines that should be used in CuInitModel in the kinetic case
+    call_to_kinetic_deriv: how to call the CuDerivModel function for this particular instance (should be the same as all other deriv calls, besides the model name)
+    declare: the function declaration for this (should be the same as all other deriv declares)
+
+Only supports kinetic equations with one state on each side of the equation, so far. 
+Also assumes that the conserve statement at the bottom of the kinetic block is essentially sum(all states) = 1
+"""
+#Also TODO: some testing on this
+#TODO: add call_to_kinetic_deriv and kinetic_deriv_declare; should be pretty simple
+def handle_kinetic_block(lines, model_name, states_line, rates_lines):
+    start = index_containing_substring(lines, 'KINETIC')
+    if start < 0:
+        return [[], [], [], '','']
+    else: 
+        states = states_line.split()
+        states_dict = {}
+        for i in range(0, len(states)):
+            states_dict[states[i]] = i
+        f = open('kinetic_template.txt', 'r')
+        template_lines = [line.strip('\n') for line in f.readlines()]
+        #creating c_kinetic_helper_lines
+        c_kinetic_helper_lines = template_lines[index_containing_substring(template_lines, '// BOILERPLATE CODE:')+1:index_containing_substring(template_lines, '//END BOILERPLATE')]
+
+        #creating c_kinetic_deriv_lines
+        c_kinetic_deriv_lines = template_lines[index_containing_substring(template_lines, '//DERIV BLOCK')+1:index_containing_substring(template_lines, '//END DERIV')] 
+        #now, need to process rates to get each of the LHS variables in rates
+        rates_lhs = []
+        for line in rates_lines:
+            temp_line = line.split()
+            var = temp_line[0]
+            if var not in rates_lhs:
+                rates_lhs.append(var) 
+          
+        q_matrix_lines = []
+        #now process the kinetic equations, to find out how to construct the q matrix
+        index = start + 2 #assumes call to rates
+        while '}' not in lines[index] and 'CONSERVE' not in lines[index] and lines[index] != '\n':
+            q_line = ''
+            state1, state2, param1, param2 = scan_kinetic_equation(lines[index]) 
+            q_line += 'q[' + str(states_dict[state1]) + '][' + str(states_dict[state2]) + '] = ' + param1  + ';'
+            q_line += 'q[' + str(states_dict[state2]) + '][' + str(states_dict[state1]) + '] = ' + param2  + ';'
+            q_matrix_lines.append(q_line)
+            index += 1
+
+        for line in reversed(rates_lines):
+            c_kinetic_deriv_lines.insert(2, line)
+        for line in q_matrix_lines:
+            c_kinetic_deriv_lines.insert(3 + len(rates_lines), line) 
+
+        #now add the states to y line before the backwards euler call, and the y to states line after the backwards euler call
+        beuler_call_index = index_containing_substring(c_kinetic_deriv_lines, 'Cubackwards_euler')
+        c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1:]
+        for state in states:
+            c_kinetic_deriv_lines.insert(beuler_call_index-1, 'y['+str(states_dict[state]) + '] = ' + state + ';')
+            c_kinetic_deriv_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_init_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
+        return [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, '', '']
 
 
-
-
-
+def scan_kinetic_equation(equation):
+    i = 0
+    equation = equation.strip()
+    lhs_end = equation.find('<')
+    rhs_end = equation.find('(')
+    param1_end = equation.find(',')
+    param2_end = equation.find(')')
+    state1 = equation[1:lhs_end].strip()
+    state2 = equation[lhs_end+3:rhs_end].strip()
+    param1 = equation[rhs_end+1:param1_end].strip()
+    param2 = equation[param1_end+1:param2_end].strip()
+    return state1, state2, param1, param2
+     
+     
+        
 def handle_initial_block(lines,model_name,states_params_str,states_params_str_seg,proc_names,input_vars_c,all_param_line_call,before_first_line_all,all_param_line_call_all):
     start = index_containing_substring(lines, 'INITIAL')
     if start < -1:
@@ -1195,6 +1606,7 @@ def handle_assigned_block(lines):
     return all_assigned
 
 def handle_state_block(lines):
+    # print lines
     states=[]
     all_states = []
     all_state_line = ''
@@ -1224,7 +1636,7 @@ def handle_state_block(lines):
             all_state_line_seg = all_state_line_seg +'StatesM[' + str(x +StateStartVal) + '][seg] ,'
         all_state_line_seg = all_state_line_seg[:-1]
 
-    return [all_state_line,all_state_line_seg,states]
+    return [all_state_line,all_state_line_seg,states,states_line]
 
 def handle_params_block(lines,globals):
     params = []
@@ -1476,6 +1888,12 @@ def parse_mod_proc(lines,all_param_line_declare,globals,all_params_line_call):
 
 
         ### Helpers ###
+
+
+def printMatrix(testMatrix):
+    for row in testMatrix:
+        print row
+
 def add_model_name_to_function(input,src,trg):
     output = input
     if isinstance(input, basestring):
@@ -1604,20 +2022,20 @@ def add_params_to_func_call(input,func_names,input_vars_c,all_param_line_call):
 
 
 def main():
-
+    global sec_list
     nrn.h.load_file(1, modelFile)
     thread = nrn_dll_sym('nrn_threads', ctypes.POINTER(NrnThread))
-    get_topo_list(thread)
-    tmp = get_topo_f_matrix(thread)
-    topo = get_topo()  # dictionary whose keys are section names
+    sec_list = create_sec_list()
+    #topo = get_topo()  # dictionary whose keys are section names
+    #output = get_topo_mdl()  # dictionary whose keys are section names, and available mechanisms
+    #topo_mdl = output[0]
 
-    output = get_topo_mdl()  # dictionary whose keys are section names, and available mechanisms
-    topo_mdl = output[0]
-
-    recsites = get_recsites()  # list of section names
+    #recsites = get_recsites()  # list of section names
     # mod_file_map = get_mod_file_map(topo_mdl.available_mechs) # dictionary whose keys are mechanisms suffixs and values are their .mod file name=
-    mechanisms = parse_models()
-    #file_to_list_no_comments('ca.mod')
+    mechanisms = parse_models(thread)
+
+    #def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
+
 
 if __name__ == '__main__':
     main()

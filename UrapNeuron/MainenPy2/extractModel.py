@@ -201,6 +201,8 @@ def get_topo_mdl():
         sections[name] = mech_params
         comp_mechs.append(set(curr_comp_mechs))
         output = ModData(mod_per_seg=sections, available_mechs=available_mechs)
+    # TODO: fix this hack, 'CO' isn't detected by get_topo_mdl()
+    # available_mechs.add('CO')
     return [output,all_params,comp_mechs,available_mechs,comp_map]
 
 
@@ -294,9 +296,12 @@ def parse_models(thread):
     reversals = []
     all_locals = []
     mod_files = list(glob.glob('*.mod'))
-    mod_files.remove('branching.mod')
-    mod_files.remove('passive.mod')
-    mod_files.remove('pasx.mod')
+    if 'branching.mod' in mod_files:
+        mod_files.remove('branching.mod')
+    if 'passive.mod' in mod_files:
+        mod_files.remove('passive.mod')
+    if 'pasx.mod' in mod_files:
+        mod_files.remove('pasx.mod')
     for  i in range(len(mod_files)):
         mod_f = mod_files[i]
         print 'parsing ' + mod_f
@@ -484,6 +489,7 @@ def parse_models(thread):
     for s in nrn.h.allsec():
         cs_names.append(nrn.h.secname())
     print cs_names
+    print available_mechs
     params_m, runModel_hoc_object = proc_add_param_to_hoc_for_opt(all_params_non_global_flat, modelFile, base_p, available_mechs, reversals,reversals, cs_names, comp_mechs, g_globals, nglobals_flat, sec_list, ftypestr,p_size_set, param_set)
     output = write_all_models_cpp(c_parsed_folder,list(all_reversals),actual_reversals,all_writes,all_locals,all_currents,nglobals_flat,neuron_globals_vals,c_init_lines_list,c_proc_lines_list,c_deriv_lines_list,c_break_lines_list,proc_declare_list,c_func_lines_list)
 
@@ -591,10 +597,20 @@ def write_all_models_cuh(c_parsed_folder,n_total_states,NX,aux,bool_model,n_para
     f.write('#define N_F_L_REL ' +str(len(aux.FLRelStarts)) +'\n')
     f.write('#define NSTATES ' + str(n_total_states) + '\n')
     f.write('#define NPARAMS ' + str(n_params) + '\n\n')
+    # kinetics
+    f.write('__device__ float calc_determinant(float mat[NSTATES-1][NSTATES-1], int n);\n')
+    f.write('__device__ void init_state_probs(float q[NSTATES][NSTATES], float y[NSTATES]);\n');
+    f.write('__device__ float calc_prob(float q[NSTATES][NSTATES], int skip);\n')
+    f.write('__device__ float rhs(float q[NSTATES][NSTATES], int index, float y[NSTATES]);\n')
+    f.write('__device__ void Cubackwards_euler(double dt, int N, int nkinStates,float y[NSTATES],float matq[NSTATES][NSTATES]);\n')
+    f.write('\n')
     for cur_mod_i in range(len(c_init_lines_cu)):
-        f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
-        f.write(c_deriv_lines_cu[cur_mod_i].splitlines()[0][:-1] + ';\n')
-        f.write(c_break_lines_cu[cur_mod_i][0].splitlines()[0][:-1] + ';\n')
+        if c_init_lines_cu[cur_mod_i] != '':
+            f.write(c_init_lines_cu[cur_mod_i][0][:-1]+';\n')
+        if c_deriv_lines_cu[cur_mod_i] != '':
+            f.write(c_deriv_lines_cu[cur_mod_i].splitlines()[0][:-1] + ';\n')
+        if c_break_lines_cu[cur_mod_i] != '':
+            f.write(c_break_lines_cu[cur_mod_i][0].splitlines()[0][:-1] + ';\n')
         f.write('\n')
 
 
@@ -1091,6 +1107,7 @@ def parse_model(lines):
     nglobal_c = []
     only_reads = []
     output = handle_neuron_block(lines)
+    # TODO
     #return [suffix, currglobal, Useion, NSC, reads, writes, Range]
     model_name = output[0]
     globals = output[1]
@@ -1104,7 +1121,7 @@ def parse_model(lines):
     all_assigned = handle_assigned_block(lines)
     output = handle_state_block(lines)
     if not output:
-        output = ['',[],[]]
+        output = ['',[],[],[]]
     all_state_line = output[0]
     all_state_line_seg = output[1]
     curr_all_state = output[2]
@@ -1170,6 +1187,65 @@ def parse_model2(mod_fn,lines,globals,all_state_line,all_state_line_seg,model_na
     c_break_lines_cu = output[2]
     call_to_break = output[3]
     call_to_break_dv = output[4]
+
+    # kinetics
+    output = handle_state_block(lines)
+    if not output:
+        output = ['',[],[],[]]
+    all_state_line = output[0]
+    all_state_line_seg = output[1]
+    curr_all_state = output[2]
+    rates_lines = []
+    for i in range(len(lines)):
+        l = lines[i]
+        if l.startswith('PROCEDURE rates'):
+            for j in range(i + 1, len(lines)):
+                l2 = lines[j].strip()
+                if len(l2) != 0 and l2 != '}':
+                    rates_lines.append(l2)
+                if l2 == '}':
+                    break
+            break
+    output2 = handle_kinetic_block(lines, model_name, ' '.join(curr_all_state), rates_lines)
+    [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, emp1, emp2] = output2
+    start = index_containing_substring(lines, 'KINETIC')
+    if start >= 0:
+        # kinetics deriv 
+        final_c_kinetic_deriv_lines = []
+        first_line = 'void DerivModel_' + model_name + '(float dt, float v' + states_params_str + ')'
+        first_line_cu = 'void CuDerivModel_' + model_name + '(float dt, float v' + states_params_str + ')'
+        first_line_with_brace = first_line + '{'
+        first_line_cu_with_brace = first_line_cu + '{'
+        final_c_kinetic_deriv_lines.append(first_line_with_brace)
+        for l in c_kinetic_deriv_lines:
+            final_c_kinetic_deriv_lines.append(l)
+        final_c_kinetic_deriv_lines.append('}')
+        c_deriv_lines = final_c_kinetic_deriv_lines
+        deriv_declare = first_line_cu + ';'
+        c_deriv_lines_cu = ['__device__ ' + first_line_cu_with_brace]
+        for l in c_kinetic_deriv_lines:
+            c_deriv_lines_cu.append(l)
+        c_deriv_lines_cu.append('}')
+        c_deriv_lines_cu = '\n'.join(c_deriv_lines_cu)
+        call_to_deriv = 'DerivModel_'  + model_name + '(dt, V[seg]' + states_params_str_seg + ');';
+
+        # kinetics init
+        first_line_cu = 'void InitModel_' + model_name + '(float v' + states_params_str + ')'
+        first_line_with_brace = first_line + '{'
+        first_line_cu = '__device__ void CuInitModel_' + model_name + '(float v' + states_params_str + ')'
+        first_line_cu_with_brace = first_line_cu + '{'
+        final_c_kinetic_init_lines = []
+        final_c_kinetic_init_lines.append(first_line_with_brace)
+        for l in c_kinetic_init_lines:
+            final_c_kinetic_init_lines.append(l)
+        final_c_kinetic_init_lines.append('}')
+        c_init_lines = final_c_kinetic_init_lines
+        init_declare = first_line_cu + ';'
+        c_init_lines_cu = [first_line_cu_with_brace]
+        for l in c_kinetic_init_lines:
+            c_init_lines_cu.append(l)
+        c_init_lines_cu.append('}')
+        call_to_init = 'InitModel_' + model_name + '(V[seg]' + states_params_str_seg + ');'
     return [proc_names,func_names,all_params,global_inds,not_global_inds,all_params_line,proc_declare,proc_declare_cu,c_func_lines,c_func_lines_cu,c_init_lines,c_init_lines_cu,c_proc_lines,c_proc_lines_cu,c_deriv_lines,c_deriv_lines_cu,c_break_lines,c_break_lines_cu,break_point_declare,deriv_declare,init_declare,before_first_line_all,c_param_lines,call_to_init,call_to_deriv,call_to_break,call_to_break_dv,locals]
     ##c_func_lines,c_func_lines_cu,c_init_lines,c_init_lines_cu,c_proc_lines,c_proc_lines_cu,\
     #c_deriv_lines,c_deriv_lines_cu,c_break_lines,c_break_lines_cu,break_point_declare,deriv_declare,init_declare
@@ -1234,21 +1310,17 @@ Also assumes that the conserve statement at the bottom of the kinetic block is e
 """
 #Also TODO: some testing on this
 #TODO: add call_to_kinetic_deriv and kinetic_deriv_declare; should be pretty simple
-def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_params_str, states_params_str_seg):
+def handle_kinetic_block(lines, model_name, states_line, rates_lines):
     start = index_containing_substring(lines, 'KINETIC')
-    if start < -1:
+    if start < 0:
         return [[], [], [], '','']
     else: 
         states = states_line.split()
         states_dict = {}
         for i in range(0, len(states)):
             states_dict[states[i]] = i
-        num_states = len(states)
         f = open('kinetic_template.txt', 'r')
         template_lines = [line.strip('\n') for line in f.readlines()]
-        for i in range(len(template_lines)):
-            template_lines[i] = re.sub(r'<NUM_STATES>', str(num_states), template_lines[i])
-            template_lines[i] = re.sub(r'<NUM_STATES-1>', str(num_states-1), template_lines[i])
         #creating c_kinetic_helper_lines
         c_kinetic_helper_lines = template_lines[index_containing_substring(template_lines, '// BOILERPLATE CODE:')+1:index_containing_substring(template_lines, '//END BOILERPLATE')]
 
@@ -1281,10 +1353,11 @@ def handle_kinetic_block(lines, model_name, states_line, rates_lines, states_par
         #now add the states to y line before the backwards euler call, and the y to states line after the backwards euler call
         beuler_call_index = index_containing_substring(c_kinetic_deriv_lines, 'Cubackwards_euler')
         c_kinetic_init_lines = c_kinetic_deriv_lines[:beuler_call_index] + c_kinetic_deriv_lines[beuler_call_index + 1:]
-        for state in states:
+        c_kinetic_init_lines.insert(beuler_call_index, "init_state_probs(q, y)")
+        for index, state in enumerate(states):
             c_kinetic_deriv_lines.insert(beuler_call_index-1, 'y['+str(states_dict[state]) + '] = ' + state + ';')
-            c_kinetic_deriv_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
-            c_kinetic_init_lines.insert(beuler_call_index+1, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_deriv_lines.insert(beuler_call_index+2+index, state + ' = y[' + str(states_dict[state]) + '];')
+            c_kinetic_init_lines.insert(beuler_call_index+2+index, state + ' = y[' + str(states_dict[state]) + '];')
         return [c_kinetic_helper_lines, c_kinetic_deriv_lines, c_kinetic_init_lines, '', '']
 
 
@@ -1532,11 +1605,14 @@ def handle_neuron_block(lines):
     end = index_containing_substring(lines[start:],'}')
     neuron_lines = lines[start+1:(start+end)]
     for currline in neuron_lines:
-        [first,rest] = currline.split(' ',1)
-        #print "first is" + first + "rest is "+ rest
-        if first.find('SUFFIX')>0:
+        if len(currline.strip().split(' ', 1)) == 1:
+            first = currline.strip().split(' ')[0]
+            rest = ''
+        else:
+            [first,rest] = currline.strip().split(' ',1)
+        if first.find('SUFFIX')>=0:
             suffix=rest.strip(' ')
-        elif first.find('USEION')>0:
+        elif first.find('USEION')>=0:
             [ion_name,rest] = rest.split(' ',1)
             Useion.append(ion_name)
             Tmp = re.findall('.*WRITE(.*)', rest)
@@ -1552,19 +1628,19 @@ def handle_neuron_block(lines):
                 reads = [x.strip(' ') for x in reads]
             else:
                 reads = []
-        elif first.find('NONSPECIFIC_CURRENT') > 0:
+        elif first.find('NONSPECIFIC_CURRENT') >= 0:
 
             NSC = rest.strip(' ')
             Writes = ['i']
             Reads = []
             Useion = ''
-        elif first.find('RANGE') > 0:
+        elif first.find('RANGE') >= 0:
 
             Tmp=rest.split(',')
             currrange = [x.strip(' ') for x in Tmp]
             ranges = currrange
             #print currrange
-        elif first.find('GLOBAL') > 0:
+        elif first.find('GLOBAL') >= 0:
 
             Tmp = rest.split(',')
             currglobal = [x.strip(' ') for x in Tmp]
@@ -1590,6 +1666,7 @@ def handle_assigned_block(lines):
     return all_assigned
 
 def handle_state_block(lines):
+    # print lines
     states=[]
     all_states = []
     all_state_line = ''
@@ -1618,7 +1695,6 @@ def handle_state_block(lines):
         for x in xrange(0, len(states)):
             all_state_line_seg = all_state_line_seg +'StatesM[' + str(x +StateStartVal) + '][seg] ,'
         all_state_line_seg = all_state_line_seg[:-1]
-
     return [all_state_line,all_state_line_seg,states]
 
 def handle_params_block(lines,globals):

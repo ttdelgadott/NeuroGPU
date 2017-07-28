@@ -1,4 +1,10 @@
-// BOILERPLATE CODE:
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+#include "AllModels.h"
+
 __device__ float calc_determinant(float mat[NSTATES-1][NSTATES-1], int n) {
 	//Only if this matrix is of dimension 1x1
 	if (n == 1) {
@@ -106,35 +112,3 @@ __device__ void Cubackwards_euler(double dt, int N, int nkinStates,float y[NSTAT
        y[i] = w0;
   }
 }
-//END BOILERPLATE 
-
-////__device__ int CuDerivModel_CO(float dt, float v, float &c1, float &o, float gbar_CO, float a12_CO, float a21_CO, float z12_CO, float z21_CO) {
-
-//DERIV BLOCK 
-	float y[NSTATES], q[NSTATES][NSTATES];
-
-
-	for (int i = 0; i < NSTATES; i++) {
-		float sum = 0;
-		for (int j = 0; j < NSTATES; j++) {
-			if (i != j) { 
-				sum += q[i][j];
-			}
-		}
-		q[i][i] = -sum;
-	}
-
-	Cubackwards_euler(dt, 1, NSTATES, y, q);
-//END DERIV
-
-//INITIAL
-	float temp[NSTATES];
-	float tempq[NSTATES][NSTATES]
-	
-
-	init_state_probs(tempq, temp);
-	c1 = temp[0];
-	o = temp[1];
-//END INITIAL
-
-
