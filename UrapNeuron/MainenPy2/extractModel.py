@@ -635,10 +635,10 @@ def write_all_models_h(c_parsed_folder,n_total_states,n_params,gglobals_flat,ggl
     call_to_break_str = ''
     call_to_break_dv_str = ''
     for i in range(len(call_to_init)):
-        call_to_init_str = call_to_init_str + 'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_init[i]
-        call_to_deriv_str =call_to_deriv_str + 'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_deriv[i]
-        call_to_break_str = call_to_break_str+'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_break[i]
-        call_to_break_dv_str = call_to_break_dv_str+'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_break_dv[i]
+        call_to_init_str = call_to_init_str + 'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_init[i] + '}'
+        call_to_deriv_str =call_to_deriv_str + 'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_deriv[i] + '}'
+        call_to_break_str = call_to_break_str+'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_break[i] + '}'
+        call_to_break_dv_str = call_to_break_dv_str+'if(TheMMat.boolModel[seg+' + str(i) + '*TheMMat.N]){' + call_to_break_dv[i] + '}'
         #KINETIC
     f.write('#define CALL_TO_INIT_STATES  ' + call_to_init_str.replace('ParamsM[','ParamsMSerial[') + '\n\n')
     f.write('#define CALL_TO_DERIV  ' + call_to_deriv_str.replace('ParamsM[', 'ParamsMSerial[')+'\n\n')
@@ -682,7 +682,7 @@ def replace_for_cuh(call_to_init_str, call_to_deriv_str, call_to_break_str, call
     call_to_break_str_cu = call_to_break_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
     call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('StatesM', 'ModelStates_ ## VARILP')
 
-    call_to_init_str_cu = call_to_init_str_cu.replace('ParamsM[ ', 'p')
+    call_to_init_str_cu = call_to_init_str_cu.replace('ParamsM[', 'p')
     call_to_deriv_str_cu = call_to_deriv_str_cu.replace('ParamsM[', 'p')
     call_to_break_str_cu = call_to_break_str_cu.replace('ParamsM[', 'p')
     call_to_break_dv_str_cu = call_to_break_dv_str_cu.replace('ParamsM[', 'p')
@@ -756,11 +756,11 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
         curr_parameter_str = '#define   SET_PARAMS{:03d}(VARILP) MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
         f.write(curr_parameter_str)
 
-    call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_init_str_cu)
-    call_to_deriv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_deriv_str_cu)
-    call_to_break_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_str_cu)
-    call_to_break_dv_str_cu = re.sub('p([0-9]*)_ ## VARILP', 'param_macro($1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
-    
+    call_to_init_str_cu = re.sub('p([0-9]*)_ ## VARILP', r'param_macro(\1, PIdx_ ## VARILP)', call_to_init_str_cu)
+    call_to_deriv_str_cu = re.sub('p([0-9]*)_ ## VARILP', r'param_macro(\1, PIdx_ ## VARILP)', call_to_deriv_str_cu)
+    call_to_break_str_cu = re.sub('p([0-9]*)_ ## VARILP', r'param_macro(\1, PIdx_ ## VARILP)', call_to_break_str_cu)
+    call_to_break_dv_str_cu = re.sub('p([0-9]*)_ ## VARILP', r'param_macro(\1, PIdx_ ## VARILP)', call_to_break_dv_str_cu)
+
     f.write('\n\n#define CALL_TO_INIT_STATES_CU(VARILP) {}\n\n'.format(call_to_init_str_cu))
     f.write('#define CALL_TO_DERIV_STR_CU(VARILP)   {}\n\n'.format(call_to_deriv_str_cu))
     f.write('#define CALL_TO_BREAK_STR_CU(VARILP)   {}\n\n'.format(call_to_break_str_cu))
