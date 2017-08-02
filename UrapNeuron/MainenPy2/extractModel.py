@@ -542,6 +542,7 @@ def parse_models(thread):
     parent_seg[0] = 0
     output = create_auxilliary_data_3(rot_mat, NX,n_segs_mat_flipped, rev_parent, cm,parent_seg,bool_model,seg_start,n_segs,seg_to_comp)
     aux = output[3]
+    tmp_file_name = output[0]
     # cm_vec = output[4]
     cm_vec = aux.Cms
     #create_auxilliary_data_3(A, N, NSeg, Parent, cmVec,parent_seg,bool_model,seg_start,n_segs,seg_to_comp):
@@ -550,7 +551,7 @@ def parse_models(thread):
     output = write_all_models_cuh(c_parsed_folder, n_total_states, NX,aux,bool_model,n_params, c_init_lines_cu_list, c_proc_lines_cu_list, c_deriv_lines_cu_list, c_break_lines_cu_list,''.join(call_to_init_list),''.join(call_to_deriv_list),''.join(call_to_break_list),''.join(call_to_break_dv_list))
 
     #(c_parsed_folder,NX,aux,bool_model,n_params,c_init_lines_cu,c_proc_lines_cu,c_deriv_lines_cu,c_break_lines_cu):
-    tail_end(open('CParsed/AllModels.h', 'a'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS)
+    tail_end(open('CParsed/AllModels.h', 'a'), n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu,params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS, tmp_file_name)
     return [n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, ND, NRHS]
 def get_matrix(FN,parent,seg_start,last_seg):
     FN = '../../Neuron/printCell/Amit/output/Mat.dat'
@@ -725,15 +726,19 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
     lines = get_lines(file_name)
     all_lines = lines
     for fn in other_file_names:
-        lines.extend(get_lines(fn))
-
+        with open(fn, 'r') as f:
+            lines.extend([l[:-1] if l[-1] == '\n' else l for l in f])
     calls = []
     for line in lines:
         if 'SUPERILPMACRO(' in line:
             calls.append(line)
-    all_in_macros = None # TODO
+    matches = []
+    for call in calls:
+        matches.append(re.findall(r'SUPERILPMACRO\((.*?)\)', call)[0])
+    all_in_macros = list(set(matches) - set(['x']))
     for i in range(1, len(all_in_macros) + 1):
-        curr_line_i = None # TODO
+        curr_line_i_tmp = [1 if re.search('(#define.*)|(' + all_in_macros[i - 1] +')', line) else 0 for line in all_lines]
+        curr_line_i = curr_line_i_tmp.index(filter(lambda x: x != 0, curr_line_i_tmp)[0])
         #I changed her cur_line to curr_line Maybe it was wrong
         curr_line = all_lines[curr_line_i]
         base_command = curr_line[curr_line.find('VARILP)') + 8:]
@@ -750,7 +755,7 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
             lines[curr_call_i[j - 1]] = lines[curr_call_i[j - 1]][:lines[curr_call_i[j - 1]].find('SUPERILPMACRO') - 1] + expanded
     put_lines(out_file_name, lines)
 
-def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs):
+def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_break_str_cu, call_to_break_dv_str_cu, params_m, n_segs_mat, cm_vec, vs_dir, has_f, nd, nrhs, FN):
     declare_str, parameter_set_str = '', ''
     for curr_param in range(1, n_params + 1):
         curr_parameter_str = '#define   SET_PARAMS{:03d}(VARILP) MYFTYPE p{:d}_ ## VARILP =ParamsM[NeuronID*perThreadMSize + {:d}*InMat.NComps+cSegToComp[PIdx_ ## VARILP] ];\n'.format(curr_param, curr_param - 1, curr_param - 1)
@@ -795,6 +800,7 @@ def tail_end(f, n_params, call_to_init_str_cu, call_to_deriv_str_cu, call_to_bre
         tmp3 = tmp
 
     put_lines(vs_dir + '/CudaStuffBasex.cu', tmp3)
+    expand_ilp_macros(vs_dir + '/CudaStuffBasex.cu', [vs_dir + '/AllModels.cuh'], nilp, vs_dir + '/CudaStuff.cu')
     params_m_mat = sio.loadmat('../../Data/ParamsMForC.mat')
     params_m_mat['param_m'] = params_m.astype(float)
     sio.savemat('../../Data/ParamsMForC.mat', params_m_mat)
