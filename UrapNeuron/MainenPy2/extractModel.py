@@ -737,7 +737,7 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
         matches.append(re.findall(r'SUPERILPMACRO\((.*?)\)', call)[0])
     all_in_macros = list(set(matches) - set(['x']))
     for i in range(1, len(all_in_macros) + 1):
-        curr_line_i_tmp = [1 if re.search('(#define.*)|(' + all_in_macros[i - 1] +')', line) else 0 for line in all_lines]
+        curr_line_i_tmp = [1 if re.search('#define.*' + all_in_macros[i - 1], line) else 0 for line in all_lines]
         curr_line_i = curr_line_i_tmp.index(filter(lambda x: x != 0, curr_line_i_tmp)[0])
         #I changed her cur_line to curr_line Maybe it was wrong
         curr_line = all_lines[curr_line_i]
@@ -745,11 +745,11 @@ def expand_ilp_macros(file_name, other_file_names, ilpn, out_file_name):
         expanded = ''
         for j in range(1, ilpn + 1):
             Tmp = base_command.replace(' ## VARILP', str(j))
-            Tmp = Tmp.replace(' ## VARILP', str(j))
+            Tmp = Tmp.replace('## VARILP', str(j))
             expanded += Tmp
         curr_call_i = []
         for k in range(len(lines)):
-            if 'SUPERILPMACRO\(' + all_in_macros[i - 1] + '\)' in lines[k]:
+            if 'SUPERILPMACRO(' + all_in_macros[i - 1] + ')' in lines[k]:
                 curr_call_i.append(k)
         for j in range(1, len(curr_call_i) + 1):
             lines[curr_call_i[j - 1]] = lines[curr_call_i[j - 1]][:lines[curr_call_i[j - 1]].find('SUPERILPMACRO') - 1] + expanded
