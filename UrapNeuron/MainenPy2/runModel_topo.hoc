@@ -19,7 +19,7 @@ psize =1
 ntraces =2
 create Exts[1]
 objref st,stims,fin,fout,pmat,matOut,stimtime,somaref,secref,extVec,strFunc,most
-load_file(1, modelFile)
+load_file(modelFile)
 objref recSites
 recSites = new SectionList()
 outFPre = "./volts/orig_step"
