@@ -2088,7 +2088,7 @@ def add_params_to_func_call(input,func_names,input_vars_c,all_param_line_call):
 
 def main():
     global sec_list
-    nrn.h.load_file(1, modelFile)
+    nrn.h.load_file(modelFile)
     thread = nrn_dll_sym('nrn_threads', ctypes.POINTER(NrnThread))
     sec_list = create_sec_list()
     #topo = get_topo()  # dictionary whose keys are section names
